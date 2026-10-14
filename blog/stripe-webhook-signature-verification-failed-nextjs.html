@@ -1,0 +1,158 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stripe Webhook Signature Verification Failed? Next.js Fix</title><meta name="description" content="Fix Stripe&#x27;s &#x27;No signatures found matching the expected signature for payload&#x27; in Next.js App Router: raw body, the right secret, runtime and clock."><link rel="canonical" href="https://edtrackai.github.io/blog/stripe-webhook-signature-verification-failed-nextjs"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Stripe Webhook Signature Verification Failed? Next.js Fix"><meta property="og:description" content="Fix Stripe&#x27;s &#x27;No signatures found matching the expected signature for payload&#x27; in Next.js App Router: raw body, the right secret, runtime and clock."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/stripe-webhook-signature-verification-failed-nextjs.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Stripe Webhook Signature Verification Failed? Next.js Fix: Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/stripe-webhook-signature-verification-failed-nextjs.png"><meta property="og:url" content="https://edtrackai.github.io/blog/stripe-webhook-signature-verification-failed-nextjs"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Stripe Webhook Signature Verification Failed in Next.js", "description": "Fix Stripe's 'No signatures found matching the expected signature for payload' in Next.js App Router: raw body, the right secret, runtime and clock.", "datePublished": "2026-10-14", "dateModified": "2026-10-14", "image": "https://edtrackai.github.io/visuals/og/stripe-webhook-signature-verification-failed-nextjs.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/stripe-webhook-signature-verification-failed-nextjs"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "Stripe Webhook Signature Verification Failed in Next.js", "item": "https://edtrackai.github.io/blog/stripe-webhook-signature-verification-failed-nextjs"}]}</script><meta property="article:published_time" content="2026-10-14"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Stripe Webhook Signature Verification Failed in …</li></ol></nav>
+<p class="eyebrow">Stripe · Security · <time datetime="2026-10-14">2026-10-14</time></p><h1 class="h1-long">Stripe Webhook Signature Verification Failed in Next.js</h1><p>Your checkout works, the payment shows up in Stripe, and then your webhook route throws this:</p><p>This guide pairs with <a href="/launch-audit" data-ev="blog-to-product" data-ev-post="stripe-webhook-signature-verification-failed-nextjs">Launch Audit</a>, and if you want the next step, read <a href="/blog/supabase-service-role-key-exposed">Supabase Service Role Key Exposed? How to Check, Rotate and Stop It Happening Again</a>.</p>
+<pre><code>Webhook signature verification failed. Err: No signatures found matching the expected signature for payload.
+</code></pre>
+<p>The user paid, but your app never finds out. Stripe's own troubleshooting page puts it simply: if you see this error, at least one of the three values you passed to <code>constructEvent()</code> is wrong. This guide walks through each cause in a Next.js App Router project, in the order you're most likely to hit them, and ends with a working handler and a debug checklist. The Stripe and Next.js behaviour described here comes from their official docs, checked on 14 October 2026 (sources at the end). This site isn't affiliated with Stripe.</p>
+<h2>What the error means</h2>
+<p>Stripe signs every webhook it sends and puts the signature in the <code>Stripe-Signature</code> header. The header looks like this:</p>
+<pre><code>t=1729000000,v1=5257a869e7ec...,v0=...
+</code></pre>
+<p><code>t</code> is a timestamp and <code>v1</code> is an HMAC-SHA256 signature of the timestamp joined to the exact request body, made with your endpoint's signing secret (it starts with <code>whsec_</code>). When you call <code>constructEvent()</code> with the body, the signature and the secret, the library recomputes that signature and compares. It needs three things to be exactly right:</p>
+<ol>
+<li><strong>The raw body</strong>: the exact UTF-8 string Stripe sent, byte for byte.</li>
+<li><strong>The signature</strong>: the <code>Stripe-Signature</code> header value, unchanged.</li>
+<li><strong>The secret</strong>: the <code>whsec_</code> secret for <em>this</em> endpoint, in <em>this</em> mode.</li>
+</ol>
+<p>There are two error messages you'll usually see. "No signatures found matching the expected signature for payload" means the header was parsed but nothing matched, so the body or the secret is wrong. "Unable to extract timestamp and signatures from header" means the header itself is missing or malformed.</p>
+<p>This check is the only thing proving the request came from Stripe. Treat a failure as a bug in your setup, not an annoyance to switch off.</p>
+<h2>Cause 1: the body was parsed before verification</h2>
+<p>This is a common bug in code that AI agents write. In an App Router route handler, the body is a stream you can read once. If you call <code>req.json()</code> and then <code>JSON.stringify()</code> the result to verify it, the keys, whitespace or encoding can change, and the signature no longer matches.</p>
+<pre><code class="language-ts">// Wrong: the body has been parsed and re-serialised
+const json = await req.json();
+stripe.webhooks.constructEvent(JSON.stringify(json), sig, secret);
+
+// Right: verify the exact text Stripe sent
+const body = await req.text();
+const event = stripe.webhooks.constructEvent(body, sig, secret);
+</code></pre>
+<p>The Next.js docs show <code>request.text()</code> for webhooks in route handlers and note that, unlike Pages Router API routes, you don't need any <code>bodyParser</code> configuration. If you're still on the Pages Router, Stripe's docs say to disable <code>bodyParser</code> for the route and read the raw buffer instead.</p>
+<p>Anything that rewrites the body before your handler sees it causes the same failure: a custom server using <code>express.json()</code> before the webhook route, a proxy that re-encodes JSON, or a wrapper that "helpfully" parses every request. We cover this bug pattern, and why agents write it, in <a href="/blog/7-security-bugs-ai-agents-write-nextjs-supabase-stripe?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-stripe-webhook-signature-verification-failed-nextjs">7 security bugs AI agents write in Next.js, Supabase and Stripe</a>.</p>
+<h2>Cause 2: the wrong signing secret</h2>
+<p>Stripe's troubleshooting page calls this the most common cause. Every endpoint has its own secret, and several situations hand you a different one:</p>
+<ul>
+<li><strong>Stripe CLI vs Dashboard.</strong> <code>stripe listen</code> prints its own <code>whsec_</code> secret in the terminal. It's different from the secret of the endpoint you created in the Dashboard (Workbench, then Reveal secret). Using the CLI secret in production, or the Dashboard secret locally, fails every time.</li>
+<li><strong>Test vs live mode.</strong> Stripe's docs say that if you use the same endpoint for test and live keys, the secret is different for each.</li>
+<li><strong>Multiple endpoints.</strong> If you've registered more than one endpoint, each has its own secret. Copying the secret from endpoint A into the app behind endpoint B won't work.</li>
+<li><strong>The env var isn't what you think.</strong> It's missing in production, set only for preview deployments, has a trailing space or newline, or you rolled the secret and forgot to update it.</li>
+</ul>
+<p>Stripe suggests printing the secret your code actually uses and comparing it with the source. Do that locally, or log only the first few characters in production; never log the full secret.</p>
+<h2>Cause 3: the header or the runtime</h2>
+<p>If you get "Unable to extract timestamp and signatures from header", check how you read the header:</p>
+<pre><code class="language-ts">const sig = req.headers.get(&quot;stripe-signature&quot;);
+if (!sig) return new Response(&quot;Missing signature&quot;, { status: 400 });
+</code></pre>
+<p>Header names are case-insensitive with <code>headers.get()</code>, but a proxy or tunnel that strips custom headers will cause this error too. Print the value and confirm it looks like <code>t=...,v1=...</code>.</p>
+<p>The runtime matters as well. The synchronous <code>constructEvent()</code> uses Node's crypto. On the Edge runtime, stripe-node needs <code>constructEventAsync()</code> with a Web Crypto provider (<code>Stripe.createSubtleCryptoProvider()</code>); if you call the sync version there, the library tells you to use the async one. The simplest fix is to pin the route to Node:</p>
+<pre><code class="language-ts">export const runtime = &quot;nodejs&quot;;
+</code></pre>
+<h2>Cause 4: timestamp tolerance and clock skew</h2>
+<p>Stripe includes the timestamp in the signed payload to protect against replay attacks. Stripe's docs say its libraries reject events whose timestamp is more than <strong>5 minutes</strong> from the server's current time by default. You'll hit this if your server clock drifts, or if you replay an old saved request with its old header while testing.</p>
+<p>The fix is to keep your server's clock in sync (Stripe recommends NTP), not to widen the tolerance. Stripe specifically warns against a tolerance of <code>0</code>, which turns the recency check off entirely. To test an old event, resend it from the Dashboard or trigger a fresh one with <code>stripe trigger</code>, so it gets a new signature.</p>
+<h2>Never "fix" it by skipping verification</h2>
+<p>When a deadline is close, the tempting fix is to delete the <code>constructEvent</code> call and <code>JSON.parse</code> the body. Don't. Stripe's docs spell out what happens: without verification, anyone can send fake events to your endpoint to fulfil orders, grant access or change records. Your webhook URL isn't secret, so a forged <code>checkout.session.completed</code> would give anyone your product for free.</p>
+<p>On failure, return a <code>400</code>, log <em>why</em> it failed (the error message, whether the header was present, which secret variable was loaded), and don't log the full payload or secret. If you want a second layer, Stripe also publishes the IP addresses webhooks come from.</p>
+<h2>A working Next.js App Router handler</h2>
+<p>This is a minimal handler: Node runtime, raw text body, verification first, and a fast <code>2xx</code>.</p>
+<pre><code class="language-ts">// app/api/stripe/webhook/route.ts
+import Stripe from &quot;stripe&quot;;
+
+export const runtime = &quot;nodejs&quot;;
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+
+export async function POST(req: Request) {
+  const sig = req.headers.get(&quot;stripe-signature&quot;);
+  if (!sig) return new Response(&quot;Missing signature&quot;, { status: 400 });
+
+  const body = await req.text(); // raw body, read once
+
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+  } catch (err) {
+    console.error(&quot;Stripe signature check failed:&quot;, (err as Error).message);
+    return new Response(&quot;Invalid signature&quot;, { status: 400 });
+  }
+
+  // Dedupe on event.id before granting anything: Stripe can deliver
+  // the same event more than once.
+  switch (event.type) {
+    case &quot;checkout.session.completed&quot;:
+      // look up the user from data you set server-side, then grant access
+      break;
+  }
+
+  return new Response(&quot;ok&quot;, { status: 200 });
+}
+</code></pre>
+<p>Two things this skeleton leaves to you. First, idempotency: Stripe's docs say endpoints can receive the same event more than once, so record processed event ids and skip repeats (the same 7-bugs post shows a pattern for that). Second, speed: Stripe asks you to return <code>2xx</code> quickly and move slow work to a queue, or deliveries can time out and be retried.</p>
+<h2>Debug checklist</h2>
+<p>Run these in order. Most people find the problem in the first three.</p>
+<ol>
+<li>Which secret is loaded? Compare the first characters of <code>STRIPE_WEBHOOK_SECRET</code> in the running environment with the source: the <code>stripe listen</code> output locally, or the Dashboard endpoint in production.</li>
+<li>Is it the right mode? Test-mode events need the test secret; live events need the live secret.</li>
+<li>Is it the right endpoint? Check the delivery's endpoint URL in Workbench matches the app you're debugging.</li>
+<li>Is the body raw? Search the route for <code>req.json()</code>, <code>JSON.stringify</code> or any middleware that touches the body.</li>
+<li>Is the header there? Log whether <code>stripe-signature</code> is present and starts with <code>t=</code>.</li>
+<li>Which runtime? Confirm <code>export const runtime = "nodejs"</code>, or use <code>constructEventAsync</code> on Edge.</li>
+<li>Is the clock right? Compare the server time with the <code>t=</code> value.</li>
+<li>Is anything in between? Proxies, tunnels or redirects (Stripe treats a <code>3xx</code> as a failed delivery).</li>
+</ol>
+<h2>FAQ</h2>
+<h3>Why does it work with <code>stripe listen</code> but not in production?</h3>
+<p>Almost always the secret. The CLI prints its own secret, which only works for events it forwards. Production needs the secret of the Dashboard endpoint, set in your production environment variables.</p>
+<h3>Can I verify Stripe webhooks on the Edge runtime?</h3>
+<p>Yes, with <code>constructEventAsync()</code> and <code>Stripe.createSubtleCryptoProvider()</code>. Pinning the route to the Node runtime is simpler and avoids the problem.</p>
+<h3>Do I need a different secret per environment?</h3>
+<p>Each endpoint and mode has its own secret, so production, staging and local CLI forwarding will each have one. Store them per environment.</p>
+<h3>Is it safe to log the raw body?</h3>
+<p>Avoid it in production. Events can contain customer names, emails and addresses. Log the event id, type and the verification error instead.</p>
+<h2>Check the rest of your Stripe setup</h2>
+<p><em>Disclosure: Launch Audit and AI Rules are our own paid products.</em> <a href="/launch-audit?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-stripe-webhook-signature-verification-failed-nextjs">Launch Audit</a> ($12; UK buyers pay $14.40 incl. VAT) runs 28 checks across a Next.js, Supabase and Stripe codebase. Its Stripe checks include a webhook with no <code>constructEvent</code> call, webhooks with no event-id idempotency, and a webhook route on the Edge runtime. It also flags webhook secrets exposed through <code>NEXT_PUBLIC_</code> variables, and its manual checklist reminds you to keep your live webhook endpoint and secret separate from test. <a href="/ai-rules?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-stripe-webhook-signature-verification-failed-nextjs">AI Rules</a> ($19; UK buyers pay $22.80 incl. VAT) gives your coding agent rules for this stack, including one that tells it to read the raw body before verifying Stripe webhooks. They reduce risk; they don't replace code review.</p>
+<!--
+Sources (checked 14 Oct 2026):
+- https://docs.stripe.com/webhooks/signature (Resolve signature verification errors: three parameters, wrong secret most common, CLI vs Dashboard secret, raw body, Pages Router bodyParser, header format)
+- https://docs.stripe.com/webhooks (secret per endpoint and per test/live mode, 5-minute default tolerance, NTP, tolerance 0 warning, duplicates, quick 2xx, IP allowlist)
+- https://nextjs.org/docs/app/api-reference/file-conventions/route (Webhooks example with request.text(), no bodyParser needed, runtime segment config)
+- https://github.com/stripe/stripe-node/blob/master/src/Webhooks.ts (DEFAULT_TOLERANCE 300, constructEventAsync, "Unable to extract timestamp and signatures from header")
+- Launch Audit checks: product-security-audit/plugin/launch-audit/skills/audit/checks.md (S1, S3, S6, K3, pre-launch manual list)
+-->
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="stripe-webhook-signature-verification-failed-nextjs">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside><aside class="cta" aria-label="Product"><p class="eyebrow">LAUNCH AUDIT · NEXT.JS + SUPABASE + STRIPE</p><h2>Launch Audit</h2><p>/audit scans your Next.js + Supabase + Stripe app with 28 checks, verifies every hit with an AI auditor with no file-editing tools, and writes LAUNCH-AUDIT.md with fixes.</p><a class="btn btn-p" href="/launch-audit" data-ev="blog-to-product" data-ev-post="stripe-webhook-signature-verification-failed-nextjs">See what's in Launch Audit</a></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/supabase-service-role-key-exposed">Supabase Service Role Key Exposed? How to Check, Rotate and Stop It Happening Again</a></li><li><a href="/blog/supabase-permission-denied-for-table-data-api-grants">Supabase “Permission Denied for Table”: the Data API Grants Change Scheduled for 30 Oct</a></li><li><a href="/blog/subscription-audit-indie-developers">The Indie Developer&#x27;s Subscription Audit: Find and Cut Wasted Tool Spend</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal or accounting advice. Notion, Cursor, Supabase, Stripe and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script></body></html>
