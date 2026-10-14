@@ -158,6 +158,8 @@ mark.fill{background:var(--color-ship-soft);color:var(--color-ink);padding:1px 4
 .pcard .amount{font:500 var(--text-4xl)/1.1 var(--font-mono);color:var(--color-ink);margin:0}.pcard .terms{font-size:var(--text-sm);color:var(--color-muted);margin:4px 0 var(--space-4)}
 .pcard ul.check{margin:0 0 var(--space-5)}.pcard .btn{width:100%;justify-content:center;margin:auto 0 0}.pcard .micro{font-size:var(--text-xs);color:var(--color-muted);margin:var(--space-2) 0 0;text-align:center}
 .badge{display:inline-block;font:500 var(--text-xs)/1 var(--font-mono);letter-spacing:var(--tracking-wide);text-transform:uppercase;padding:6px 10px;border-radius:var(--radius-full)}
+.badge-best{background:var(--color-brand-soft);color:var(--color-brand)}.pcard-featured{border:var(--pricing-featured-border)}
+.strike{color:var(--price-strike);text-decoration:line-through}.sum{font-family:var(--font-mono)}
 .badge-new{background:var(--color-ship-soft);color:var(--color-ship-text-on-soft)}
 .offer{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--color-ship-soft);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--banner-pad);margin:var(--space-6) 0;color:var(--color-ink)}
 .offer .chip{font:500 var(--text-sm) var(--font-mono);background:var(--color-surface);border:1px dashed var(--color-ship-text);padding:3px 8px;border-radius:var(--radius-sm);color:var(--color-ink)}
