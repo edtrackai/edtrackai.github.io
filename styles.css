@@ -100,7 +100,7 @@ a{color:var(--color-brand);text-underline-offset:3px;text-decoration-thickness:1
 .skip{position:absolute;left:-999px;top:8px;background:var(--color-surface);padding:8px 12px;z-index:10}.skip:focus{left:8px}
 .wrap{max-width:var(--container);margin:0 auto;padding:0 var(--space-6)}.narrow{max-width:calc(var(--container-prose) + 3rem)}
 h1,h2,h3{font-family:var(--font-display);letter-spacing:var(--tracking-tight);line-height:var(--leading-tight);font-weight:var(--weight-bold);text-wrap:balance}
-h1{font-size:clamp(1.875rem,1.2rem + 3.6vw,3.75rem);margin:0 0 var(--space-5)}h1.h1-long,article h1.h1-long{font-size:clamp(1.5rem,1.1rem + 3vw,3.25rem)}h2{font-size:var(--text-3xl);margin:var(--space-12) 0 var(--space-4)}h3{font-size:var(--text-xl);margin:var(--space-6) 0 var(--space-2);font-weight:600}
+h1{font-size:clamp(1.875rem,1.2rem + 3.6vw,3.75rem);margin:0 0 var(--space-5)}h1.h1-long,article h1.h1-long{font-size:clamp(1.5rem,1.1rem + 3vw,3.25rem)}h1.h1-xlong,article h1.h1-xlong{font-size:clamp(1.375rem,1rem + 2vw,2.5rem)}h2{font-size:var(--text-3xl);margin:var(--space-12) 0 var(--space-4)}h3{font-size:var(--text-xl);margin:var(--space-6) 0 var(--space-2);font-weight:600}
 code,pre,.mono{font-family:var(--font-mono)}
 .eyebrow{text-wrap:balance;font:500 var(--text-xs)/1.4 var(--font-mono);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-muted);margin:0 0 var(--space-3)}
 .amp{color:var(--color-ship-text)}.amp.lg{color:var(--color-ship)} /* #F97316 only at >=24px */
@@ -216,5 +216,6 @@ p code,li code,article code{overflow-wrap:anywhere}td code{white-space:nowrap;ov
 @media(max-width:640px){.links{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}.hero .btn-s{font-size:var(--text-sm);padding-left:var(--space-3);padding-right:var(--space-3)}}
 @media(max-width:374px){.hero .btn-s{font-size:var(--text-sm);letter-spacing:-.02em;padding-left:var(--space-1);padding-right:var(--space-1)}}
 .offer__for{white-space:nowrap}
+@media(max-width:400px){.offer__title{font-size:var(--text-lg)}.hero{padding-top:var(--space-3)}.hero .lede{font-size:var(--text-base);margin-bottom:var(--space-3)}.hero .offer{margin-top:var(--space-2)}}   /* r19.1: shorter mobile hero, no copy change */
 /* QA H-01: below 389px the label gets its own row above chip + Copy */
 @media(max-width:388.98px){.offer__codes,.hero .offer__codes{grid-template-columns:minmax(0,1fr) auto}.offer__for,.hero .offer__for{grid-column:1/-1;white-space:normal;text-align:left;margin:var(--space-1) 0 0}.offer__code code,.offer__copy{white-space:nowrap}}
