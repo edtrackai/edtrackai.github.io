@@ -1,4 +1,4 @@
-<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Solo Founder OS: Notion Template for Solo Founders</title><meta name="description" content="A Notion workspace for solo founders: projects, tasks, revenue with MRR and VAT, expenses, subscriptions and monthly profit per product. Free Lite."><link rel="canonical" href="https://edtrackai.github.io/solo-founder-os"><meta property="og:type" content="website"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Solo Founder OS: Notion Template for Solo Founders"><meta property="og:description" content="A Notion workspace for solo founders: projects, tasks, revenue with MRR and VAT, expenses, subscriptions and monthly profit per product. Free Lite."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/solo-founder-os.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Solo Founder OS by Stack &amp; Ship: Notion template for running a one-person software business, Pro dashboard preview"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/solo-founder-os.png"><meta property="og:url" content="https://edtrackai.github.io/solo-founder-os"><meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
@@ -23,7 +23,7 @@ var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.global
 if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
 var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
 if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
-var s='',u={},T=Date.now(),n=K.some(function(k){return q.get(k);});
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
 if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
 if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
 try{localStorage.removeItem('ft');}catch(e){}
@@ -40,4 +40,5 @@ var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1
 if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
 if(P){x.searchParams.set('code',P);a.dataset.evCode=P;}
 else if(Z&&g=='ffjsf'){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
-a.href=x.toString();});})();</script></body></html>
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script></body></html>

@@ -216,6 +216,7 @@ p code,li code,article code{overflow-wrap:anywhere}td code{white-space:nowrap;ov
 @media(max-width:640px){.links{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}.hero .btn-s{font-size:var(--text-sm);padding-left:var(--space-3);padding-right:var(--space-3)}}
 @media(max-width:374px){.hero .btn-s{font-size:var(--text-sm);letter-spacing:-.02em;padding-left:var(--space-1);padding-right:var(--space-1)}}
 .offer__for{white-space:nowrap}
-@media(max-width:400px){.offer__title{font-size:var(--text-lg)}.hero{padding-top:var(--space-3)}.hero .lede{font-size:var(--text-base);margin-bottom:var(--space-3)}.hero .offer{margin-top:var(--space-2)}}   /* r19.1: shorter mobile hero, no copy change */
+.btn-price{font-family:var(--font-mono);font-weight:600}.btn-sub{font-size:var(--text-sm);color:var(--color-muted);margin:0 0 var(--space-3)}   /* r20 */
+@media(max-width:400px){.offer__title{font-size:var(--text-lg)}.hero{padding-top:var(--space-3)}.hero .lede{font-size:var(--text-base);margin-bottom:var(--space-3)}.hero .offer{margin-top:var(--space-1);padding-top:var(--space-3)}.hero .btn{margin-bottom:var(--space-1)}.hero .btn-sub{margin-bottom:var(--space-1)}}   /* QA r20 L-2 */   /* r19.1: shorter mobile hero, no copy change */
 /* QA H-01: below 389px the label gets its own row above chip + Copy */
 @media(max-width:388.98px){.offer__codes,.hero .offer__codes{grid-template-columns:minmax(0,1fr) auto}.offer__for,.hero .offer__for{grid-column:1/-1;white-space:normal;text-align:left;margin:var(--space-1) 0 0}.offer__code code,.offer__copy{white-space:nowrap}}
