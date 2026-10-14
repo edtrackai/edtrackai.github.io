@@ -214,4 +214,7 @@ footer{padding:var(--space-12) 0;color:var(--color-muted);font-size:var(--text-s
 @media(max-width:720px){.offer__code code{font-size:var(--text-sm);letter-spacing:0}}
 p code{white-space:nowrap;overflow-wrap:normal}
 @media(max-width:640px){.links{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}.hero .btn-s{font-size:var(--text-sm);padding-left:var(--space-3);padding-right:var(--space-3)}}
-@media(max-width:374px){.hero .btn-s{font-size:.8125rem;padding-left:var(--space-2);padding-right:var(--space-2)}}
+@media(max-width:374px){.hero .btn-s{font-size:var(--text-sm);letter-spacing:-.02em;padding-left:var(--space-1);padding-right:var(--space-1)}}
+.offer__for{white-space:nowrap}
+/* QA H-01: below 389px the label gets its own row above chip + Copy */
+@media(max-width:388.98px){.offer__codes,.hero .offer__codes{grid-template-columns:minmax(0,1fr) auto}.offer__for,.hero .offer__for{grid-column:1/-1;white-space:normal;text-align:left;margin:var(--space-1) 0 0}.offer__code code,.offer__copy{white-space:nowrap}}

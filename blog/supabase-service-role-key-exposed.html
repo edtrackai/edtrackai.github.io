@@ -1,0 +1,170 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Supabase Service Role Key Exposed? Check, Rotate, Prevent</title><meta name="description" content="How a Supabase service role or secret key leaks in Next.js apps, how to check your build and git history, how to rotate it, and how to stop it recurring."><link rel="canonical" href="https://edtrackai.github.io/blog/supabase-service-role-key-exposed"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Supabase Service Role Key Exposed? Check, Rotate, Prevent"><meta property="og:description" content="How a Supabase service role or secret key leaks in Next.js apps, how to check your build and git history, how to rotate it, and how to stop it recurring."><meta property="og:image" content="https://edtrackai.github.io/og/supabase-service-role-key-exposed.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Supabase Service Role Key Exposed? Check, Rotate, Prevent: Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/og/supabase-service-role-key-exposed.png"><meta property="og:url" content="https://edtrackai.github.io/blog/supabase-service-role-key-exposed"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Supabase Service Role Key Exposed? How to Check, Rotate and Stop It Happening Again", "description": "How a Supabase service role or secret key leaks in Next.js apps, how to check your build and git history, how to rotate it, and how to stop it recurring.", "datePublished": "2026-10-14", "dateModified": "2026-10-14", "image": "https://edtrackai.github.io/og/supabase-service-role-key-exposed.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/supabase-service-role-key-exposed"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "Supabase Service Role Key Exposed? How to Check, Rotate and Stop It Happening Again", "item": "https://edtrackai.github.io/blog/supabase-service-role-key-exposed"}]}</script><meta property="article:published_time" content="2026-10-14"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Supabase Service Role Key Exposed? How to Check,…</li></ol></nav>
+<p class="eyebrow">Supabase · Security · <time datetime="2026-10-14">2026-10-14</time></p><h1 class="h1-long">Supabase Service Role Key Exposed? How to Check, Rotate and Stop It Happening Again</h1><p>Most Supabase keys are meant to be seen. The service role key is not. If yours has ended up in a browser bundle, a public repo or a log file, anyone who finds it can read and write every row in your database, whatever your Row Level Security policies say.</p><p>This guide pairs with <a href="/ai-rules" data-ev="blog-to-product" data-ev-post="supabase-service-role-key-exposed">Ship-Ready AI Rules</a>, and if you want the next step, read <a href="/blog/subscription-audit-indie-developers">The Indie Developer&#x27;s Subscription Audit: Find and Cut Wasted Tool Spend</a>.</p>
+<p>This guide covers what the key actually does, how it typically leaks from a Next.js app, how to check whether you're exposed, how to rotate it the way Supabase recommends, and how to stop it happening again. Every Supabase-specific claim below comes from Supabase's <a href="https://supabase.com/docs/guides/api/api-keys">API keys documentation</a> and <a href="https://supabase.com/changelog/45329-breaking-change-tables-not-exposed-to-data-and-graphql-api-automatically">changelog</a> (both checked 14 October 2026).</p>
+<h2>Why the service role key is the one key that must never leak</h2>
+<p>Supabase gives every project two kinds of key:</p>
+<div class="table-wrap"><table><caption class="sr-only">Why the service role key is the one key that must never leak</caption>
+<thead>
+<tr>
+<th scope="col">Key</th>
+<th scope="col">Format</th>
+<th scope="col">Where it belongs</th>
+<th scope="col">What it can reach</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Publishable key (legacy: <code>anon</code>)</td>
+<td><code>sb_publishable_...</code></td>
+<td>Anything you ship: browser, mobile app, CLI</td>
+<td>Only what your RLS policies allow</td>
+</tr>
+<tr>
+<td>Secret key (legacy: <code>service_role</code>)</td>
+<td><code>sb_secret_...</code></td>
+<td>Servers, Edge Functions, cron jobs you control</td>
+<td>Everything. It bypasses RLS</td>
+</tr>
+</tbody>
+</table></div>
+<p>Secret keys work through the built-in <code>service_role</code> Postgres role, which has full access to your project's data and the <code>BYPASSRLS</code> attribute. In Supabase's own words, RLS policies "never apply to a secret key". So the usual advice "RLS will protect you" doesn't apply here. RLS protects you from the publishable key. Nothing in the database protects you from a leaked secret key.</p>
+<p>Two details are worth knowing:</p>
+<ul>
+<li><strong>Naming is changing.</strong> Supabase is deprecating the legacy <code>anon</code> and <code>service_role</code> JWT keys by the end of 2026 in favour of <code>sb_publishable_</code> and <code>sb_secret_</code> keys. If a tutorial (or your AI assistant) tells you to paste a long key starting with <code>eyJ</code>, it was written for the legacy keys. Everything in this post applies to both the legacy <code>service_role</code> key and the new secret keys.</li>
+<li><strong>New secret keys have one extra guard.</strong> Supabase rejects a secret key used from a browser, matching on the <code>User-Agent</code> header and returning <code>401</code>. Don't treat that as protection. The docs are explicit that an attacker can still use the key from other tools.</li>
+</ul>
+<h2>How it usually leaks in a Next.js app</h2>
+<p>In Next.js and Supabase projects, a leak almost always comes from one of five routes.</p>
+<ol>
+<li><strong>A <code>NEXT_PUBLIC_</code> prefix.</strong> Next.js inlines any <code>NEXT_PUBLIC_</code> variable into the JavaScript bundle at build time, so <code>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY</code> is shipped to every visitor. The only key that should carry that prefix is the publishable one (Supabase's example uses <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code>).</li>
+<li><strong>An admin client imported into client code.</strong> A shared <code>lib/supabase.ts</code> that creates both clients gets imported by a <code>"use client"</code> component, and the secret goes with it.</li>
+<li><strong>A committed <code>.env</code> file</strong>, or a key pasted into a CI script, a README or a config file.</li>
+<li><strong>Logs and error messages.</strong> A key printed in a debug log or returned in an API error is as public as wherever those logs go. Supabase says not to log keys at all, "even one that looks invalid".</li>
+<li><strong>An AI agent's "fix".</strong> A query returns no rows because of an RLS policy, and the agent swaps in the admin client to make the error go away. It works, so it ships.</li>
+</ol>
+<h2>Check in 10 minutes: are you exposed?</h2>
+<p>Run these from your project root. Look for both <code>sb_secret_</code> and long <code>eyJ</code> tokens, plus your variable names.</p>
+<p><strong>1. The built JavaScript.</strong> Build, then search what the browser receives:</p>
+<pre><code class="language-bash">npm run build
+grep -rEl &quot;sb_secret_|SERVICE_ROLE|SECRET_KEY&quot; .next/static || echo &quot;nothing in client bundles&quot;
+</code></pre>
+<p>Legacy keys are JWTs, so also search for them. The <code>anon</code> key is a JWT too and is meant to be public, so for each match, decode the middle (payload) segment and check its <code>role</code> claim. Only <code>"role":"service_role"</code> is a problem:</p>
+<pre><code class="language-bash">grep -rEoh &quot;eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]+&quot; .next/static | sort -u
+</code></pre>
+<p>Then open your deployed site, view the loaded scripts in browser devtools, and search there too.</p>
+<p><strong>2. Your environment variable names:</strong></p>
+<pre><code class="language-bash">grep -rn &quot;NEXT_PUBLIC_.*\(SECRET\|SERVICE\)&quot; --include=&quot;*.ts&quot; --include=&quot;*.tsx&quot; --include=&quot;.env*&quot; .
+</code></pre>
+<p><strong>3. Git history, not just the current tree.</strong> A key deleted in a later commit is still in history:</p>
+<pre><code class="language-bash">git log -p --all -S &quot;sb_secret_&quot; | head
+git log -p --all -S &quot;service_role&quot; | head
+git log -p --all -G &quot;eyJ[A-Za-z0-9_-]{10,}\.eyJ&quot; | head
+git ls-files | grep -E &quot;(^|/)\.env&quot;
+</code></pre>
+<p>If the repo has ever been public, or shared with anyone who shouldn't have full database access, assume the key is compromised.</p>
+<p><strong>4. Logs.</strong> Search your hosting and error-tracking logs for the key prefix.</p>
+<p>For the rest of a pre-launch review (RLS on every table, webhook signatures, auth checks), work through the free <a href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-supabase-service-role-key-exposed" data-ev="free-download-click" data-ev-product="checklist">Supabase + Stripe security checklist</a>.</p>
+<h2>If it leaked: rotate and contain</h2>
+<p>Supabase's documented procedure for a leaked secret or <code>service_role</code> key starts with a warning: don't rush, and fix the root cause first, or the new key will leak the same way. Then:</p>
+<ol>
+<li><strong>Create a new secret key</strong> in the Dashboard under <strong>Settings &gt; API Keys</strong>.</li>
+<li><strong>Replace the compromised key everywhere</strong> your application uses it: hosting environment variables, Edge Functions, CI secrets, cron jobs. If the leaked key was a legacy JWT <code>service_role</code> key, replace it with the new secret key rather than another legacy one.</li>
+<li><strong>Confirm every component now uses the new key.</strong> Redeploy and watch for errors.</li>
+<li><strong>Retire the old key.</strong> Deleting a secret key can't be undone, so only do it after step 3. Legacy <code>anon</code> and <code>service_role</code> keys are deactivated in the same Dashboard section instead, and deactivation is reversible if you find a client you missed.</li>
+</ol>
+<p>Creating new keys doesn't revoke the legacy ones. Both systems work side by side until you disable the legacy keys, so step 4 isn't optional.</p>
+<p>Then contain the damage:</p>
+<ul>
+<li><strong>Review the data.</strong> Look for unexpected inserts, updates, deletes and new users from the exposure window, and check Storage buckets.</li>
+<li><strong>Clean the history</strong> if you like, but treat the key as burned either way. Rewriting git history doesn't un-leak a key someone already copied.</li>
+<li><strong>Run the Security Advisor</strong> in the Dashboard. Supabase's built-in checks for common role and RLS problems are a good sanity pass after an incident.</li>
+</ul>
+<h2>Heads-up: the 30 October 2026 Data API grants change</h2>
+<p>There's a related Supabase change to know about. According to Supabase's <a href="https://supabase.com/changelog/45329-breaking-change-tables-not-exposed-to-data-and-graphql-api-automatically">changelog announcement</a>, from <strong>30 October 2026</strong> existing projects stop automatically granting <code>select</code>, <code>insert</code>, <code>update</code> and <code>delete</code> on <strong>new</strong> tables in the <code>public</code> schema to <code>anon</code>, <code>authenticated</code> and <code>service_role</code>. New projects have had this default since a gradual rollout that began on 30 May 2026.</p>
+<p>What it means in practice:
+- <strong>Existing tables keep their grants</strong> and stay reachable. Only tables created after the change reaches your project are affected.
+- A new table without an explicit <code>grant</code> is invisible to the Data API (REST, GraphQL and <code>supabase-js</code>). Requests fail with error <code>42501</code> "permission denied for table", and the response includes a hint naming the missing grant.
+- <strong>That includes the secret key.</strong> <code>service_role</code> loses its default grant on new tables too, so "switch to the admin client" won't fix a 42501. The right fix is a minimal <code>grant</code> in the same migration that enables RLS.
+- <strong>RLS behaviour doesn't change</strong>, and direct Postgres connections (psql, an ORM, a connection string) aren't affected.</p>
+<h2>Prevent it: the server-only pattern</h2>
+<p>The fix is structural: make it impossible for the admin client to reach the browser.</p>
+<pre><code class="language-ts">// lib/supabase/admin.ts
+import &quot;server-only&quot;;
+import { createClient } from &quot;@supabase/supabase-js&quot;;
+
+export function createAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!, // no NEXT_PUBLIC_ prefix, ever
+    { auth: { persistSession: false } }
+  );
+}
+</code></pre>
+<ul>
+<li><strong><code>import "server-only"</code></strong> makes the build fail if a Client Component imports this file. It's the package Next.js documents for exactly this case.</li>
+<li><strong>Keep the admin client in its own module</strong>, separate from the user client, so one import can't drag the secret along.</li>
+<li><strong>Use it only where there's no user to act for:</strong> verified webhooks, cron jobs, trusted background work. Everywhere else, use the publishable key with the user's session and let RLS do its job.</li>
+<li><strong>Never use the admin client to get past an RLS error.</strong> If a query returns nothing, the policy is the bug. Fix the policy.</li>
+<li><strong>Use one secret key per backend component</strong>, as Supabase recommends, so a leak in one place means rotating one key, not all of them.</li>
+</ul>
+<h2>Stop your AI agent reintroducing it</h2>
+<p>Leak route 5 is the one that recurs. An agent will happily undo your careful setup the next time it hits an empty query. Put the rule where the agent reads it, in <code>AGENTS.md</code> or <code>.cursor/rules</code>:</p>
+<pre><code class="language-md">## Supabase keys (always)
+- Secret/service_role key: only in lib/supabase/admin.ts (import &quot;server-only&quot;).
+- Never prefix a secret with NEXT_PUBLIC_. Never log keys.
+- Admin client only in verified webhooks, cron and trusted jobs.
+- Empty result or RLS error? Fix the policy. Never switch to the admin client.
+</code></pre>
+<p><em>Disclosure: Ship-Ready AI Rules and Launch Audit are our own paid products.</em></p>
+<p><a href="/ai-rules?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-supabase-service-role-key-exposed">Ship-Ready AI Rules</a> packages this rule with the rest of the Next.js + Supabase + Stripe set for $19:
+- <strong>Rule formats:</strong> Cursor rules, <code>AGENTS.md</code> and Claude Code skills.
+- <strong>Guardrail hooks</strong> designed to block secrets in client components and <code>NEXT_PUBLIC_*SECRET</code> variables before the agent writes them. They reduce risk; they don't replace code review.
+- <strong>A reference app</strong> the rules were checked against.</p>
+<p>There's also a free sample on <a href="https://github.com/edtrackai/ship-ready-ai-rules-free-sample">GitHub</a> if you want to try the approach first.</p>
+<p>Already built the app? Run <a href="/launch-audit?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-supabase-service-role-key-exposed">Launch Audit</a> before you launch. It scans for service keys in client components, secrets in <code>NEXT_PUBLIC_</code> variables and <code>.env</code> files in git, along with RLS, auth and Stripe webhook problems, and writes a report with file:line fixes.</p>
+<h2>FAQ</h2>
+<p><strong>Is the publishable (anon) key safe to expose?</strong>
+Yes, by design. Supabase says it's safe to put in web pages, apps and source code. It only reaches what your RLS policies allow, so its safety depends on RLS being enabled on every table with correct policies.</p>
+<p><strong>Does RLS protect me if the service role key leaks?</strong>
+No. The <code>service_role</code> role has the <code>BYPASSRLS</code> attribute, so policies never apply to it. Rotation is the only fix.</p>
+<p><strong>Do I need to rewrite git history?</strong>
+It's good hygiene, but it isn't the fix. Rotate first. Once a key has been pushed somewhere others can read, assume it's been copied.</p>
+<p><strong>Can I catch this in CI?</strong>
+Yes. Grep the build output for secret key prefixes, or run <a href="/launch-audit?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-supabase-service-role-key-exposed">Launch Audit</a>'s scanner with <code>--fail-on=high</code>.</p>
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="supabase-service-role-key-exposed">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside><aside class="cta" aria-label="Product"><p class="eyebrow">AI RULES · NEXT.JS + SUPABASE + STRIPE</p><h2>Ship-Ready AI Rules</h2><p>3 guardrail hooks, 18 Claude Code skills and 6 subagents, plus Cursor rules and AGENTS.md, for Next.js, Supabase and Stripe.</p><a class="btn btn-p" href="/ai-rules" data-ev="blog-to-product" data-ev-post="supabase-service-role-key-exposed">See what's in Ship-Ready AI Rules</a></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/subscription-audit-indie-developers">The Indie Developer&#x27;s Subscription Audit: Find and Cut Wasted Tool Spend</a></li><li><a href="/blog/notion-template-for-indie-hackers">Notion Template for Indie Hackers: What to Look For (and What to Skip)</a></li><li><a href="/blog/notion-mrr-profit-tracker">How to Track MRR and Monthly Profit per Product in Notion (Free Template)</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal or accounting advice. Notion, Cursor, Supabase, Stripe and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=Date.now(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="LAUNCH30",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});})();</script></body></html>
