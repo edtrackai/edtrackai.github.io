@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ship-Ready AI Rules: Cursor rules &amp; AGENTS.md for Next.js + Supabase + Stripe</title><meta name="description" content="AGENTS.md, CLAUDE.md, 6 Cursor rules and 5 Claude Code skills that stop AI agents shipping insecure Supabase and Stripe code. Includes a reference Next.js 16 app. Free sample available."><link rel="canonical" href="https://edtrackai.github.io/ai-rules">
+<meta property="og:type" content="website"><meta property="og:title" content="Ship-Ready AI Rules: Cursor rules &amp; AGENTS.md for Next.js + Supabase + Stripe"><meta property="og:description" content="AGENTS.md, CLAUDE.md, 6 Cursor rules and 5 Claude Code skills that stop AI agents shipping insecure Supabase and Stripe code. Includes a reference Next.js 16 app. Free sample available."><meta property="og:image" content="https://edtrackai.github.io/cover-product-2.png"><meta property="og:url" content="https://edtrackai.github.io/ai-rules"><meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+<link rel="stylesheet" href="/styles.css"></head><body>
+<header class="top"><div class="wrap"><nav><b><a href="/">🚀 Solo Founder Tools</a></b><div><a href="/ai-rules">AI Rules</a><a href="/blog">Blog</a></div></nav></div></header>
+
+<div class="hero" style="background:linear-gradient(160deg,#0a0a0e,#1f2937)"><div class="wrap"><h1>Stop your AI agent shipping insecure Supabase and Stripe code.</h1><p>An opinionated playbook for Cursor, Claude Code and other agents on Next.js 16 + Supabase + Stripe, plus the small reference app it was written against.</p><a class="btn btn-o" href="https://luxurydrive0.gumroad.com/l/ffjsf">Get the pack: $15</a><a class="btn btn-l" href="https://github.com/edtrackai/ship-ready-ai-rules-free-sample">Free sample on GitHub</a></div></div>
+<div class="wrap narrow"><section>
+<img src="/cover-product-2.png" alt="Ship-Ready AI Rules" width="1280" height="720" style="width:100%;border-radius:16px">
+<h2>The mistakes it prevents</h2>
+<table><tr><th>Without rules, agents often…</th><th>The rule</th></tr>
+<tr><td>Use the service/secret key in a page "to make the query work"</td><td>Two clients: user client (RLS) vs admin client (webhooks only)</td></tr>
+<tr><td>Create tables and "add RLS later"</td><td>RLS + policies in the same migration</td></tr>
+<tr><td>Call <code>request.json()</code> before verifying Stripe webhooks</td><td>Raw body → <code>constructEvent</code> → idempotency by event id</td></tr>
+<tr><td>Grant access on the Checkout success URL</td><td>Access only from the webhook-mirrored subscription</td></tr>
+<tr><td>Redirect to whatever <code>?next=</code> says</td><td><code>safeNext()</code>: relative paths only</td></tr></table>
+<h2>What's in the pack</h2><ul class="check">
+<li><b>AGENTS.md</b>: stack, commands, golden rules, definition of done</li><li><b>CLAUDE.md</b> for Claude Code</li>
+<li><b>6 Cursor rules</b>: core, Next.js 16, Supabase, Stripe, security, testing</li>
+<li><b>5 Claude Code skills</b>: add table with RLS, new webhook event, protected page, magic-link auth, security review</li>
+<li><b>docs/</b>: setup guide and "rules explained"</li>
+<li><b>Reference app</b>: magic-link sign-in, RLS migration, Stripe Checkout, verified idempotent webhook, unit tests</li></ul>
+</section><section class="narrow"><h2>🎁 Free bonuses included</h2><ul class="check"><li><b>Pre-launch security checklist</b>: 30+ checks, each with a command or SQL query you can run (keys, auth, RLS, Stripe, hardening, launch day)</li><li><b>Prompt library</b>: 11 prompts for build, review, debug and ship that call the pack's skills by name</li><li><b>Screen-by-screen walkthrough</b> with screenshots: from install to a paid, RLS-protected feature in about 20 minutes</li></ul></section>
+<section class="narrow"><h2>What's been verified</h2><p>The demo passes typecheck, 5 unit tests and <code>next build</code> on a clean install (Next.js 16.4, @supabase/ssr 0.12.7, stripe 23.0). Locally, the webhook rejects missing and invalid signatures, and the sign-in confirm route blocks open redirects. It has <b>not</b> yet been run end-to-end against a live Supabase project and Stripe test account. The setup guide shows you how.</p>
+<a class="btn btn-o" href="https://luxurydrive0.gumroad.com/l/ffjsf">Get Ship-Ready AI Rules: $15</a>
+<p class="meta">Not affiliated with Vercel, Supabase, Stripe, Anysphere (Cursor) or Anthropic.</p></section></div>
+<footer><div class="wrap">© 2026 Solo Founder Tools · Products sold via Gumroad (merchant of record). Not tax, legal or accounting advice. Notion, Cursor, Supabase, Stripe and other names are trademarks of their owners; not affiliated or endorsed.</div></footer></body></html>

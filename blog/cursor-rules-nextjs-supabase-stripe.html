@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cursor Rules for Next.js + Supabase + Stripe: A Secure Starting Set</title><meta name="description" content="Practical Cursor rules (.mdc) and AGENTS.md guidance for Next.js 16 App Router, Supabase RLS and Stripe webhooks, with the mistakes each rule prevents. Free sample included."><link rel="canonical" href="https://edtrackai.github.io/blog/cursor-rules-nextjs-supabase-stripe">
+<meta property="og:type" content="article"><meta property="og:title" content="Cursor Rules for Next.js + Supabase + Stripe: A Secure Starting Set"><meta property="og:description" content="Practical Cursor rules (.mdc) and AGENTS.md guidance for Next.js 16 App Router, Supabase RLS and Stripe webhooks, with the mistakes each rule prevents. Free sample included."><meta property="og:image" content="https://edtrackai.github.io/cover-product-2.png"><meta property="og:url" content="https://edtrackai.github.io/blog/cursor-rules-nextjs-supabase-stripe"><meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Cursor Rules for Next.js + Supabase + Stripe: A Secure Starting Set", "datePublished": "2026-10-14", "dateModified": "2026-10-14", "description": "Practical Cursor rules (.mdc) and AGENTS.md guidance for Next.js 16 App Router, Supabase RLS and Stripe webhooks, with the mistakes each rule prevents. Free sample included.", "image": "https://edtrackai.github.io/cover-product-2.png", "author": {"@type": "Person", "name": "Shah Lal"}}</script></head><body>
+<header class="top"><div class="wrap"><nav><b><a href="/">🚀 Solo Founder Tools</a></b><div><a href="/ai-rules">AI Rules</a><a href="/blog">Blog</a></div></nav></div></header>
+<div class="wrap narrow"><article><p class="meta">Published 14 October 2026 · Cursor · Supabase · Stripe</p><h1>Cursor Rules for Next.js + Supabase + Stripe: A Secure Starting Set</h1>
+<p>AI agents write Next.js, Supabase and Stripe code fast, but they make the same handful of mistakes, and on this stack those mistakes are security bugs. This post gives you a working set of rules for Cursor (<code>.cursor/rules/*.mdc</code>) and any agent that reads <code>AGENTS.md</code>, and explains what each one prevents.</p>
+<h2>How Cursor rules work (quick recap)</h2><p>Project rules live in <code>.cursor/rules/</code> as <code>.mdc</code> files with front matter: a <code>description</code>, optional <code>globs</code> (which files trigger the rule), and <code>alwaysApply</code>. Keep "always" rules short and put detail in glob-scoped rules so they load only when relevant. Many agents (Claude Code, Codex and others) also read <code>AGENTS.md</code> at the repo root, so put your core rules there and point Cursor at it.</p>
+<h2>Rule 1: Two Supabase clients, never mixed</h2><p>The most common, and most dangerous, agent "fix" is swapping in the service/secret key when a query returns nothing. That bypasses Row Level Security for everyone.</p>
+<pre><code>---
+description: Supabase clients
+globs: app/**/*.ts,app/**/*.tsx,lib/supabase/**
+alwaysApply: false
+---
+- Acting as a user: await createUserClient() (publishable key, RLS applies).
+- Admin client (secret key) ONLY in webhooks, cron and trusted jobs. Never in
+  components or client code. If a query returns nothing, fix the RLS policy.</code></pre>
+<h2>Rule 2: RLS in the same migration as the table</h2><pre><code>create table public.notes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  body text not null
+);
+create index on public.notes (user_id);
+alter table public.notes enable row level security;
+create policy "own notes" on public.notes
+  for select to authenticated using ((select auth.uid()) = user_id);</code></pre>
+<p>Wrapping <code>auth.uid()</code> in <code>select</code> lets Postgres evaluate it once per query rather than per row.</p>
+<h2>Rule 3: Authorise with <code>getUser()</code> on the server</h2><p>Don't authorise with <code>getSession()</code> (cookie data that isn't re-validated) or with a <code>userId</code> sent by the browser.</p>
+<h2>Rule 4: Stripe webhooks, raw body first</h2><pre><code>export const runtime = "nodejs";
+export async function POST(req: Request) {
+  const body = await req.text();                // NOT req.json()
+  const sig = req.headers.get("stripe-signature")!;
+  const event = stripe.webhooks.constructEvent(body, sig, WEBHOOK_SECRET);
+  // insert event.id into stripe_events; on unique violation return 200 (already processed)
+}</code></pre>
+<h2>Rule 5: Grant access from the webhook, not the success URL</h2><p>Anyone can visit <code>/success</code>. Mirror subscription state from <code>customer.subscription.*</code> events into a table and gate features on that row (<code>active</code> / <code>trialing</code>).</p>
+<h2>Rule 6: Next.js 16 specifics</h2><ul><li><code>cookies()</code>, <code>headers()</code>, <code>params</code> and <code>searchParams</code> are async: <code>await</code> them.</li><li>Session refresh lives in <code>proxy.ts</code> (the replacement for <code>middleware.ts</code>). Exclude your webhook path from its matcher.</li><li>Modules that touch secrets start with <code>import "server-only"</code>.</li></ul>
+<h2>Rule 7: Safe redirects</h2><p>Auth flows love <code>?next=/somewhere</code>. Only allow relative paths starting with a single <code>/</code>, otherwise you've built an open redirect.</p>
+<h2>A definition of done</h2><p>End every rule set with a checklist the agent must satisfy: typecheck, tests and build pass; new tables have RLS; no secrets in client bundles; webhooks idempotent.</p>
+<div class="cta"><b>Free sample:</b> the AGENTS.md golden rules and the complete Stripe <code>.mdc</code> rule are on <a href="https://github.com/edtrackai/ship-ready-ai-rules-free-sample">GitHub (MIT)</a>. <b>Full pack:</b> <a href="/ai-rules">Ship-Ready AI Rules</a> ($15) adds 6 Cursor rules, 5 Claude Code skills, setup docs and the reference Next.js 16 app they were written against.</div></article></div>
+<footer><div class="wrap">© 2026 Solo Founder Tools · Products sold via Gumroad (merchant of record). Not tax, legal or accounting advice. Notion, Cursor, Supabase, Stripe and other names are trademarks of their owners; not affiliated or endorsed.</div></footer></body></html>

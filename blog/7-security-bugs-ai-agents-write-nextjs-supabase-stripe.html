@@ -1,0 +1,127 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>7 Security Bugs AI Agents Write in Next.js + Supabase + Stripe Apps (and the Rules That Stop Them)</title><meta name="description" content="Seven security bugs AI coding agents ship in Next.js, Supabase and Stripe apps, with fixed code and a rule for each."><link rel="canonical" href="https://dev.to/edtrackai/7-security-bugs-ai-agents-write-in-nextjs-supabase-stripe-apps-and-the-rules-that-stop-them-3o64"><meta property="og:type" content="article"><meta property="og:title" content="7 Security Bugs AI Agents Write in Next.js + Supabase + Stripe Apps (and the Rules That Stop Them)"><meta property="og:description" content="Seven security bugs AI coding agents ship in Next.js, Supabase and Stripe apps, with fixed code and a rule for each."><meta property="og:image" content="https://edtrackai.github.io/cover-product-2.png"><meta property="og:url" content="https://dev.to/edtrackai/7-security-bugs-ai-agents-write-in-nextjs-supabase-stripe-apps-and-the-rules-that-stop-them-3o64"><meta name="twitter:card" content="summary_large_image"><link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "7 Security Bugs AI Agents Write in Next.js + Supabase + Stripe Apps (and the Rules That Stop Them)", "datePublished": "2026-10-14", "description": "Seven security bugs AI coding agents ship in Next.js, Supabase and Stripe apps, with fixed code and a rule for each.", "mainEntityOfPage": "https://dev.to/edtrackai/7-security-bugs-ai-agents-write-in-nextjs-supabase-stripe-apps-and-the-rules-that-stop-them-3o64"}</script></head><body>
+<header class="top"><div class="wrap"><nav><b><a href="/">🚀 Solo Founder Tools</a></b><div><a href="/ai-rules">AI Rules</a><a href="/blog">Blog</a></div></nav></div></header>
+<div class="wrap narrow"><article><p class="meta">Published 2026-10-14 · originally on <a href="https://dev.to/edtrackai/7-security-bugs-ai-agents-write-in-nextjs-supabase-stripe-apps-and-the-rules-that-stop-them-3o64">dev.to</a></p><h1>7 Security Bugs AI Agents Write in Next.js + Supabase + Stripe Apps (and the Rules That Stop Them)</h1><p>AI coding agents are great at getting a Next.js + Supabase + Stripe app <em>working</em>. They're much less reliable at getting it <em>safe</em>. The bugs below all pass a quick click-through test, which is exactly why they ship.</p>
+<p>Every "fixed" snippet here is taken from a small reference app I built with Next.js 16, <code>@supabase/ssr</code> and the Stripe Node SDK, so you can copy them with some confidence. At the end there's a short rule you can drop into <code>AGENTS.md</code> / <code>.cursor/rules</code> for each one.</p>
+<h2>1. RLS "enabled" but a policy that protects nothing</h2>
+<p>Agents love to make an empty query go away by writing this:</p>
+<pre><code class="language-sql">-- ❌ passes the &quot;RLS enabled&quot; check, protects nothing
+create policy &quot;allow all&quot; on public.subscriptions
+  for select using (true);
+</code></pre>
+<p>What you want is ownership scoped to the signed-in user, and no write policy at all for tables only your server should write:</p>
+<pre><code class="language-sql">alter table public.subscriptions enable row level security;
+create policy &quot;read own subscriptions&quot; on public.subscriptions
+  for select to authenticated using ((select auth.uid()) = user_id);
+</code></pre>
+<p>Wrapping <code>auth.uid()</code> in <code>(select ...)</code> lets Postgres evaluate it once per query instead of once per row. Find existing offenders with:</p>
+<pre><code class="language-sql">select tablename, policyname from pg_policies where qual = 'true';
+</code></pre>
+<p><strong>Rule:</strong> <em>Every table in <code>public</code> has RLS enabled. Never write <code>using (true)</code>. If a query returns no rows, fix the policy — never switch keys.</em></p>
+<h2>2. "Fixing" an empty result with the service-role key</h2>
+<p>The second half of bug #1. When RLS correctly returns nothing, agents often swap in the secret/service-role key, which bypasses RLS completely. Keep two clearly named clients and make the dangerous one obvious:</p>
+<pre><code class="language-ts">/** Per-request client acting as the signed-in user. RLS applies. */
+export async function createUserClient() { /* createServerClient(url, PUBLISHABLE_KEY, { cookies }) */ }
+
+/** Admin client that BYPASSES RLS. Only for trusted server code such as webhooks. */
+export function createAdminClient() {
+  const e = env();
+  return createClient(e.NEXT_PUBLIC_SUPABASE_URL, e.SUPABASE_SECRET_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+</code></pre>
+<p>Put <code>import "server-only";</code> at the top of that file so the build fails if a client component ever imports it.</p>
+<p><strong>Rule:</strong> <em>The admin client is only used in webhook handlers and background jobs, never in code that runs on behalf of a user.</em></p>
+<h2>3. Trusting <code>getSession()</code> on the server</h2>
+<p><code>supabase.auth.getSession()</code> reads the cookie without re-validating it with Supabase Auth. On the server, check the user properly before doing anything that matters:</p>
+<pre><code class="language-ts">const supabase = await createUserClient();
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) return NextResponse.json({ error: &quot;Not signed in&quot; }, { status: 401 });
+</code></pre>
+<p>(<code>getClaims()</code> is also fine if you're on asymmetric JWT signing keys.)</p>
+<p><strong>Rule:</strong> <em>Server-side authorization uses <code>getUser()</code>/<code>getClaims()</code>, never <code>getSession()</code>.</em></p>
+<h2>4. Parsing the Stripe webhook body before verifying it</h2>
+<p><code>await request.json()</code> re-serialises the payload and the signature check fails. So the agent "fixes" it by deleting the check. Read the raw text instead:</p>
+<pre><code class="language-ts">export const runtime = &quot;nodejs&quot;;
+
+export async function POST(request: Request) {
+  const signature = request.headers.get(&quot;stripe-signature&quot;);
+  if (!signature) return NextResponse.json({ error: &quot;Missing signature&quot; }, { status: 400 });
+
+  // Raw body is required for signature verification. Never parse JSON first.
+  const body = await request.text();
+  let event: Stripe.Event;
+  try {
+    event = stripe().webhooks.constructEvent(body, signature, env().STRIPE_WEBHOOK_SECRET);
+  } catch {
+    return NextResponse.json({ error: &quot;Invalid signature&quot; }, { status: 400 });
+  }
+  // ...
+}
+</code></pre>
+<p>Also exclude the webhook path from any auth middleware/proxy so it isn't redirected to a login page:</p>
+<pre><code class="language-ts">export const config = {
+  matcher: [&quot;/((?!_next/static|_next/image|favicon.ico|api/webhooks).*)&quot;],
+};
+</code></pre>
+<p><strong>Rule:</strong> <em>Webhook handlers read <code>request.text()</code> and verify the signature before touching the payload.</em></p>
+<h2>5. Non-idempotent webhooks</h2>
+<p>Stripe retries deliveries and can send events more than once. Record each event id with a primary key and bail on duplicates:</p>
+<pre><code class="language-sql">create table public.stripe_events (
+  id text primary key,
+  type text not null,
+  received_at timestamptz not null default now()
+);
+alter table public.stripe_events enable row level security; -- no policies = no client access
+</code></pre>
+<pre><code class="language-ts">const { error: dupError } = await db.from(&quot;stripe_events&quot;).insert({ id: event.id, type: event.type });
+if (dupError?.code === &quot;23505&quot;) return NextResponse.json({ received: true, duplicate: true });
+if (dupError) return NextResponse.json({ error: &quot;DB error&quot; }, { status: 500 });
+</code></pre>
+<p>Returning 500 on a real DB error matters too: it tells Stripe to retry later instead of silently losing the event.</p>
+<p><strong>Rule:</strong> <em>Every webhook is idempotent on <code>event.id</code>; use <code>upsert</code> for state.</em></p>
+<h2>6. Granting access from the success redirect</h2>
+<p><code>/account?checkout=success</code> is just a URL — anyone can visit it. Access must come from the webhook-mirrored subscription status, and the mapping should be explicit:</p>
+<pre><code class="language-ts">export function accessFor(status: string | null | undefined): &quot;active&quot; | &quot;grace&quot; | &quot;none&quot; {
+  switch (status) {
+    case &quot;active&quot;:
+    case &quot;trialing&quot;:
+      return &quot;active&quot;;
+    case &quot;past_due&quot;:
+      return &quot;grace&quot;;
+    default:
+      return &quot;none&quot;;
+  }
+}
+</code></pre>
+<p>Link the Stripe customer back to your user at checkout creation (<code>client_reference_id: user.id</code>) so the webhook knows whose subscription it is — never take a user id or price from the request body.</p>
+<p><strong>Rule:</strong> <em>Paid access is derived only from webhook-written rows. Prices come from env/server config, never from the client.</em></p>
+<h2>7. Open redirects in auth callbacks</h2>
+<p>Magic-link and OAuth callbacks usually accept a <code>?next=</code> param. Agents pass it straight to <code>redirect()</code>, which turns your login into a phishing redirector (<code>?next=//evil.com</code>). Allow only same-origin relative paths:</p>
+<pre><code class="language-ts">export function safeNext(next: string | null | undefined, fallback = &quot;/account&quot;): string {
+  if (!next || !next.startsWith(&quot;/&quot;) || next.startsWith(&quot;//&quot;) || next.startsWith(&quot;/\\&quot;)) return fallback;
+  return next;
+}
+</code></pre>
+<pre><code class="language-ts">const next = safeNext(url.searchParams.get(&quot;next&quot;));
+return NextResponse.redirect(new URL(ok ? next : &quot;/login?error=link-invalid&quot;, url.origin));
+</code></pre>
+<p><strong>Rule:</strong> <em>Any redirect target from user input goes through <code>safeNext()</code>.</em></p>
+<h2>Bonus: fail loudly on bad env</h2>
+<p>A missing <code>STRIPE_WEBHOOK_SECRET</code> shouldn't become <code>undefined</code> at runtime. Validate lazily (so <code>next build</code> still works without secrets) with zod:</p>
+<pre><code class="language-ts">const schema = z.object({
+  SUPABASE_SECRET_KEY: z.string().min(1),
+  STRIPE_SECRET_KEY: z.string().startsWith(&quot;sk_&quot;),
+  STRIPE_WEBHOOK_SECRET: z.string().startsWith(&quot;whsec_&quot;),
+  STRIPE_PRICE_ID: z.string().startsWith(&quot;price_&quot;),
+  // ...
+});
+let cached: z.infer&lt;typeof schema&gt; | undefined;
+export function env() { return (cached ??= schema.parse(process.env)); }
+</code></pre>
+<h2>The takeaway</h2>
+<p>None of these are exotic. They're the predictable shortcuts an agent takes when its only goal is "make the error go away." Writing the rules down where the agent reads them every time (<code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>.cursor/rules</code>) fixes most of them before they're written.</p>
+<hr />
+<p><em>Disclosure: I made these resources.</em> I turned this into a <strong>free</strong> 30-point <a href="https://luxurydrive0.gumroad.com/l/security-checklist">Supabase + Stripe pre-launch security checklist</a>. If you'd rather have the full rule files plus the reference app these snippets come from, it's a <a href="https://luxurydrive0.gumroad.com/l/ffjsf">$15 pack</a> (<a href="https://github.com/edtrackai/ship-ready-ai-rules-free-sample">free sample on GitHub</a>). Either way, I hope the list above saves you a bad launch day — corrections welcome in the comments.</p></article></div>
+<footer><div class="wrap">© 2026 Solo Founder Tools · Products sold via Gumroad (merchant of record). Not tax, legal or accounting advice. Notion, Cursor, Supabase, Stripe and other names are trademarks of their owners; not affiliated or endorsed.</div></footer></body></html>

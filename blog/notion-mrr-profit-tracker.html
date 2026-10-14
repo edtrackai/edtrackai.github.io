@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to Track MRR and Monthly Profit per Product in Notion (Free Template)</title><meta name="description" content="Build a Notion system that calculates MRR and monthly profit for each product with relations, formulas and rollups. Step-by-step, with copy-paste formulas."><link rel="canonical" href="https://edtrackai.github.io/blog/notion-mrr-profit-tracker">
+<meta property="og:type" content="article"><meta property="og:title" content="How to Track MRR and Monthly Profit per Product in Notion (Free Template)"><meta property="og:description" content="Build a Notion system that calculates MRR and monthly profit for each product with relations, formulas and rollups. Step-by-step, with copy-paste formulas."><meta property="og:image" content="https://edtrackai.github.io/cover-pro.png"><meta property="og:url" content="https://edtrackai.github.io/blog/notion-mrr-profit-tracker"><meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "How to Track MRR and Monthly Profit per Product in Notion (Free Template)", "datePublished": "2026-10-14", "dateModified": "2026-10-14", "description": "Build a Notion system that calculates MRR and monthly profit for each product with relations, formulas and rollups. Step-by-step, with copy-paste formulas.", "image": "https://edtrackai.github.io/cover-pro.png", "author": {"@type": "Person", "name": "Shah Lal"}}</script></head><body>
+<header class="top"><div class="wrap"><nav><b><a href="/">🚀 Solo Founder Tools</a></b><div><a href="/ai-rules">AI Rules</a><a href="/blog">Blog</a></div></nav></div></header>
+<div class="wrap narrow"><article><p class="meta">Published 14 October 2026 · Notion · Finance</p><h1>How to Track MRR and Monthly Profit per Product in Notion (Free Template)</h1>
+<p>If you run more than one product, a single revenue total hides what's actually working. One app might pay for everything while another quietly costs you £40 a month in hosting. This guide shows how to calculate <b>MRR and monthly profit per product</b> in Notion using relations, formulas and rollups. It works on the free plan.</p>
+<h2>The structure</h2><p>You need four databases, each linked to a central <b>Products</b> database:</p>
+<table><tr><th>Database</th><th>Key properties</th></tr><tr><td>Products</td><td>Name, Status, rollups (added in step 4)</td></tr><tr><td>Revenue</td><td>Date, Kind (Recurring / One-off), Gross, VAT, Fees, Product (relation)</td></tr><tr><td>Expenses</td><td>Date, Amount, Category, Product (relation)</td></tr><tr><td>Subscriptions</td><td>Cost, Billing (Monthly / Yearly), Status, Next renewal, Product (relation)</td></tr></table>
+<h2>Step 1: Create Products</h2><p>One row per product, side project or client. Add a <code>Status</code> select (Idea, Building, Launched, Paused). That's all for now. The useful columns come from rollups later.</p>
+<h2>Step 2: Revenue with net and MRR formulas</h2><p>Add a <code>Product</code> relation to Products (two-way, so Products gets a <code>Revenue</code> column). Then add these formulas:</p>
+<pre><code>Net = prop("Gross") - prop("VAT") - prop("Fees")
+
+MRR = if(prop("Kind") == "Recurring", prop("Gross") - prop("VAT"), 0)
+
+MRR this month = if(
+  formatDate(prop("Date"), "YYYY-MM") == formatDate(today(), "YYYY-MM"),
+  prop("MRR"), 0)
+
+Net this month = if(
+  formatDate(prop("Date"), "YYYY-MM") == formatDate(today(), "YYYY-MM"),
+  prop("Net"), 0)</code></pre>
+<p>Why exclude VAT from MRR? If you sell through a merchant of record such as Gumroad, Paddle or Lemon Squeezy, the VAT was never yours. Including it inflates your numbers.</p>
+<h2>Step 3: Expenses and subscriptions</h2><p>In Expenses add <code>Spend this month</code> using the same month comparison on <code>Amount</code>. In Subscriptions, normalise everything to a monthly figure:</p>
+<pre><code>Cost per month = if(prop("Status") == "Cancelled", 0,
+  if(prop("Billing") == "Yearly", round(prop("Cost") / 12 * 100) / 100, prop("Cost")))</code></pre>
+<h2>Step 4: Roll it up on Products</h2><p>On Products, add rollups (all <b>Sum</b>):</p><ul>
+<li><code>MRR</code> ← Revenue → MRR this month</li><li><code>Revenue this month</code> ← Revenue → Net this month</li>
+<li><code>Expenses this month</code> ← Expenses → Spend this month</li><li><code>Tool costs / month</code> ← Subscriptions → Cost per month</li></ul>
+<p>Then one formula:</p><pre><code>Monthly profit = prop("Revenue this month") - prop("Expenses this month") - prop("Tool costs / month")</code></pre>
+<p>Turn on the column <b>Sum</b> at the bottom of a table view to get business-wide totals.</p>
+<h2>Limitations to know</h2><ul><li><b>No currency conversion.</b> Notion adds up numbers as entered. Pick a home currency and convert before entering; keep a Currency tag for reference.</li><li><b>Manual entry.</b> Notion doesn't pull from Stripe or Gumroad natively. Log weekly, or use Zapier/Make.</li><li><b>"This month" is calendar-based.</b> Annual plans paid upfront show as a spike unless you enter them as monthly instalments.</li><li>It's tracking, not accounting. Your accountant still needs proper records.</li></ul>
+<div class="cta"><b>Want this pre-built?</b> Solo Founder OS includes all of the above plus tasks, bugs, releases and a dashboard. Lite is free; Pro is $29.</div></article></div>
+<footer><div class="wrap">© 2026 Solo Founder Tools · Products sold via Gumroad (merchant of record). Not tax, legal or accounting advice. Notion, Cursor, Supabase, Stripe and other names are trademarks of their owners; not affiliated or endorsed.</div></footer></body></html>
