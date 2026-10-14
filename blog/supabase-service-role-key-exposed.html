@@ -132,6 +132,7 @@ export function createAdminClient() {
 - <strong>A reference app</strong> the rules were checked against.</p>
 <p>There's also a free sample on <a href="https://github.com/edtrackai/ship-ready-ai-rules-free-sample">GitHub</a> if you want to try the approach first.</p>
 <p>Already built the app? Run <a href="/launch-audit?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-supabase-service-role-key-exposed">Launch Audit</a> before you launch. It scans for service keys in client components, secrets in <code>NEXT_PUBLIC_</code> variables and <code>.env</code> files in git, along with RLS, auth and Stripe webhook problems, and writes a report with file:line fixes.</p>
+<p>Scan for leaked keys with our <a href="/checker">free checker</a> (ours, MIT).</p>
 <h2>FAQ</h2>
 <p><strong>Is the publishable (anon) key safe to expose?</strong>
 Yes, by design. Supabase says it's safe to put in web pages, apps and source code. It only reaches what your RLS policies allow, so its safety depends on RLS being enabled on every table with correct policies.</p>

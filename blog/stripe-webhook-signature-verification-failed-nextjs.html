@@ -119,6 +119,12 @@ export async function POST(req: Request) {
 <p>Avoid it in production. Events can contain customer names, emails and addresses. Log the event id, type and the verification error instead.</p>
 <h2>Check the rest of your Stripe setup</h2>
 <p><em>Disclosure: Launch Audit and AI Rules are our own paid products.</em> <a href="/launch-audit?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-stripe-webhook-signature-verification-failed-nextjs">Launch Audit</a> ($12; UK buyers pay $14.40 incl. VAT) runs 28 checks across a Next.js, Supabase and Stripe codebase. Its Stripe checks include a webhook with no <code>constructEvent</code> call, webhooks with no event-id idempotency, and a webhook route on the Edge runtime. It also flags webhook secrets exposed through <code>NEXT_PUBLIC_</code> variables, and its manual checklist reminds you to keep your live webhook endpoint and secret separate from test. <a href="/ai-rules?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-stripe-webhook-signature-verification-failed-nextjs">AI Rules</a> ($19; UK buyers pay $22.80 incl. VAT) gives your coding agent rules for this stack, including one that tells it to read the raw body before verifying Stripe webhooks. They reduce risk; they don't replace code review.</p>
+<p><strong>Catch this in CI.</strong> Add our free checker (ours, MIT) to your PR workflow:</p>
+<pre><code class="language-yaml">- uses: edtrackai/nextjs-supabase-stripe-security-checker@v0
+  with:
+    fail-on: high
+</code></pre>
+<p>It runs 24 checks on every pull request and keeps one PR comment with the findings. Full workflow: <a href="https://github.com/edtrackai/nextjs-supabase-stripe-security-checker/blob/main/docs/github-action.md">docs/github-action.md</a></p>
 <!--
 Sources (checked 14 Oct 2026):
 - https://docs.stripe.com/webhooks/signature (Resolve signature verification errors: three parameters, wrong secret most common, CLI vs Dashboard secret, raw body, Pages Router bodyParser, header format)
