@@ -8,7 +8,7 @@
 <header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
 <main id="main"><div class="wrap narrow"><article class="prose"><p class="eyebrow eyebrow-plain">Free tool · MIT</p>
 <h1 class="h1-long">Free Next.js + Supabase + Stripe security checker</h1>
-<p class="lede">Your AI agent shipped the app. Did it also ship your Stripe secret key, a table without RLS, or an open webhook? This free CLI runs 24 checks locally. No account, no uploads.</p>
+<p class="lede">Your AI agent shipped the app. Did it also ship a Stripe secret key, a table without RLS or an open webhook? This free CLI runs 24 checks locally. No account, no uploads.</p>
 <div class="limits limits-top"><h2>Honest limits</h2><ul>
 <li>Heuristic static scan, 24 checks. A clean run isn't proof of security.</li>
 <li>False positives happen: it doesn't follow data across files (for example, auth in a helper it doesn't recognise).</li>
@@ -24,7 +24,7 @@ node bin/nss-security-check.js fixtures/vulnerable-app
 node bin/nss-security-check.js /path/to/your/app --fail-on=high</code></pre>
 <h2>What the output looks like</h2>
 <p>Real output from v0.6.0 on <code>fixtures/vulnerable-app</code>:</p>
-<picture><source type="image/webp" srcset="/visuals/checker/terminal-vulnerable.webp"><img src="/visuals/checker/terminal-vulnerable.png" width="1080" height="1785" alt="Terminal: the free nextjs-supabase-stripe-security-checker v0.6.0 run on its vulnerable fixture app. 17 files, 24 checks. Findings include a tracked .env file, a Stripe webhook without signature verification, JSON parsed before verification, and a table without RLS. Summary: critical 10, high 9, medium 6, low 1." loading="lazy" decoding="async" class="term-shot"></picture>
+<figure class="term-fig"><picture><source type="image/webp" srcset="/visuals/checker/terminal-vulnerable.webp"><img src="/visuals/checker/terminal-vulnerable.png" width="1080" height="1785" alt="Terminal: the free nextjs-supabase-stripe-security-checker v0.6.0 run on its vulnerable fixture app. 17 files, 24 checks. Findings include a tracked .env file, a Stripe webhook without signature verification, JSON parsed before verification, and a table without RLS. Summary: critical 10, high 9, medium 6, low 1." loading="lazy" decoding="async" class="term-shot"></picture><figcaption>Real output from v0.6.0 (excerpt)</figcaption></figure>
 <details class="term-text"><summary>Show as text (colours removed, middle trimmed)</summary><pre class="term"><code>nss-security-check v0.6.0  17 files · 24 checks
 
 CRITICAL K3  .env file with values tracked by git
@@ -39,12 +39,11 @@ CRITICAL K2  Secret-looking NEXT_PUBLIC_ variable
 
 critical 10 · high 9 · medium 6 · low 1
 Each hit is a prompt to review, not a verdict.</code></pre></details>
-<p>And on the hardened <code>fixtures/clean-app</code>:</p>
-<picture><source type="image/webp" srcset="/visuals/checker/terminal-clean.webp"><img src="/visuals/checker/terminal-clean.png" width="1080" height="645" alt="Terminal: the free nextjs-supabase-stripe-security-checker v0.6.0 run on its hardened clean fixture app. 28 files, 24 checks. Output: No findings. Static checks only: this is not proof the app is secure. Summary: critical 0, high 0, medium 0, low 0." loading="lazy" decoding="async" class="term-shot"></picture>
-<details class="term-text"><summary>Show as text (run with <code class="nw">--fail-on=high</code>, exit 0)</summary><pre class="term"><code>nss-security-check v0.6.0  27 files · 24 checks
+<p>And on the hardened <code>fixtures/clean-app</code> (run with <code class="nw">--fail-on=high</code>, exit 0):</p>
+<pre class="term"><code>nss-security-check v0.6.0  27 files · 24 checks
 
 ✓ No findings. Static checks only: this is not proof the app is secure.
-critical 0 · high 0 · medium 0 · low 0</code></pre></details>
+critical 0 · high 0 · medium 0 · low 0</code></pre>
 <h2>Run it on every pull request</h2>
 <pre><code>- uses: edtrackai/nextjs-supabase-stripe-security-checker@v0
   with:
