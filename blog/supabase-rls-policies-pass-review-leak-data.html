@@ -162,7 +162,7 @@ returning user_id;
 </ul>
 <p>Thanks to <a href="https://dev.to/cekuu35">cekuu35</a> and <a href="https://dev.to/elijahbrown">elijahbrown</a> for raising these in the <a href="https://dev.to/edtrackai/7-security-bugs-ai-agents-write-in-nextjs-supabase-stripe-apps-and-the-rules-that-stop-them-3o64#comments">comment thread</a>.</p>
 <hr />
-<p><em>Disclosure: this is our own paid product.</em> If you want your coding agent steered towards this from the start, <a href="/ai-rules?ref=seo-rls-leaks">AI Rules</a> ($19; UK buyers pay $22.80 incl. VAT) includes a Supabase RLS migration skill. It tells the agent to write owner-scoped policies using <code>(select auth.uid())</code> for each operation. There's also an RLS audit skill that treats <code>using (true)</code> / <code>with check (true)</code> as critical and requires ownership to come from <code>auth.uid()</code>. It doesn't replace code review or a two-user test.</p>
+<p><em>Disclosure: this is our own paid product.</em> If you want your coding agent steered towards this from the start, <a href="/ai-rules?ref=seo-rls-leaks">AI Rules</a> ($19 plus VAT where applicable) includes a Supabase RLS migration skill. It tells the agent to write owner-scoped policies using <code>(select auth.uid())</code> for each operation. There's also an RLS audit skill that treats <code>using (true)</code> / <code>with check (true)</code> as critical and requires ownership to come from <code>auth.uid()</code>. It doesn't replace code review or a two-user test.</p>
 <p><strong>Sources (checked 15 October 2026):</strong></p>
 <ul>
 <li><a href="https://supabase.com/docs/guides/database/postgres/row-level-security">Supabase: Row Level Security</a></li>
