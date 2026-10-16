@@ -1,0 +1,276 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Supabase getSession vs getUser vs getClaims in Next.js</title><meta name="description" content="Which Supabase auth method to trust on the server in Next.js: getClaims for pages, getUser for writes, and getSession never for authorisation. With code."><link rel="canonical" href="https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Supabase getSession vs getUser vs getClaims in Next.js"><meta property="og:description" content="Which Supabase auth method to trust on the server in Next.js: getClaims for pages, getUser for writes, and getSession never for authorisation. With code."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/supabase-getsession-vs-getuser-vs-getclaims.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Supabase getSession vs getUser vs getClaims in Next.js: Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/supabase-getsession-vs-getuser-vs-getclaims.png"><meta property="og:url" content="https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Supabase getSession vs getUser vs getClaims: which to use where", "description": "Which Supabase auth method to trust on the server in Next.js: getClaims for pages, getUser for writes, and getSession never for authorisation. With code.", "datePublished": "2026-10-17", "dateModified": "2026-10-17", "image": "https://edtrackai.github.io/visuals/og/supabase-getsession-vs-getuser-vs-getclaims.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "Supabase getSession vs getUser vs getClaims: which to use where", "item": "https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims"}]}</script><meta property="article:published_time" content="2026-10-17"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Supabase getSession vs getUser vs getClaims: whi…</li></ol></nav>
+<p class="eyebrow">Supabase · security · <time datetime="2026-10-17">2026-10-17</time></p><h1 class="h1-long">Supabase getSession vs getUser vs getClaims: which to use where</h1><p>Supabase Auth gives you three ways to ask "who is this?" on the server: <code>getSession()</code>, <code>getUser()</code> and <code>getClaims()</code>. They look interchangeable, and in a quick test they all return the same user. They aren't interchangeable. One of them reads whatever the cookie says, one asks the Auth server, and one checks a signature.</p><p>This guide pairs with <a href="/ai-rules?ref=seo-supabase-getsession-vs-getuser-vs-getclaims" data-ev="blog-to-product" data-ev-post="supabase-getsession-vs-getuser-vs-getclaims">Ship-Ready AI Rules</a>, and if you want the next step, read <a href="/blog/supabase-rls-policies-pass-review-leak-data">Supabase RLS policies that pass review but still leak data</a>.</p>
+<p>This post explains what each method actually does, which to use in a Next.js App Router app, and why the choice matters for security. Supabase behaviour comes from the <a href="https://supabase.com/docs/guides/auth/server-side/nextjs">Supabase docs</a> and the <code>@supabase/auth-js</code> source (supabase-js 2.118.0, <code>@supabase/ssr</code> 0.12.7), checked on 17 October 2026. The code samples type-check with <code>tsc --strict</code> against Next.js 16.4. This site isn't affiliated with Supabase.</p>
+<h2>The short answer</h2>
+<ul>
+<li><strong>Protecting a page or reading user data:</strong> <code>getClaims()</code>.</li>
+<li><strong>Before a write, or when you need the current user record:</strong> <code>getUser()</code>.</li>
+<li><strong>When you need the raw access or refresh token:</strong> <code>getSession()</code>, but never use its user object to decide who someone is on the server.</li>
+</ul>
+<p>Supabase's own summary, from its Next.js guide: "use getClaims to verify identity (typically for protecting pages and data), getUser when you need an up-to-date user record from the Auth server, and getSession when you need the access or refresh token directly, but don't rely on the user object it returns for authorization decisions."</p>
+<h2>getSession(): reads the cookie, verifies nothing</h2>
+<p><code>getSession()</code> returns the session from the client's storage. In the browser, that's local storage or cookies. On the server, with <code>@supabase/ssr</code>, it's the request cookies. The <a href="https://supabase.com/docs/reference/javascript/auth-getsession">getSession reference</a> says it plainly: it "loads values directly from the storage attached to the client. If that storage is based on request cookies for example, the values in it may not be authentic."</p>
+<p>Cookies come from the browser, and anyone can edit their own cookies. So this is unsafe in server code:</p>
+<pre><code class="language-ts">// Don't do this: the session comes straight from the cookie.
+export async function getUserIdUnsafe() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getSession();
+  return data.session?.user.id;
+}
+</code></pre>
+<p>The Next.js guide puts it bluntly: "Anyone can forge the session cookie, so trusting it without verification lets an attacker render another user's page." The library warns you too. If you read the user object from a server-side session, auth-js logs a warning that it "may not be authentic" and suggests <code>getUser()</code> instead.</p>
+<p><code>getSession()</code> still has a use: when you need the access token itself, for example to pass to another API. Just don't treat its contents as proof of identity.</p>
+<h2>getUser(): asks the Auth server every time</h2>
+<p><code>getUser()</code> sends the access token to your project's Auth server and gets the user record back. The <a href="https://supabase.com/docs/reference/javascript/auth-getuser">getUser reference</a> says "the returned value is authentic and can be used to base authorization rules on."</p>
+<p>Because the server checks the token on every call, <code>getUser()</code> can notice things a token alone can't tell you. Supabase's docs describe this as an authentic check, so if the user signed out, or you banned or deleted them, the call should fail even if the access token hasn't expired yet. We haven't tested every one of those cases. It also returns the latest user record, such as an email change or updated metadata.</p>
+<p>The cost is a network round trip on every call. That's fine before a write. It's wasteful on every page render.</p>
+<h2>getClaims(): verifies the token's signature</h2>
+<p><code>getClaims()</code> gets the access token (from the session, refreshing it if it's close to expiring), then verifies the JWT's signature before returning its claims. How it verifies depends on your project's signing keys.</p>
+<p><strong>Asymmetric signing keys (ECC or RSA):</strong> the default for new projects, per the Next.js guide. <code>getClaims()</code> fetches your project's public keys from:</p>
+<pre><code class="language-text">/auth/v1/.well-known/jwks.json
+</code></pre>
+<p>It then verifies the signature locally with the WebCrypto API. The <a href="https://supabase.com/docs/reference/javascript/auth-getclaims">getClaims reference</a> notes the JWKS endpoint "is often cached, resulting in significantly faster responses". In the auth-js source, the in-memory key cache lasts 10 minutes (<code>JWKS_TTL</code>). The <a href="https://supabase.com/docs/guides/auth/signing-keys">signing keys guide</a> adds that Supabase's edge also caches the endpoint for 10 minutes.</p>
+<p><strong>Symmetric (legacy JWT secret) projects:</strong> your server can't verify an HS256 token without the secret. So <code>getClaims()</code> falls back to calling <code>getUser()</code>, the same Auth server request. The source also falls back when the token has no key id or WebCrypto isn't available.</p>
+<p>We checked this behaviour against auth-js 2.118.0 with a test key pair and a stubbed <code>fetch</code>:</p>
+<pre><code class="language-text">valid ES256 token  -&gt; claims returned; 1 request (jwks.json)
+tampered payload   -&gt; &quot;Invalid JWT signature&quot;; 0 requests
+HS256 token        -&gt; falls back to GET /auth/v1/user
+expired token      -&gt; &quot;JWT has expired&quot;; 0 requests
+</code></pre>
+<p>A forged or edited token fails locally, without any network call, once the keys are cached.</p>
+<p>The trade-off: a valid signature only proves Supabase issued the token. It doesn't prove the session is still active. If a user signs out or is banned, an access token they already hold keeps passing <code>getClaims()</code> until it expires. That's why the guidance is <code>getClaims()</code> for reads and pages, and <code>getUser()</code> where you want the Auth server's answer.</p>
+<h2>Which one where in a Next.js App Router app</h2>
+<div class="table-wrap"><table><caption class="sr-only">Which one where in a Next.js App Router app</caption>
+<thead>
+<tr>
+<th scope="col">Where</th>
+<th scope="col">Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Proxy / middleware</td>
+<td><code>getClaims()</code></td>
+</tr>
+<tr>
+<td>Server Component (page)</td>
+<td><code>getClaims()</code></td>
+</tr>
+<tr>
+<td>Server Action that writes</td>
+<td><code>getUser()</code></td>
+</tr>
+<tr>
+<td>Route Handler that writes</td>
+<td><code>getUser()</code></td>
+</tr>
+<tr>
+<td>Need the raw token</td>
+<td><code>getSession()</code> (token only)</td>
+</tr>
+<tr>
+<td>Browser UI state</td>
+<td>either; RLS protects data</td>
+</tr>
+</tbody>
+</table></div>
+<p>Whichever method you use, Row Level Security is still what protects the data. A missing auth check in a Server Action is a bug, but an owner-scoped RLS policy stops it from leaking other users' rows.</p>
+<h2>Proxy (middleware): refresh the session with getClaims</h2>
+<p>Server Components can't write cookies, so something has to refresh expired tokens and store the new ones. In current Next.js that's <code>proxy.ts</code>. Next.js 16 renamed <code>middleware.ts</code> to <code>proxy.ts</code>; on Next.js 15 and earlier, keep <code>middleware.ts</code> and name the function <code>middleware</code>. The Supabase code is the same either way. The Next.js guide says the proxy refreshes the token by calling <code>getClaims()</code>.</p>
+<p>The server client, in <code>lib/supabase/server.ts</code>:</p>
+<pre><code class="language-ts">import { createServerClient } from &quot;@supabase/ssr&quot;;
+import { cookies } from &quot;next/headers&quot;;
+
+export async function createClient() {
+  const cookieStore = await cookies();
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =&gt;
+              cookieStore.set(name, value, options),
+            );
+          } catch {
+            // Called from a Server Component: the proxy refreshes the session.
+          }
+        },
+      },
+    },
+  );
+}
+</code></pre>
+<p>The session refresh, in <code>lib/supabase/proxy.ts</code>:</p>
+<pre><code class="language-ts">import { createServerClient } from &quot;@supabase/ssr&quot;;
+import { NextResponse, type NextRequest } from &quot;next/server&quot;;
+
+export async function updateSession(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({ request });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =&gt;
+            request.cookies.set(name, value),
+          );
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =&gt;
+            supabaseResponse.cookies.set(name, value, options),
+          );
+        },
+      },
+    },
+  );
+
+  // Don't run code between createServerClient and getClaims().
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+
+  if (!claims &amp;&amp; request.nextUrl.pathname.startsWith(&quot;/dashboard&quot;)) {
+    const url = request.nextUrl.clone();
+    url.pathname = &quot;/login&quot;;
+    return NextResponse.redirect(url);
+  }
+
+  // Return supabaseResponse so the refreshed cookies reach the browser.
+  return supabaseResponse;
+}
+</code></pre>
+<p>And <code>proxy.ts</code> at the project root:</p>
+<pre><code class="language-ts">import { type NextRequest } from &quot;next/server&quot;;
+import { updateSession } from &quot;@/lib/supabase/proxy&quot;;
+
+export async function proxy(request: NextRequest) {
+  return await updateSession(request);
+}
+
+export const config = {
+  matcher: [
+    &quot;/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)&quot;,
+  ],
+};
+</code></pre>
+<p>Two details from the guide that cause sign-out bugs:</p>
+<ul>
+<li><strong>Return the right response.</strong> Return the <code>supabaseResponse</code> that <code>setAll</code> last built. An earlier response doesn't carry the refreshed cookies. If you need a different response, copy the cookies (and the cache headers) onto it first.</li>
+<li><strong>Refresh in one place.</strong> Let the proxy do the refresh, so Server Components don't each try to refresh the same token.</li>
+</ul>
+<p>The redirect in the proxy is a convenience, not your only check. Check again in the page or action itself.</p>
+<h2>Pages: getClaims in Server Components</h2>
+<pre><code class="language-tsx">import { redirect } from &quot;next/navigation&quot;;
+import { createClient } from &quot;@/lib/supabase/server&quot;;
+
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+  if (error || !data?.claims) redirect(&quot;/login&quot;);
+
+  const userId = data.claims.sub;
+  const { data: projects } = await supabase
+    .from(&quot;projects&quot;)
+    .select(&quot;id, name&quot;)
+    .eq(&quot;user_id&quot;, userId);
+
+  return &lt;pre&gt;{JSON.stringify(projects, null, 2)}&lt;/pre&gt;;
+}
+</code></pre>
+<p><code>claims.sub</code> is the user's id. The query still runs through RLS with the user's token, so the <code>.eq</code> filter is a convenience, not the security boundary.</p>
+<h2>Writes: getUser in Server Actions and Route Handlers</h2>
+<pre><code class="language-ts">&quot;use server&quot;;
+import { createClient } from &quot;@/lib/supabase/server&quot;;
+
+export async function deleteProject(projectId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (error || !user) throw new Error(&quot;Not signed in&quot;);
+
+  const { error: dbError } = await supabase
+    .from(&quot;projects&quot;)
+    .delete()
+    .eq(&quot;id&quot;, projectId)
+    .eq(&quot;user_id&quot;, user.id);
+  if (dbError) throw dbError;
+}
+</code></pre>
+<p>One round trip per write buys you the Auth server's answer: a signed-out or banned user should be turned away even if their access token hasn't expired yet. If latency matters more than that window for a particular action, <code>getClaims()</code> is defensible there too. Make it a deliberate choice, not an accident.</p>
+<h2>Signing keys: check which kind your project uses</h2>
+<p>Whether <code>getClaims()</code> is fast depends on your signing keys. In the dashboard, check your project's JWT signing keys (see the <a href="https://supabase.com/docs/guides/auth/signing-keys">signing keys guide</a>). If the project still uses the legacy JWT secret, <code>getClaims()</code> works but makes the same Auth server call as <code>getUser()</code>. Migrating to an asymmetric key makes it local.</p>
+<p>Per the guide, asymmetric keys also make rotation and revocation easier: public keys are published at the JWKS endpoint, so you don't have to redeploy a shared secret everywhere it's used. Because of the caching described above, plan rotations with the guide's timing in mind rather than expecting instant effect.</p>
+<h2>A quick checklist</h2>
+<ul>
+<li>Search your server code for <code>getSession(</code>. Keep it only where you need the raw token.</li>
+<li>Proxy refreshes the session with <code>getClaims()</code> and returns <code>supabaseResponse</code>.</li>
+<li>Pages and Server Components check <code>getClaims()</code> and redirect when there are no claims.</li>
+<li>Server Actions and Route Handlers that write call <code>getUser()</code>.</li>
+<li>RLS policies scope every user table to <code>(select auth.uid())</code>.</li>
+<li>Check whether your project uses asymmetric signing keys.</li>
+</ul>
+<h2>Related</h2>
+<ul>
+<li><a href="/blog/supabase-rls-policies-pass-review-leak-data">Supabase RLS policies that pass review but still leak data</a>: the database half of the same problem.</li>
+<li><a href="/blog/supabase-service-role-key-exposed">Supabase service role key exposed</a>: why bypassing RLS isn't a fix.</li>
+<li>Our <a href="/checker">free checker</a> (MIT, runs locally) flags <code>getSession()</code> trusted on the server (its A1 check) along with leaked keys, RLS gaps and webhook issues. It's heuristic, so treat it as a first pass.</li>
+</ul>
+<hr />
+<p><em>Disclosure: this is our own paid product.</em> <a href="/ai-rules?ref=seo-supabase-getsession-vs-getuser-vs-getclaims">AI Rules</a> ($19 plus VAT where applicable) includes a Supabase server-auth skill that tells your coding agent to use <code>getClaims()</code> for pages, <code>getUser()</code> for writes, and never <code>getSession()</code> for authorisation on the server. Its security-review and ship-check skills check for the same thing. It doesn't replace code review.</p>
+<p><strong>Sources (checked 17 October 2026):</strong></p>
+<ul>
+<li><a href="https://supabase.com/docs/guides/auth/server-side/nextjs">Supabase: Setting up server-side auth for Next.js</a></li>
+<li><a href="https://supabase.com/docs/reference/javascript/auth-getclaims">Supabase JS reference: getClaims</a></li>
+<li><a href="https://supabase.com/docs/reference/javascript/auth-getuser">Supabase JS reference: getUser</a></li>
+<li><a href="https://supabase.com/docs/reference/javascript/auth-getsession">Supabase JS reference: getSession</a></li>
+<li><a href="https://supabase.com/docs/guides/auth/signing-keys">Supabase: JWT signing keys</a></li>
+<li><a href="https://github.com/supabase/supabase-js/blob/master/packages/core/auth-js/src/GoTrueClient.ts">supabase-js source (auth-js GoTrueClient)</a></li>
+</ul>
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="supabase-getsession-vs-getuser-vs-getclaims">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside><aside class="cta" aria-label="Product"><p class="eyebrow">AI Rules · Next.js + Supabase + Stripe</p><h2>Ship-Ready AI Rules</h2><p>3 guardrail hooks, 18 Claude Code skills, and 6 subagents, plus Cursor rules and AGENTS.md, for Next.js, Supabase, and Stripe.</p><a class="btn btn-p" href="/ai-rules?ref=seo-supabase-getsession-vs-getuser-vs-getclaims" data-ev="blog-to-product" data-ev-post="supabase-getsession-vs-getuser-vs-getclaims">See what's in Ship-Ready AI Rules</a></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/supabase-rls-policies-pass-review-leak-data">Supabase RLS policies that pass review but still leak data</a></li><li><a href="/blog/supabase-service-role-key-exposed">Supabase service role key exposed? How to check, rotate, and stop it happening again</a></li><li><a href="/blog/supabase-permission-denied-for-table-data-api-grants">Supabase “Permission Denied for Table”: the Data API Grants Change Scheduled for 30 Oct</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal, or accounting advice. Notion, Cursor, Supabase, Stripe, and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/guardrails">Guardrails Pack</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script></body></html>

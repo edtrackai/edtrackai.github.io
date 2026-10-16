@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/supabase-rls-policies-pass-review-leak-data</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/supabase-service-role-key-exposed</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/supabase-permission-denied-for-table-data-api-grants</loc><lastmod>2026-10-17</lastmod></url>
