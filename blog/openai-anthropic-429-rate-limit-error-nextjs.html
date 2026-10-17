@@ -166,6 +166,7 @@ const BILLING = new Set([&quot;insufficient_quota&quot;, &quot;credit_balance_ex
   &quot;organization_usage_limit_exceeded&quot;]);
 const SPEND = new Set([&quot;project_spend_limit_exceeded&quot;,
   &quot;organization_spend_limit_exceeded&quot;, &quot;enforced_spend_limit_reached&quot;]);
+const SPEND_400 = &quot;You have reached your specified&quot;; // Anthropic 400 prefix
 
 type Headersish = { get(name: string): string | null } | undefined;
 const str = (v: unknown) =&gt; (typeof v === &quot;string&quot; ? v : null);
@@ -190,11 +191,14 @@ export function classifyProviderError(err: unknown): Classified {
   const details = (inner.details ?? {}) as Record&lt;string, unknown&gt;;
   const code = str(details.error_code) ?? str(e.code) ?? str(inner.code);
   const type = str(e.type) ?? str(inner.type);
+  const message = str(inner.message) ?? &quot;&quot;;
   const retryAfterMs = parseRetryAfter(h);
   const out = (kind: ProviderErrorKind, retryable: boolean): Classified =&gt;
     ({ kind, retryable, retryAfterMs: retryable ? retryAfterMs : null, code: code ?? type });
 
   if (code &amp;&amp; SPEND.has(code)) return out(&quot;spend_limit&quot;, false);
+  if (status === 400 &amp;&amp; message.startsWith(SPEND_400))
+    return out(&quot;spend_limit&quot;, false);
   if ((code &amp;&amp; BILLING.has(code)) || type === &quot;insufficient_quota&quot;)
     return out(&quot;quota_or_billing&quot;, false);
   if (status === 429) return out(&quot;rate_limit&quot;, true);
@@ -203,7 +207,7 @@ export function classifyProviderError(err: unknown): Classified {
   return out(&quot;other&quot;, false);
 }
 </code></pre>
-<p>The Anthropic spend-limit 400 comes out as <code>other</code>, not retryable. The docs don't give a separate code for it, so we don't guess from the message text.</p>
+<p>The docs don't give a separate code for the Anthropic spend-limit 400, but the rate limits page says its message begins "You have reached your specified API usage limits" or "You have reached your specified workspace API usage limits". So the helper treats a 400 with that opening as <code>spend_limit</code>, not retryable, and the route below stops and returns the same message as for billing errors. If Anthropic rewords the message, it would fall back to <code>other</code>.</p>
 <h2>A capped retry that stops on known billing errors</h2>
 <p>Turn the SDK's own retries off with <code>maxRetries: 0</code>, so you don't stack two retry loops, and use one you control. This one caps attempts, caps each wait and the total wait, honours <code>Retry-After</code> inside those caps, and gives up straight away on anything not retryable:</p>
 <pre tabindex="0"><code class="language-ts">// lib/provider-retry.ts
@@ -285,8 +289,8 @@ export async function POST(req: Request) {
 <li><strong>The same pattern works for Anthropic.</strong> Create the Anthropic client with <code>maxRetries: 0</code> and call <code>messages.create</code>. The classifier already reads the nested Anthropic error.</li>
 </ul>
 <h2>Why one user can cause 429s for everyone</h2>
-<p>OpenAI's guide says that "limits are applied per organization and not per user." Anthropic's limits are also set at the organization level. If one signed-in user scripts your chat route, they use up the shared requests and tokens per minute, and every other user starts seeing errors.</p>
-<p>Retries don't help with that. What helps is a limit per user in your own app, keyed on the session user id, so one account can't use up the shared allowance. Our <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user spend limits post</a> walks through a per-user rate limit and a monthly dollar cap in Supabase.</p>
+<p>OpenAI's error codes guide says that "limits are applied per organization and not per user." Anthropic's limits are also set at the organization level. If one signed-in user scripts your chat route, they use up the shared requests and tokens per minute, and every other user starts seeing errors.</p>
+<p>Retries don't help with that. What helps is a limit per user in your own app, keyed on the session user id, so one account can't use up the shared allowance. Our <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user spend limits post</a> walks through a per-user rate limit and a monthly dollar cap in Supabase. To estimate what each user may cost per month, and how many requests a day a given cap would allow, you can try our <a href="/tools/ai-api-cost-calculator">AI API cost calculator</a>.</p>
 <h2>Reduce rate-limit pressure with prompt caching</h2>
 <p>On Anthropic, cached reads can take pressure off your input-token limit. The rate limits page says: "For most Claude models, only uncached input tokens count toward your ITPM rate limits." If your prompts share a long prefix, getting caching to work can leave more room under that limit. Our <a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">prompt caching post</a> covers how to check whether requests actually hit the cache.</p>
 <h2>Checklist</h2>

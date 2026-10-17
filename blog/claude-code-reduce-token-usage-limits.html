@@ -154,7 +154,7 @@ fi
 <li><strong>Usage credits.</strong> Run <code>/usage-credits</code> to turn on or request credits and keep working past the limit at API rates. Remember the cache lifetime drops to five minutes while you're on credits, so long pauses cost more.</li>
 <li><strong>Check for a stray API key.</strong> If <code>ANTHROPIC_API_KEY</code> is set in your environment, Claude Code uses it instead of your subscription, and you're billed at API rates.</li>
 </ul>
-<p>If you use Claude through the API, with a Console key in Claude Code or in your own app, you pay per token, so cache hits matter. Our post on <a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">prompt caching not working</a> shows how to check whether a request hit the cache. If your app calls the API on behalf of your users, <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user spend limits in Next.js</a> covers capping what each user can spend.</p>
+<p>If you use Claude through the API, with a Console key in Claude Code or in your own app, you pay per token, so cache hits matter. Our post on <a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">prompt caching not working</a> shows how to check whether a request hit the cache. If your app calls the API on behalf of your users, <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user spend limits in Next.js</a> covers capping what each user can spend. If you want a rough monthly figure for API use, you can enter your tokens per request, cached share and traffic in our <a href="/tools/ai-api-cost-calculator">AI API cost calculator</a>; it gives estimates only.</p>
 <h2>Checklist</h2>
 <ul>
 <li>Add the status line so you can see the 5-hour and weekly bars as you work.</li>
