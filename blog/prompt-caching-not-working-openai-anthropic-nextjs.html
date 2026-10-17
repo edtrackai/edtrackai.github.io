@@ -1,0 +1,320 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prompt caching not working? OpenAI and Anthropic checks</title><meta name="description" content="Prompt caching not working? Check the OpenAI and Anthropic cache usage fields in a Next.js AI SDK route, common causes of misses and cached token pricing."><link rel="canonical" href="https://edtrackai.github.io/blog/prompt-caching-not-working-openai-anthropic-nextjs"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Prompt caching not working? OpenAI and Anthropic checks"><meta property="og:description" content="Prompt caching not working? Check the OpenAI and Anthropic cache usage fields in a Next.js AI SDK route, common causes of misses and cached token pricing."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/prompt-caching-not-working-openai-anthropic-nextjs.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Prompt caching not working? OpenAI and Anthropic checks: Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/prompt-caching-not-working-openai-anthropic-nextjs.png"><meta property="og:url" content="https://edtrackai.github.io/blog/prompt-caching-not-working-openai-anthropic-nextjs"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)", "description": "Prompt caching not working? Check the OpenAI and Anthropic cache usage fields in a Next.js AI SDK route, common causes of misses and cached token pricing.", "datePublished": "2026-10-17", "dateModified": "2026-10-17", "image": "https://edtrackai.github.io/visuals/og/prompt-caching-not-working-openai-anthropic-nextjs.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/prompt-caching-not-working-openai-anthropic-nextjs"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)", "item": "https://edtrackai.github.io/blog/prompt-caching-not-working-openai-anthropic-nextjs"}]}</script><meta property="article:published_time" content="2026-10-17"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Prompt caching not working? Check it in OpenAI a…</li></ol></nav>
+<p class="eyebrow">Next.js · AI costs · <time datetime="2026-10-17">2026-10-17</time></p><h1 class="h1-long">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</h1><p>You turned on prompt caching, or you were told it's on by default, and the usage numbers say nothing was cached. <code>cached_tokens</code> is 0 on OpenAI, or <code>cache_read_input_tokens</code> is 0 on Anthropic, and the bill hasn't moved. If you searched for prompt caching not working, this post covers how to check whether a request actually hit the cache, the usual reasons it didn't, and how to price cached reads and writes correctly once it does.</p><p>This guide pairs with <a href="/spend-caps-kit?ref=seo-prompt-caching-not-working-openai-anthropic-nextjs" data-ev="blog-to-product" data-ev-post="prompt-caching-not-working-openai-anthropic-nextjs">Spend Caps Kit</a>, and if you want the next step, read <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">OpenAI and Anthropic spend limits per user in Next.js</a>.</p>
+<p>Everything here is for a Next.js App Router route using the Vercel AI SDK (<code>ai</code> 7.0.143, <code>@ai-sdk/anthropic</code> 4.0.82, <code>@ai-sdk/openai</code> 4.0.96). Limits and prices come from the OpenAI, Anthropic and AI SDK docs, checked on 17 October 2026.</p>
+<p><strong>What we did and didn't test.</strong> We haven't shown a live cache hit. We didn't call the OpenAI or Anthropic APIs with a real key, so every hit and usage number below comes from the providers' docs. Our code type-checks with <code>tsc --strict</code> against the package versions above and has 16 unit tests. Some of those tests run the AI SDK against a fake <code>fetch</code>, which lets us check the request the SDK would send and how it reads a usage block copied from the docs. That's all it proves. We aren't affiliated with or endorsed by OpenAI, Anthropic or Vercel; their product and model names are their trademarks, used here only to identify them.</p>
+<h2>The short checklist</h2>
+<p>If your cache reads are 0, check these in order:</p>
+<ol>
+<li>Is the cached part of the prompt at or above the model's minimum length?</li>
+<li>Is anything that changes between requests (a date, a user name, a request id, tool order) placed before the cache point?</li>
+<li>Was the next request sent before the cache expired?</li>
+<li>On Anthropic, is there a cache breakpoint, and is it on a block that stays identical between requests?</li>
+<li>In the AI SDK, did the cache option reach the provider, and are you reading the right usage field?</li>
+<li>Are you looking at cost, which can go up on the first request, instead of cache reads?</li>
+</ol>
+<p>The rest of this post goes through each one.</p>
+<h2>How to tell if a request hit the cache</h2>
+<p>Both providers report cache use in the response's <code>usage</code> object, but they count input tokens differently. That difference is a common reason dashboards and home-made cost maths disagree.</p>
+<p><strong>Anthropic.</strong> The <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching#tracking-cache-performance">prompt caching docs</a> list three fields:</p>
+<ul>
+<li><code>cache_read_input_tokens</code>: tokens read from the cache on this request.</li>
+<li><code>cache_creation_input_tokens</code>: tokens written to the cache on this request.</li>
+<li><code>input_tokens</code>: only the tokens after the last cache breakpoint, which can't be cached.</li>
+</ul>
+<p>So the total input is the sum of all three. The docs' own example is 100,000 tokens read from the cache, 0 written and 50 in the user message, for a total of 100,050 input tokens. The docs also say that "if both <code>cache_creation_input_tokens</code> and <code>cache_read_input_tokens</code> are 0, the prompt was not cached". If you use the 1-hour cache, a <code>cache_creation</code> object splits writes into <code>ephemeral_5m_input_tokens</code> and <code>ephemeral_1h_input_tokens</code>.</p>
+<p><strong>OpenAI.</strong> The <a href="https://developers.openai.com/api/docs/guides/prompt-caching#monitor-cache-performance">prompt caching guide</a> tells you to track <code>cached_tokens</code> and <code>cache_write_tokens</code>, which sit inside <code>input_tokens_details</code>. Here <code>input_tokens</code> already includes the cached and written tokens. The guide's own cost example works out ordinary input as <code>input_tokens</code> minus <code>cached_tokens</code> minus <code>cache_write_tokens</code>. On models before GPT-5.6, the guide says reported <code>cached_tokens</code> is rounded down to the nearest multiple of 128.</p>
+<p><strong>AI SDK.</strong> The SDK maps both providers onto one shape. The <a href="https://ai-sdk.dev/providers/ai-sdk-providers/anthropic">Anthropic provider page</a> and the <a href="https://ai-sdk.dev/providers/ai-sdk-providers/openai">OpenAI provider page</a> both say to read <code>cacheReadTokens</code> and <code>cacheWriteTokens</code> under <code>usage.inputTokenDetails</code>. In the SDK's <code>LanguageModelUsage</code> type, <code>inputTokens</code> is the total input and <code>noCacheTokens</code> is the uncached part. Our tests confirm that for both providers: the Anthropic docs example comes out as 100,050 total and 50 uncached.</p>
+<p>Here's a small reader that turns any of the three shapes into one report. "unknown" means the provider didn't send the fields at all, which isn't the same as a miss.</p>
+<pre><code class="language-ts">// lib/cache-usage.ts (excerpt)
+import type { LanguageModelUsage } from 'ai';
+
+export type CacheStatus = 'hit' | 'write' | 'none' | 'unknown';
+
+export type CacheReport = {
+  totalInput: number;
+  uncached: number;
+  cacheRead: number;
+  cacheWrite5m: number;
+  cacheWrite1h: number;
+  status: CacheStatus;
+};
+
+function statusOf(read: number | undefined, write: number | undefined): CacheStatus {
+  if (read === undefined &amp;&amp; write === undefined) return 'unknown';
+  if ((read ?? 0) &gt; 0) return 'hit';
+  if ((write ?? 0) &gt; 0) return 'write';
+  return 'none';
+}
+
+// AI SDK usage: inputTokens is the total, cache reads and writes included.
+export function fromAiSdk(usage: LanguageModelUsage, writeTtl: '5m' | '1h' = '5m'): CacheReport {
+  const read = usage.inputTokenDetails.cacheReadTokens;
+  const write = usage.inputTokenDetails.cacheWriteTokens;
+  const total = usage.inputTokens ?? 0;
+  const uncached = usage.inputTokenDetails.noCacheTokens ?? total - (read ?? 0) - (write ?? 0);
+  return {
+    totalInput: total,
+    uncached,
+    cacheRead: read ?? 0,
+    cacheWrite5m: writeTtl === '5m' ? write ?? 0 : 0,
+    cacheWrite1h: writeTtl === '1h' ? write ?? 0 : 0,
+    status: statusOf(read, write),
+  };
+}
+
+// Raw Anthropic usage: input_tokens is only the part after the last breakpoint.
+export type AnthropicUsage = {
+  input_tokens: number;
+  cache_read_input_tokens?: number | null;
+  cache_creation_input_tokens?: number | null;
+  cache_creation?: { ephemeral_5m_input_tokens?: number; ephemeral_1h_input_tokens?: number } | null;
+};
+
+export function fromAnthropic(u: AnthropicUsage): CacheReport {
+  const read = u.cache_read_input_tokens ?? 0;
+  const write = u.cache_creation_input_tokens ?? 0;
+  const w1h = u.cache_creation?.ephemeral_1h_input_tokens ?? 0;
+  const w5m = u.cache_creation ? u.cache_creation.ephemeral_5m_input_tokens ?? 0 : write;
+  return {
+    totalInput: u.input_tokens + read + write,
+    uncached: u.input_tokens,
+    cacheRead: read,
+    cacheWrite5m: w5m,
+    cacheWrite1h: w1h,
+    status: statusOf(read, write),
+  };
+}
+</code></pre>
+<p>The full file, which also has a reader for raw OpenAI Responses usage, follows the same pattern. The AI SDK's normalised usage doesn't say whether an Anthropic write was 5-minute or 1-hour, so <code>fromAiSdk</code> takes the TTL you asked for.</p>
+<h2>Reason 1: the prompt is below the model's minimum</h2>
+<p>Neither provider caches short prompts, and Anthropic doesn't return an error when this happens. From <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching#cache-limitations">Anthropic's cache limitations</a>, on the Claude API the minimum cacheable prompt length is:</p>
+<ul>
+<li>512 tokens for Claude Fable 5.1, Mythos 5.1, Opus 5.5, Opus 5, Sonnet 5.5, Fable 5, Mythos 5 and Haiku 5.5.</li>
+<li>1,024 tokens for Claude Opus 4.8, Sonnet 5, Sonnet 4.6 and Sonnet 4.5, among others.</li>
+<li>2,048 tokens for Claude Mythos Preview and Opus 4.7.</li>
+<li>4,096 tokens for Claude Opus 4.6, Opus 4.5 and Haiku 4.5.</li>
+</ul>
+<p>The docs add: "Any requests to cache fewer than this number of tokens will be processed without caching, and no error is returned."</p>
+<p>OpenAI's <a href="https://developers.openai.com/api/docs/guides/prompt-caching#summary-of-model-differences">guide</a> gives a minimum of 1,024 visible input tokens for GPT-5.6 and later. For earlier models it "varies with request settings, including tools, images, output schemas, reasoning effort, and verbosity". Tokens in OpenAI's hidden system content don't count toward the minimum.</p>
+<p>One thing to watch: the minimum-length list on the AI SDK's Anthropic page is older than Anthropic's own and doesn't list the newer models. Go by Anthropic's page.</p>
+<h2>Reason 2: something changes before the cached part</h2>
+<p>Caching only works on a prefix that is exactly the same from one request to the next. Anthropic's docs say "Cache hits require 100% identical prompt segments", and the cache covers <code>tools</code>, then <code>system</code>, then <code>messages</code>, in that order. OpenAI's guide says "Cache reuse requires the entire rendered prefix to match."</p>
+<p>The usual causes:</p>
+<ul>
+<li><strong>A date or user detail in the system prompt.</strong> "Today is 17 October" or "The user's name is Sam" at the top changes the prefix on every request. Both providers say to put stable content first and changing content last.</li>
+<li><strong>Tool changes.</strong> On Anthropic, changing tool definitions (names, descriptions or parameters) invalidates the whole cache. Changing <code>tool_choice</code>, or adding or removing images, invalidates the messages part. On OpenAI, changing tool names, descriptions, schemas or order changes the prefix.</li>
+<li><strong>Changing the active tools in the AI SDK.</strong> The AI SDK's OpenAI page says <code>activeTools</code> removes tools from the request "and invalidates the cache whenever the allow-list changes". It suggests the <code>allowedTools</code> provider option instead, which keeps the full tool list in the request (Responses API only).</li>
+<li><strong>Other settings.</strong> Anthropic lists speed mode, thinking settings and effort among the things that invalidate parts of the cache. OpenAI lists <code>reasoning.effort</code>, <code>text.verbosity</code> and structured output format.</li>
+<li><strong>Rewriting history.</strong> OpenAI's guide says summarising, compaction or truncating earlier turns can reset cache reuse. Append new messages instead of editing old ones.</li>
+</ul>
+<p>A cheap way to catch this is to log a hash of the part you expect to be cached next to each usage report. If the hash changes between two requests, a miss is expected.</p>
+<pre><code class="language-ts">// lib/prefix.ts
+import { createHash } from 'node:crypto';
+
+export function prefixFingerprint(...parts: string[]): string {
+  return createHash('sha256').update(parts.join('\u0000')).digest('hex').slice(0, 12);
+}
+</code></pre>
+<h2>Reason 3: the cache expired</h2>
+<p><strong>Anthropic:</strong> the default lifetime is 5 minutes, and it's "refreshed for no additional cost each time the cached content is used". The lifetime counts from the start of the request, so a response that takes 4 minutes to stream leaves about 1 minute for the follow-up. You can ask for a 1-hour cache by adding <code>ttl: "1h"</code> to the cache setting, at a higher write price (see the pricing section).</p>
+<p><strong>OpenAI:</strong> for GPT-5.6 and later, <code>prompt_cache_options.ttl</code> supports one value, <code>30m</code>, which is also the default. The guide says a cached prefix stays reusable "for 30 minutes after its most recent write or reuse, though OpenAI may retain it longer." For earlier models, <code>prompt_cache_retention</code> takes <code>in_memory</code> (entries typically stay for 5 to 10 minutes of inactivity, up to one hour) or <code>24h</code> (up to 24 hours, on the models the guide lists). GPT-5.5 and GPT-5.5 Pro support <code>24h</code> only. Organisations without Zero Data Retention default to <code>24h</code>, and those with it default to <code>in_memory</code>.</p>
+<p>Two more timing traps from the docs:</p>
+<ul>
+<li><strong>Parallel requests.</strong> Anthropic says "a cache entry only becomes available after the first response begins". If you fire 10 identical requests at once, they won't share a cache. Wait for the first response to start.</li>
+<li><strong>High traffic on OpenAI.</strong> Cached state lives on individual machines, and "traffic above 15 requests per minute can lead to overflow routing" to machines without your cache. On models before GPT-5.6, the guide recommends a stable <code>prompt_cache_key</code> for requests that share a prefix.</li>
+</ul>
+<h2>Reason 4 (Anthropic): no breakpoint, or the wrong one</h2>
+<p>On Anthropic you opt in. You either add one <code>cache_control</code> field at the top level of the request (automatic caching, which moves the cache point forward as a conversation grows) or put <code>cache_control</code> on specific blocks. The docs allow up to 4 block-level breakpoints.</p>
+<p>Writes happen only at a breakpoint. If the breakpoint sits on a block that changes every time, such as the user's latest message with a timestamp in it, the cached entry never matches. The docs' advice is to place the breakpoint "on the last block that stays identical across requests". Automatic caching has the same trap: it puts the breakpoint on the last cacheable block, so if that block changes every request, the docs suggest an explicit breakpoint at the end of the stable part instead.</p>
+<p>In long chats, there's also a 20-block lookback: the system checks at most 20 positions back from each breakpoint for an earlier cache entry. The docs say a breakpoint on the final block works as long as each turn adds fewer than 20 blocks. If one turn adds more, the earlier entry falls outside the window, and the docs suggest a second breakpoint further back.</p>
+<p>Anthropic also has a <a href="https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics">cache diagnostics</a> feature that compares consecutive requests and reports where the prompt diverged. OpenAI has a <a href="https://developers.openai.com/api/docs/guides/prompt-caching/diagnostics">Prompt Cache Diagnostics</a> tool for the same job.</p>
+<h2>Reason 5 (AI SDK): the option never reached the provider</h2>
+<p>In the AI SDK, cache settings travel through <code>providerOptions</code>. For Anthropic, that's <code>cacheControl</code> with a <code>type</code> of <code>ephemeral</code>, set on a message, a message part or a tool. For OpenAI, the provider page lists <code>promptCacheKey</code>, <code>promptCacheOptions</code> (with <code>mode</code> and <code>ttl</code>, for GPT-5.6 and later), <code>promptCacheRetention</code> for earlier models, and <code>promptCacheBreakpoint</code> on a content part.</p>
+<p>Three things we found while testing against <code>ai</code> 7.0.143 with a fake <code>fetch</code> (no live API calls):</p>
+<ul>
+<li><strong>A system message inside <code>messages</code> now throws.</strong> In <code>ai</code> 7, a message with the <code>system</code> role in <code>messages</code> fails with "System messages are not allowed in the prompt or messages fields. Use the instructions option instead." unless you set <code>allowSystemInMessages</code>. Older examples, including the system-message example on the AI SDK's Anthropic page, put it in <code>messages</code>. In version 7, put the cached system prompt in <code>instructions</code>, which accepts a system message with <code>providerOptions</code>. Our test confirms the SDK then sends <code>cache_control</code> on the system block.</li>
+<li><strong>More than 4 breakpoints are dropped, not rejected.</strong> With 5 <code>cacheControl</code> parts, the Anthropic provider sent 4 and added a warning to <code>warnings</code> saying the breakpoint limit was exceeded. Log <code>warnings</code> so you see it.</li>
+<li><strong>Read the standard usage object.</strong> Older code read cache counts from provider metadata. The provider pages now point to <code>usage.inputTokenDetails</code>.</li>
+</ul>
+<p>Here's the Anthropic route with logging. It assumes a long, stable prompt in <code>SUPPORT_PROMPT</code>.</p>
+<pre><code class="language-ts">// app/api/chat/route.ts
+import { anthropic } from '@ai-sdk/anthropic';
+import { streamText, type ModelMessage } from 'ai';
+import { fromAiSdk } from '@/lib/cache-usage';
+import { costUsd } from '@/lib/cache-cost';
+import { prefixFingerprint } from '@/lib/prefix';
+
+// Stable text only: no dates, user names or request ids in here.
+const INSTRUCTIONS = process.env.SUPPORT_PROMPT ?? '';
+const MODEL = 'claude-haiku-4-5';
+
+export async function POST(req: Request): Promise&lt;Response&gt; {
+  const { messages } = (await req.json()) as { messages: ModelMessage[] };
+
+  const result = streamText({
+    model: anthropic(MODEL),
+    instructions: {
+      role: 'system',
+      content: INSTRUCTIONS,
+      providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } },
+    },
+    messages,
+    onEnd: ({ usage, warnings }) =&gt; {
+      const cache = fromAiSdk(usage);
+      console.log(JSON.stringify({
+        model: MODEL,
+        prefix: prefixFingerprint(INSTRUCTIONS),
+        ...cache,
+        usd: costUsd(MODEL, cache, usage.outputTokens ?? 0),
+        warnings: warnings?.length ?? 0,
+      }));
+    },
+  });
+
+  return result.toTextStreamResponse();
+}
+</code></pre>
+<p>Claude Haiku 4.5 needs at least 4,096 tokens before anything is cached, so a short <code>SUPPORT_PROMPT</code> will log <code>none</code> every time. That's Reason 1, not a bug in the route. In a real app, check the user is signed in before calling the model.</p>
+<p>For OpenAI on GPT-5.6 or later, the same idea uses an explicit breakpoint on the instructions (the SDK sends them as a developer message, as OpenAI's guide recommends) and a per-user cache key:</p>
+<pre><code class="language-ts">// app/api/chat-openai/route.ts (excerpt)
+const result = streamText({
+  model: openai('gpt-5.6-terra'),
+  providerOptions: {
+    openai: {
+      // userId from your auth session, never the request body
+      promptCacheKey: `support-v1:${userId}`,
+      promptCacheOptions: { mode: 'explicit', ttl: '30m' },
+    } satisfies OpenAILanguageModelResponsesOptions,
+  },
+  instructions: {
+    role: 'system',
+    content: INSTRUCTIONS,
+    providerOptions: { openai: { promptCacheBreakpoint: { mode: 'explicit' } } },
+  },
+  messages,
+  onEnd: ({ usage }) =&gt; console.log(JSON.stringify(fromAiSdk(usage))),
+});
+</code></pre>
+<p>OpenAI's guide says that in explicit mode, "When no explicit breakpoints are placed, the request does not use prompt caching". On GPT-5.6 and later the key isn't needed for routing, but the guide says separate keys keep cache accounting separate per user and help prevent cache-hit probing across users.</p>
+<h2>Reason 6: you're reading cost, not cache reads</h2>
+<p>Writing to the cache costs more than plain input on both providers' newer models, so the first request in a series can cost more than it would without caching. Only later reads are cheaper. If you check the bill after a handful of <span class="nw">one-off</span> requests, caching can look like it made things worse.</p>
+<p>From <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching#pricing">Anthropic's pricing table</a>:</p>
+<ul>
+<li>5-minute cache writes cost 1.25 times the base input price.</li>
+<li>1-hour cache writes cost 2 times the base input price.</li>
+<li>Cache reads cost 0.1 times the base input price, except 0.05 times on Claude Opus 5.5 and Sonnet 5.5, and 0.025 times on Claude Fable 5.1 and Mythos 5.1.</li>
+</ul>
+<p>For Claude Haiku 4.5, that's $1 per million base input tokens, $1.25 for 5-minute writes, $2 for 1-hour writes, $0.10 for cache reads and $5 for output.</p>
+<p>From <a href="https://developers.openai.com/api/docs/guides/prompt-caching#how-caching-works-gpt-5-6-and-later">OpenAI's guide</a>, for GPT-5.6 and later, writes cost 1.25 times the uncached input rate, and reads cost 0.1 times that rate (0.05 times on GPT-6.1 Sol). Earlier models have no extra cache-write charge. The <a href="https://developers.openai.com/api/docs/pricing">pricing page</a> lists gpt-5.6-terra at $2.00 input, $0.20 cached input, $2.50 cache writes and $12.00 output per million tokens (short-context, standard rates). The guide's cost formula counts each input token once, at the uncached, cached or cache-write rate, so a write isn't charged on top of ordinary input.</p>
+<p>The guide gives its own worked figure: with a 0.1 times read rate, writing a prefix once and reusing it once costs 1.35 times its ordinary input cost, against 2 times for sending it twice without caching. Your figure depends on how often a prefix is reused before it expires.</p>
+<h2>Pricing cached tokens correctly</h2>
+<p>If you log cost per request, or cap or bill users by spend, price each kind of input token at its own rate. Here's the cost function we tested, with the prices above. The OpenAI row stores its single write rate in both write fields.</p>
+<pre><code class="language-ts">// lib/cache-cost.ts (excerpt: two of the five price rows)
+import type { CacheReport } from './cache-usage';
+
+// USD per million tokens, from the providers' pricing pages on 17 Oct 2026.
+export type Price = { input: number; cacheRead: number; cacheWrite5m: number; cacheWrite1h: number; output: number };
+
+export const PRICES: Record&lt;string, Price&gt; = {
+  'claude-haiku-4-5': { input: 1, cacheRead: 0.1, cacheWrite5m: 1.25, cacheWrite1h: 2, output: 5 },
+  'gpt-5.6-terra': { input: 2, cacheRead: 0.2, cacheWrite5m: 2.5, cacheWrite1h: 2.5, output: 12 },
+};
+
+export function costUsd(model: string, r: CacheReport, outputTokens: number): number {
+  const p = PRICES[model];
+  if (!p) throw new Error(`No price for model ${model}`);
+  return (
+    r.uncached * p.input +
+    r.cacheRead * p.cacheRead +
+    r.cacheWrite5m * p.cacheWrite5m +
+    r.cacheWrite1h * p.cacheWrite1h +
+    outputTokens * p.output
+  ) / 1_000_000;
+}
+</code></pre>
+<p>The tests check it against hand-worked numbers. For example, on Claude Haiku 4.5, 10,000 cache reads, 2,000 5-minute writes, 500 uncached tokens and 300 output tokens come to $0.0055. For OpenAI, the tests check it against the formula in OpenAI's guide. Unknown models throw rather than being priced at $0. That matters because a missing price quietly turns into free usage.</p>
+<p>One more pricing detail: OpenAI's FAQ says cached input tokens still count toward tokens-per-minute rate limits. Anthropic's 1-hour cache section says cache hits are not deducted against your rate limit.</p>
+<h2>Test results</h2>
+<pre><code class="language-text">$ npx tsc -p . --strict
+exit 0
+
+$ node --import tsx --test test/cache.test.ts
+ℹ tests 16
+ℹ pass 16
+ℹ fail 0
+</code></pre>
+<p>The tests cover the Anthropic and OpenAI docs' usage examples, the hit, write, none and unknown statuses, the cost maths for 5-minute and 1-hour writes, and four offline AI SDK round trips. Those round trips use a fake <code>fetch</code> that records the request and returns a usage block copied from the docs:</p>
+<ul>
+<li>Anthropic <code>cache_control</code> from <code>instructions</code>.</li>
+<li>The <code>ai</code> 7 error for system messages inside <code>messages</code>.</li>
+<li>The dropped fifth breakpoint.</li>
+<li>OpenAI cache key, options and breakpoint.</li>
+</ul>
+<p>None of this proves a cache hit against a live API.</p>
+<h2>Checklist</h2>
+<ul>
+<li>The cached part is at or above the model's minimum length, checked on the provider's own page.</li>
+<li>Nothing that changes per request comes before the cache point.</li>
+<li>Tools, tool order and settings that affect the prefix stay the same between requests.</li>
+<li>Follow-up requests arrive within the cache lifetime, and parallel requests wait for the first response to start.</li>
+<li>On Anthropic there's a breakpoint, and it's on a block that stays the same.</li>
+<li>In AI SDK 7, the cached system prompt is in <code>instructions</code>, and <code>warnings</code> is logged.</li>
+<li>Cache reads and writes are read from <code>usage.inputTokenDetails</code> and priced at their own rates.</li>
+</ul>
+<h2>Related</h2>
+<ul>
+<li><a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">OpenAI and Anthropic spend limits per user in Next.js</a>: how to reserve and settle that per-request cost against a monthly cap for each user.</li>
+<li><a href="/blog/chatgpt-pro-200-codex-usage-limits">ChatGPT Pro 200 limits drop after 29 Oct: how to make Codex usage last</a></li>
+</ul>
+<hr />
+<p><em>Disclosure: this is our own paid product.</em> <a href="/spend-caps-kit?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=e45">Spend Caps Kit</a> ($19 plus VAT where applicable) is copy-paste TypeScript and one Supabase migration for Next.js. It adds per-user rate limits and a monthly dollar cap per user, priced from each response's token usage with cached tokens and cache writes included, and a price table for 16 OpenAI and Anthropic models. The kit doesn't make the cache hit; it counts and caps the cost.</p>
+<p><strong>Sources (checked 17 October 2026):</strong></p>
+<ul>
+<li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">Anthropic: Prompt caching</a></li>
+<li><a href="https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics">Anthropic: Cache diagnostics</a></li>
+<li><a href="https://platform.claude.com/docs/en/about-claude/pricing">Anthropic: Pricing</a></li>
+<li><a href="https://developers.openai.com/api/docs/guides/prompt-caching">OpenAI: Prompt caching</a></li>
+<li><a href="https://developers.openai.com/api/docs/guides/prompt-caching/diagnostics">OpenAI: Prompt Cache Diagnostics</a></li>
+<li><a href="https://developers.openai.com/api/docs/pricing">OpenAI: Pricing</a></li>
+<li><a href="https://ai-sdk.dev/providers/ai-sdk-providers/anthropic">AI SDK: Anthropic provider</a></li>
+<li><a href="https://ai-sdk.dev/providers/ai-sdk-providers/openai">AI SDK: OpenAI provider</a></li>
+<li><a href="https://nextjs.org/docs/app/api-reference/file-conventions/route">Next.js: route.js (Route Handlers)</a></li>
+</ul>
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="prompt-caching-not-working-openai-anthropic-nextjs">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside><aside class="cta" aria-label="Product"><p class="eyebrow">Spend Caps Kit · <span class="nw">$19 plus VAT where applicable</span></p><h2>Spend Caps Kit</h2><p>Per-user rate limits and AI spend caps for Next.js + Supabase + Stripe</p><a class="btn btn-p" href="/spend-caps-kit?ref=seo-prompt-caching-not-working-openai-anthropic-nextjs" data-ev="blog-to-product" data-ev-post="prompt-caching-not-working-openai-anthropic-nextjs">See what's in Spend Caps Kit</a></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">OpenAI and Anthropic spend limits per user in Next.js</a></li><li><a href="/blog/chatgpt-pro-200-codex-usage-limits">ChatGPT Pro 200 limits drop after 29 Oct: how to make Codex usage last</a></li><li><a href="/blog/supabase-getsession-vs-getuser-vs-getclaims">Supabase getSession vs getUser vs getClaims: which to use where</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal, or accounting advice. Notion, Cursor, Supabase, Stripe, and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/guardrails">Guardrails Pack</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script></body></html>
