@@ -15,7 +15,7 @@
 <p>A 429 on its own doesn't tell you what to do. Look one level down:</p>
 <ul>
 <li><strong>OpenAI:</strong> read <code>error.code</code>. The error codes guide says: "For billing-related errors, inspect <code>error.code</code> to identify the specific cause. The broader <code>error.type</code> can still be <code>insufficient_quota</code>."</li>
-<li><strong>Anthropic:</strong> read the error <code>type</code>, and for a spend cap, <code>error.details.error_code</code>.</li>
+<li><strong>Anthropic:</strong> read the error <code>type</code>, and check <code>error.details.error_code</code> for a spend cap.</li>
 </ul>
 <p>Then split the result into two groups:</p>
 <ol>
