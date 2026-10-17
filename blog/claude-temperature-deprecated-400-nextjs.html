@@ -1,0 +1,224 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Claude &#x27;temperature is deprecated for this model&#x27; Fix</title><meta name="description" content="Claude Sonnet 5.5 or Haiku 5.5 returning &#x27;temperature is deprecated for this model&#x27;? What&#x27;s rejected, what still passes, and how to fix it in Next.js."><link rel="canonical" href="https://edtrackai.github.io/blog/claude-temperature-deprecated-400-nextjs"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Claude &#x27;temperature is deprecated for this model&#x27; Fix"><meta property="og:description" content="Claude Sonnet 5.5 or Haiku 5.5 returning &#x27;temperature is deprecated for this model&#x27;? What&#x27;s rejected, what still passes, and how to fix it in Next.js."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/claude-temperature-deprecated-400-nextjs.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Claude &#x27;temperature is deprecated for this model&#x27; Fix: Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/claude-temperature-deprecated-400-nextjs.png"><meta property="og:url" content="https://edtrackai.github.io/blog/claude-temperature-deprecated-400-nextjs"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Claude 'temperature is deprecated for this model': the 400 error and the fix in Next.js", "description": "Claude Sonnet 5.5 or Haiku 5.5 returning 'temperature is deprecated for this model'? What's rejected, what still passes, and how to fix it in Next.js.", "datePublished": "2026-10-17", "dateModified": "2026-10-17", "image": "https://edtrackai.github.io/visuals/og/claude-temperature-deprecated-400-nextjs.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/claude-temperature-deprecated-400-nextjs"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "Claude 'temperature is deprecated for this model': the 400 error and the fix in Next.js", "item": "https://edtrackai.github.io/blog/claude-temperature-deprecated-400-nextjs"}]}</script><meta property="article:published_time" content="2026-10-17"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/spend-caps-kit" data-ev="cta-click" data-ev-cta="nav">Spend Caps Kit</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Claude &#x27;temperature is deprecated for this model…</li></ol></nav>
+<p class="eyebrow">Claude API · Next.js · <time datetime="2026-10-17">2026-10-17</time></p><h1 class="h1-long h1-xlong">Claude &#x27;temperature is deprecated for this model&#x27;: the 400 error and the fix in Next.js</h1><p>You switched a Next.js route to <code>claude-sonnet-5-5</code> or <code>claude-haiku-5-5</code>, and every request now fails with a 400 about <code>temperature</code>. This post covers what the newer Claude models reject, what they still accept, why the two common Next.js SDKs behave differently, and a small helper that removes the parameters for the models Anthropic names.</p><p>This guide pairs with <a href="/spend-caps-kit?ref=seo-claude-temperature-deprecated-400-nextjs" data-ev="blog-to-product" data-ev-post="claude-temperature-deprecated-400-nextjs">Spend Caps Kit</a>, and if you want the next step, read <a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</a>.</p>
+<p><strong>What we did and didn't test.</strong> We don't have an Anthropic API key and made no live API calls, so we haven't seen this 400 ourselves. Everything about what the API accepts or rejects is quoted from Anthropic's docs as of 17 Oct 2026 (listed in Sources); those pages change with each model launch, so check them before you rely on a detail here. What we did run, with <code>TZ=UTC</code> and a fake <code>fetch</code> so nothing left our machine: a check of what <code>@anthropic-ai/sdk</code> 0.135.0 and the Vercel AI SDK (<code>ai</code> 7.0.143 with <code>@ai-sdk/anthropic</code> 4.0.82) put in the request body, and the helper below, type-checked with TypeScript 5.9.3 in strict mode and covered by two unit tests. We aren't affiliated with or endorsed by Anthropic or Vercel; Claude and Claude Code are Anthropic's trademarks, and other product names belong to their owners; all are used here only to name those products.</p>
+<h2>What the error means</h2>
+<p>In public reports, the error reads:</p>
+<pre tabindex="0"><code class="language-text">`temperature` is deprecated for this model.
+</code></pre>
+<p>We couldn't find that exact string on an Anthropic page, but it matches what the docs describe. Anthropic's <a href="https://platform.claude.com/docs/en/api/messages">Messages API reference</a> says, as of 17 Oct 2026: "Models released after Claude Opus 4.6 do not support setting temperature. A value of 1.0 will be accepted for backwards compatibility, all other values will be rejected with a 400 error."</p>
+<p>There are open reports on GitHub from projects running into it, for example <a href="https://github.com/langgenius/dify-official-plugins/issues/4044">here</a> and <a href="https://github.com/harbor-framework/harbor/issues/3678">here</a>.</p>
+<h2>Which models reject it, and which still accept it</h2>
+<p>Our summary of Anthropic's docs as of 17 Oct 2026:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Which models reject it, and which still accept it"><table><caption class="sr-only">Which models reject it, and which still accept it</caption>
+<thead>
+<tr>
+<th scope="col">Model</th>
+<th scope="col"><code>temperature</code></th>
+<th scope="col"><code>top_p</code></th>
+<th scope="col"><code>top_k</code></th>
+<th scope="col">Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Sonnet 5.5</td>
+<td>Only the default</td>
+<td>Only the default</td>
+<td>Rejected</td>
+<td><a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide">Sonnet 5.5 migration guide</a></td>
+</tr>
+<tr>
+<td>Claude Haiku 5.5</td>
+<td>Only <code>1</code></td>
+<td>Only <code>0.99</code></td>
+<td>Rejected</td>
+<td><a href="https://platform.claude.com/docs/en/models/haiku-5-5/migration-guide">Haiku 5.5 migration guide</a></td>
+</tr>
+<tr>
+<td>Models released after Claude Opus 4.6</td>
+<td>Only <code>1.0</code></td>
+<td>0.99 or more</td>
+<td>Rejected</td>
+<td><a href="https://platform.claude.com/docs/en/api/messages">Messages API reference</a></td>
+</tr>
+<tr>
+<td>Claude Sonnet 4.6 and earlier, Claude Haiku 4.5</td>
+<td>Accepted</td>
+<td>Accepted</td>
+<td>Accepted</td>
+<td><a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide">Sonnet 5.5 migration guide</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>The Sonnet 5.5 guide puts it this way: "Claude Sonnet 4.6 and earlier models and Claude Haiku 4.5 accept <code>temperature</code>, <code>top_p</code>, and <code>top_k</code>. On Claude Sonnet 5.5, a non-default value returns a 400 error. Remove them."</p>
+<p>The 7 Oct 2026 <a href="https://platform.claude.com/docs/en/release-notes/overview">release notes</a> say the same about Haiku: "Code written for Claude Haiku 4.5 can break on Claude Haiku 5.5. Manual extended thinking (<code>budget_tokens</code>), the sampling parameters <code>temperature</code>, <code>top_p</code>, and <code>top_k</code>, and assistant message prefill can each return a 400 error."</p>
+<h2>What still passes</h2>
+<p>The Haiku 5.5 guide gives the exact values:</p>
+<ul>
+<li>"If a request includes <code>temperature</code>, it must be <code>1</code>. If it includes <code>top_p</code>, it must be <code>0.99</code>, its default."</li>
+<li>"Any other <code>temperature</code> or <code>top_p</code> value returns a 400 error, including a <code>top_p</code> of <code>1</code>. So does any <code>top_k</code> value, and so does a request that includes both <code>temperature</code> and <code>top_p</code>."</li>
+</ul>
+<p>For models released after Claude Opus 4.6 in general, the API reference adds that for <code>top_p</code> "A value &gt;= 0.99 will be accepted for backwards compatibility, all other values will be rejected with a 400 error." and that those models "do not accept top_k; any value will be rejected with a 400 error."</p>
+<p>The simplest option the docs give is to leave all three out. The Haiku 5.5 guide says: "On Claude Haiku 5.5, omit all three and use prompting to guide the model's behavior instead."</p>
+<h2>Why you may be seeing it now</h2>
+<p>Anthropic's <a href="https://platform.claude.com/docs/en/about-claude/model-deprecations">model deprecations page</a> says: "On September 30, 2026, Anthropic notified developers using Claude Sonnet 4.5 of its upcoming retirement on the Claude API." As of 17 Oct 2026, it lists <code>claude-sonnet-4-5-20250929</code> as retiring on 30 November 2026, with <code>claude-sonnet-5-5</code> as the recommended replacement. If your code sets <code>temperature: 0</code> and you switch to that replacement, this is the 400 you can expect.</p>
+<p>A few related details from the same page:</p>
+<ul>
+<li>Anthropic describes "providing at least 60 days' notice before model retirement for publicly released models."</li>
+<li>The Haiku 4.5 row (<code>claude-haiku-4-5-20251001</code>) reads: Active, N/A, "Not sooner than October 15, 2026".</li>
+<li>The dates are for the Claude API: "Partner-operated platforms (Amazon Bedrock and Google Cloud) set their own retirement schedules, so a model's lifecycle status and dates can differ."</li>
+</ul>
+<h2>The fix in Next.js</h2>
+<h3>What each SDK sends</h3>
+<p>We ran the same call, with <code>temperature: 0</code>, through both SDKs against a fake <code>fetch</code> and looked at the request body. In the versions we tested:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="What each SDK sends"><table><caption class="sr-only">What each SDK sends</caption>
+<thead>
+<tr>
+<th scope="col">SDK (version)</th>
+<th scope="col">Model ID</th>
+<th scope="col"><code>temperature: 0</code> in the request?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@anthropic-ai/sdk</code> 0.135.0</td>
+<td><code>claude-sonnet-5-5</code></td>
+<td>Sent</td>
+</tr>
+<tr>
+<td><code>@ai-sdk/anthropic</code> 4.0.82</td>
+<td><code>claude-sonnet-5-5</code></td>
+<td>Dropped, with a warning</td>
+</tr>
+<tr>
+<td><code>@ai-sdk/anthropic</code> 4.0.82</td>
+<td><code>claude-haiku-5-5</code></td>
+<td>Dropped, with a warning</td>
+</tr>
+<tr>
+<td><code>@ai-sdk/anthropic</code> 4.0.82</td>
+<td><code>claude-sonnet-4-5-20250929</code></td>
+<td>Sent</td>
+</tr>
+<tr>
+<td><code>@ai-sdk/anthropic</code> 4.0.82</td>
+<td><code>claude-haiku-4-5-20251001</code></td>
+<td>Sent</td>
+</tr>
+</tbody>
+</table></div>
+<p>The Vercel AI SDK returned this in <code>warnings</code> for <code>claude-sonnet-5-5</code>:</p>
+<pre tabindex="0"><code class="language-json">{&quot;type&quot;:&quot;unsupported&quot;,&quot;feature&quot;:&quot;temperature&quot;,&quot;details&quot;:&quot;temperature is not supported by claude-sonnet-5-5 and will be ignored&quot;}
+</code></pre>
+<p>So with the Vercel AI SDK, in these versions and for these two model IDs, the request goes out without <code>temperature</code>. With <code>@anthropic-ai/sdk</code>, it goes out as written, and per Anthropic's docs the API would return the 400. We didn't test other model IDs, and the Vercel AI SDK's model list can change in any release.</p>
+<p>The <code>@anthropic-ai/sdk</code> type for <code>temperature</code> is marked deprecated, not removed. Its type file reads "@deprecated Deprecated. Models released after Claude Opus 4.6 do not support", and in our check <code>tsc --strict</code> still compiled <code>temperature: 0</code> without an error. An editor may show it struck through, but the build won't stop you.</p>
+<h3>A small model-aware helper</h3>
+<p>If you call <code>@anthropic-ai/sdk</code> directly and still use older models for some routes, you can remove the sampling parameters only for the models the docs name. This is the helper we tested:</p>
+<pre tabindex="0"><code class="language-ts">// Models that Anthropic's migration guides say reject non-default sampling params.
+// Add IDs only when Anthropic's docs name them.
+const NO_SAMPLING = new Set(['claude-sonnet-5-5', 'claude-haiku-5-5']);
+
+type Sampling = { temperature?: number; top_p?: number; top_k?: number };
+
+export function stripSamplingParams&lt;T extends Sampling&gt;(model: string, params: T) {
+  if (!NO_SAMPLING.has(model)) return params;
+  const { temperature, top_p, top_k, ...rest } = params;
+  return rest;
+}
+</code></pre>
+<p>Using it in a route handler:</p>
+<pre tabindex="0"><code class="language-ts">const model = 'claude-sonnet-5-5';
+await anthropic.messages.create({
+  model,
+  max_tokens: 1024,
+  messages: [{ role: 'user', content: 'hi' }],
+  ...stripSamplingParams(model, { temperature: 0 }),
+});
+</code></pre>
+<p>With our fake <code>fetch</code>, that request went out without <code>temperature</code>. The tests:</p>
+<pre tabindex="0"><code class="language-ts">import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { stripSamplingParams } from './sampling.js';
+
+const p = { max_tokens: 16, temperature: 0, top_p: 0.9, top_k: 40 };
+
+test('5.5 models drop all three', () =&gt; {
+  for (const m of ['claude-sonnet-5-5', 'claude-haiku-5-5']) {
+    assert.deepEqual(stripSamplingParams(m, p), { max_tokens: 16 });
+  }
+});
+
+test('4.5 models keep them', () =&gt; {
+  for (const m of ['claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001']) {
+    assert.deepEqual(stripSamplingParams(m, p), p);
+  }
+});
+</code></pre>
+<p>The helper drops all three parameters for the listed models, even an allowed <code>temperature: 1</code>, because leaving them out is what the guides recommend. It only knows the two IDs in the set. The API reference applies the same rules to every model released after Claude Opus 4.6, so if you use another newer model, check its docs and add its ID.</p>
+<h2>"I set temperature 0 for consistent output"</h2>
+<p>Even before this change, <code>temperature: 0</code> didn't make output fully repeatable. The API reference says: "Note that even with <code>temperature</code> of <code>0.0</code>, the results will not be fully deterministic."</p>
+<p>On the newer models, the guides point to prompting instead: clear instructions and examples of the output you want. If you need a fixed shape, such as JSON for a parser, Anthropic's docs cover structured outputs. Check that page for which models support it.</p>
+<h2>Other things that can break when you move from Sonnet 4.5 to 5.5</h2>
+<p>A short checklist. Anthropic's <a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide">Sonnet 5.5 migration guide</a> has the full list.</p>
+<ul>
+<li><strong>Prefill.</strong> "Claude Sonnet 5.5 rejects a prefilled last assistant turn with a 400 error". The guide gives the message as:</li>
+</ul>
+<pre tabindex="0"><code class="language-text">This model does not support assistant message prefill. The conversation must end with a user message.
+</code></pre>
+<ul>
+<li><strong>Manual extended thinking.</strong> The release notes list <code>budget_tokens</code> among the things that can return a 400 on Haiku 5.5. See the migration guides for what replaces it.</li>
+<li><strong>Token counts.</strong> The Sonnet 5.5 guide says "the same text produces about 30% more tokens, depending on the content." If you budget or cap by tokens, recount after the switch; our <a href="/blog/openai-anthropic-count-tokens-api-nextjs">token counting guide</a> covers the count endpoint.</li>
+</ul>
+<p>For other Anthropic API errors, such as 429 and 529, see our <a href="/blog/openai-anthropic-429-rate-limit-error-nextjs">rate limit error guide</a>.</p>
+<h2>Building on Claude for your users? Check what each user can spend</h2>
+<p>A model switch, especially one that can raise token counts, is a reasonable moment to look at what each of your users can spend. Our <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user spend limits post</a> shows the pattern in Next.js.</p>
+<hr />
+<p><em>Disclosure: this is our own paid product.</em> If your Next.js app calls Claude for your users, the <a href="/spend-caps-kit?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=e54">Spend Caps Kit</a> is designed to add per-user rate limits and a monthly dollar cap per user. It does not fix or detect the <code>temperature</code> 400 or any other API parameter error. It does not change which parameters Anthropic models accept. It does not replace Anthropic Console spend limits. It costs $19 (plus VAT where applicable).</p>
+<p><strong>Sources (checked 17 October 2026):</strong></p>
+<ul>
+<li><a href="https://platform.claude.com/docs/en/api/messages">Anthropic: Messages API reference</a></li>
+<li><a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide">Anthropic: Claude Sonnet 5.5 migration guide</a></li>
+<li><a href="https://platform.claude.com/docs/en/models/haiku-5-5/migration-guide">Anthropic: Claude Haiku 5.5 migration guide</a></li>
+<li><a href="https://platform.claude.com/docs/en/about-claude/model-deprecations">Anthropic: Model deprecations</a></li>
+<li><a href="https://platform.claude.com/docs/en/release-notes/overview">Anthropic: Release notes</a></li>
+<li><a href="https://www.npmjs.com/package/@anthropic-ai/sdk">npm: @anthropic-ai/sdk</a> (0.135.0)</li>
+<li><a href="https://www.npmjs.com/package/@ai-sdk/anthropic">npm: @ai-sdk/anthropic</a> (4.0.82)</li>
+</ul>
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="claude-temperature-deprecated-400-nextjs">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside><aside class="cta" aria-label="Product"><p class="eyebrow">Spend Caps Kit&nbsp;· <span class="nw">$19 plus VAT where applicable</span></p><h2>Spend Caps Kit</h2><p>Per-user rate limits and AI spend caps for Next.js + Supabase + Stripe</p><a class="btn btn-p" href="/spend-caps-kit?ref=seo-claude-temperature-deprecated-400-nextjs" data-ev="blog-to-product" data-ev-post="claude-temperature-deprecated-400-nextjs">See what's in Spend Caps Kit</a></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</a></li><li><a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">OpenAI and Anthropic spend limits per user in Next.js</a></li><li><a href="/blog/openai-anthropic-count-tokens-api-nextjs">Count tokens before you call OpenAI or Claude: the count tokens APIs in Next.js</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal, or accounting advice. Notion, Cursor, Supabase, Stripe, and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/spend-caps-kit">Spend Caps Kit</a> · <a href="/guardrails">Guardrails Pack</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script><script>(function(){var W=document.querySelectorAll('.table-wrap[aria-label]');if(!W.length)return;W.forEach(function(w){w.setAttribute('data-tw-l',w.getAttribute('aria-label'))});function f(){W.forEach(function(w){if(w.scrollWidth>w.clientWidth+1){w.setAttribute('tabindex','0');w.setAttribute('role','region');w.setAttribute('aria-label',w.getAttribute('data-tw-l'))}else{if(document.activeElement===w)w.blur();w.removeAttribute('tabindex');w.removeAttribute('role');w.removeAttribute('aria-label')}})}f();addEventListener('load',f);var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(f,100)})})();</script></body></html>

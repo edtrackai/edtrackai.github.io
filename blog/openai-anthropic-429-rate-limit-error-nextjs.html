@@ -144,7 +144,7 @@ anthropic-ratelimit-input-tokens-remaining
 <p>We counted the requests our mock server received. These are the results from our run:</p>
 <ul>
 <li><strong>Every 429 arrived as <code>RateLimitError</code> in both SDKs</strong>, including the credit, quota and spend-limit bodies. The class alone doesn't tell you whether to retry.</li>
-<li><strong>With default settings, the mock received 3 requests for every 429, 503 and 529 body</strong>, including <code>insufficient_quota</code>, <code>credit_balance_exhausted</code>, the spend-limit codes and Anthropic's spend cap. So by default each failed user action can cost three calls that the docs say won't succeed. The Anthropic 400 got 1 request.</li>
+<li><strong>With default settings, the mock received 3 requests for every 429, 503 and 529 body</strong>, including <code>insufficient_quota</code> and <code>credit_balance_exhausted</code> as well as the spend-limit codes and Anthropic's spend cap. So by default each failed user action can cost three calls that the docs say won't succeed. The Anthropic 400 got 1 request.</li>
 <li><strong>With <code>maxRetries: 0</code>, the mock received exactly 1 request</strong> for every case.</li>
 <li><strong>OpenAI 503 and Anthropic 529 arrived as <code>InternalServerError</code></strong>, not <code>RateLimitError</code>. The Anthropic 400 arrived as <code>BadRequestError</code>.</li>
 <li><strong><code>retry-after: 1</code></strong> produced gaps of about one second in both SDKs.</li>
