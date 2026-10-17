@@ -1,0 +1,363 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenAI &amp; Claude Count Tokens API: Check Before You Send</title><meta name="description" content="Count tokens before you call OpenAI or Claude. Use the OpenAI count tokens API and Anthropic count_tokens in Next.js to check context fit and cost first."><link rel="canonical" href="https://edtrackai.github.io/blog/openai-anthropic-count-tokens-api-nextjs"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="OpenAI &amp; Claude Count Tokens API: Check Before You Send"><meta property="og:description" content="Count tokens before you call OpenAI or Claude. Use the OpenAI count tokens API and Anthropic count_tokens in Next.js to check context fit and cost first."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/openai-anthropic-count-tokens-api-nextjs.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="OpenAI &amp; Claude Count Tokens API: Check Before You Send: Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/openai-anthropic-count-tokens-api-nextjs.png"><meta property="og:url" content="https://edtrackai.github.io/blog/openai-anthropic-count-tokens-api-nextjs"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Count tokens before you call OpenAI or Claude: the count tokens APIs in Next.js", "description": "Count tokens before you call OpenAI or Claude. Use the OpenAI count tokens API and Anthropic count_tokens in Next.js to check context fit and cost first.", "datePublished": "2026-10-17", "dateModified": "2026-10-17", "image": "https://edtrackai.github.io/visuals/og/openai-anthropic-count-tokens-api-nextjs.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/openai-anthropic-count-tokens-api-nextjs"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "Count tokens before you call OpenAI or Claude: the count tokens APIs in Next.js", "item": "https://edtrackai.github.io/blog/openai-anthropic-count-tokens-api-nextjs"}]}</script><meta property="article:published_time" content="2026-10-17"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/spend-caps-kit" data-ev="cta-click" data-ev-cta="nav">Spend Caps Kit</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Count tokens before you call OpenAI or Claude: t…</li></ol></nav>
+<p class="eyebrow">Next.js · AI costs · <time datetime="2026-10-17">2026-10-17</time></p><h1 class="h1-long h1-xlong">Count tokens before you call OpenAI or Claude: the count tokens APIs in Next.js</h1><p>You want to know how many tokens a request will use before you send it: to check it fits the model's context window, to estimate what it will cost, or to stop one user's pasted document from running up a bill. Both OpenAI and Anthropic now have an API endpoint that counts input tokens for the exact payload you're about to send. This post shows both from TypeScript, explains why a local tokenizer or the "4 characters per token" rule can drift, and builds a small pre-call check for a Next.js route.</p><p>This guide pairs with <a href="/spend-caps-kit?ref=seo-openai-anthropic-count-tokens-api-nextjs" data-ev="blog-to-product" data-ev-post="openai-anthropic-count-tokens-api-nextjs">Spend Caps Kit</a>, and if you want the next step, read <a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</a>.</p>
+<p><strong>Checked 17 Oct 2026 with <code>openai</code> 7.36.0, <code>@anthropic-ai/sdk</code> 0.135.0 and <code>js-tiktoken</code> 1.0.21</strong> (Node 20.19, TypeScript strict). What the endpoints do comes from the OpenAI and Anthropic docs, quoted below and listed in Sources.</p>
+<p><strong>What we did and didn't test.</strong> We had no API keys for this post, so we never called the real count endpoints and we have no real counts from either provider. Every endpoint response below comes from a local mock server that we rebuilt from the documented response shapes, and the token numbers it returns are made up. What the mock does show is real SDK behaviour: which method each SDK exposes, the path and body it sends, how it parses the response, and how it retries. The local tokenizer numbers are real output from our machine. Our helper type-checks with <code>tsc --strict</code> and has 21 unit tests. We aren't affiliated with or endorsed by OpenAI or Anthropic; their product and model names are their trademarks, used here only to identify them.</p>
+<h2>Quick answer: two endpoints, same payload as the real call</h2>
+<p>Both providers count input tokens server-side, for the same request body you would send to generate a response:</p>
+<ul>
+<li><strong>OpenAI:</strong> <code>/v1/responses/input_tokens</code>, called from Node with <code>responses.inputTokens.count()</code>. OpenAI's guide says it "lets you determine how many input tokens a request will use before you send it to the model."</li>
+<li><strong>Anthropic:</strong> <code>/v1/messages/count_tokens</code>, called with <code>messages.countTokens()</code>. Anthropic's guide says it "lets you determine the number of tokens in a message before you send it to Claude."</li>
+</ul>
+<p>Both return a number of input tokens. Neither predicts output. OpenAI's help article is direct about that: "An input count does not predict how many output tokens the model will generate." For output, budget with your output limit, as in the helper further down.</p>
+<h2>Count tokens with the OpenAI API</h2>
+<p>The OpenAI guide says: "The input token count endpoint accepts the same input format as the Responses API. Pass text, messages, images, files, tools, or conversations—the API returns the exact count the model will receive." In the Node SDK the method sits under <code>responses</code>:</p>
+<pre tabindex="0"><code class="language-ts">import OpenAI from &quot;openai&quot;;
+
+const openai = new OpenAI();
+
+const { input_tokens } = await openai.responses.inputTokens.count({
+  model: &quot;your-openai-model&quot;,
+  instructions: &quot;You are a concise assistant.&quot;,
+  input: &quot;What's the weather in Paris?&quot;,
+});
+console.log(input_tokens);
+</code></pre>
+<p>A few points from the guide worth knowing:</p>
+<ul>
+<li><strong>It counts structure, not only text.</strong> "The count includes formatting tokens used to represent request structure, such as message roles and boundaries. These tokens might not appear in the text or fields you tokenize locally."</li>
+<li><strong>Tools count.</strong> Pass the same <code>tools</code> array you'll send with the real call. The guide lists "Tools and schemas add tokens that are hard to count locally" as a reason to use the endpoint.</li>
+<li><strong>Images and PDFs count.</strong> "File inputs (currently PDFs) are supported." Images go in as they would for <code>responses.create</code>.</li>
+</ul>
+<p>The endpoint is part of the Responses API. We didn't find a separate count method for Chat Completions in the SDK version we installed.</p>
+<h2>Count tokens with the Anthropic API</h2>
+<p>Anthropic's guide says: "The token counting endpoint accepts the same structured list of inputs for creating a message, including support for system prompts, tools, images, and PDFs." The TypeScript SDK method is <code>messages.countTokens()</code>:</p>
+<pre tabindex="0"><code class="language-ts">import Anthropic from &quot;@anthropic-ai/sdk&quot;;
+
+const anthropic = new Anthropic();
+
+const { input_tokens } = await anthropic.messages.countTokens({
+  model: &quot;your-claude-model&quot;,
+  system: &quot;You are a concise assistant.&quot;,
+  messages: [{ role: &quot;user&quot;, content: &quot;What's the weather in Paris?&quot; }],
+});
+console.log(input_tokens);
+</code></pre>
+<p>Leave out <code>max_tokens</code>: the count request doesn't take it. Things to plan for:</p>
+<ul>
+<li><strong>It's an estimate.</strong> "The token count is an estimate. In some cases, the actual number of input tokens used when creating a message might differ by a small amount."</li>
+<li><strong>Some inputs are refused.</strong> The guide says "This endpoint returns an <code>invalid_request_error</code> for a few inputs that the Messages API accepts". Its list covers server tools other than the advisor tool (web search and code execution, for example), the MCP connector, and images or documents passed by <code>url</code> or <code>file</code> source. Its advice for files: "Send images and PDFs as base64 to count them."</li>
+<li><strong>It has its own rate limit.</strong> The guide says: "Token counting is free to use but subject to requests per minute rate limits based on your usage tier." It adds: "Token counting and message creation have separate and independent rate limits."</li>
+<li><strong>It ignores caching.</strong> "No, token counting provides an estimate without using caching logic." If you use prompt caching, the count is the full input; our <a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">prompt caching post</a> covers how cached reads show up in usage after the call.</li>
+</ul>
+<h2>What the SDKs actually send (our mock test)</h2>
+<p>We pointed both SDKs at a local mock server through <code>baseURL</code> and logged each request. These are the requests and parsed results the SDKs produced. The <code>input_tokens</code> value of 42 is a number our mock returns, not a real count.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="What the SDKs actually send (our mock test)"><table><caption class="sr-only">What the SDKs actually send (our mock test)</caption>
+<thead>
+<tr>
+<th scope="col">SDK call</th>
+<th scope="col">Request the SDK sent</th>
+<th scope="col">Parsed result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>responses.inputTokens.count()</code></td>
+<td>POST <code>/v1/responses/input_tokens</code>, body with <code>model</code>, <code>instructions</code>, <code>input</code> and <code>tools</code> as passed</td>
+<td><code>input_tokens</code> of 42, and <code>object</code> set to <code>response.input_tokens</code></td>
+</tr>
+<tr>
+<td><code>messages.countTokens()</code></td>
+<td>POST <code>/v1/messages/count_tokens</code>, header <code>anthropic-version: 2023-06-01</code>, body with <code>model</code>, <code>system</code>, <code>messages</code> and <code>tools</code> as passed</td>
+<td><code>input_tokens</code> of 42</td>
+</tr>
+</tbody>
+</table></div>
+<p>We also had the mock return a 429 from the count endpoint, with <code>retry-after: 0</code> so the run stayed short:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="What the SDKs actually send (our mock test)"><table><caption class="sr-only">What the SDKs actually send (our mock test)</caption>
+<thead>
+<tr>
+<th scope="col">SDK</th>
+<th scope="col"><code>maxRetries: 0</code></th>
+<th scope="col">Default settings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>openai</code> 7.36.0</td>
+<td>1 request, then <code>RateLimitError</code></td>
+<td>3 requests, then <code>RateLimitError</code></td>
+</tr>
+<tr>
+<td><code>@anthropic-ai/sdk</code> 0.135.0</td>
+<td>1 request, then <code>RateLimitError</code></td>
+<td>3 requests, then <code>RateLimitError</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>So by default a busy count endpoint can add two retries, and their waits, before your real call even starts. The helper below sets <code>maxRetries: 0</code> and a short timeout on the count call, and falls back to an estimate instead. If you handle 429s from the main call, our <a href="/blog/openai-anthropic-429-rate-limit-error-nextjs">429 errors post</a> covers which ones to retry.</p>
+<h2>Why tiktoken and "4 characters per token" drift</h2>
+<p>OpenAI's help article gives a rule of thumb, "1 token is approximately 4 characters", and adds: "These are estimates, not exact counts." For plain text it points to tiktoken and says to "Select the encoding for your target model, such as with tiktoken.encoding_for_model(model)." We ran <code>js-tiktoken</code> (a JavaScript port of tiktoken; not published by OpenAI) with the <code>o200k_base</code> encoding on four fixed samples:</p>
+<pre tabindex="0"><code class="language-ts">import { getEncoding } from &quot;js-tiktoken&quot;;
+
+const enc = getEncoding(&quot;o200k_base&quot;);
+
+export function localCount(text: string): number {
+  return enc.encode(text).length;
+}
+</code></pre>
+<p>Real output from our run, run with <code>TZ=UTC</code>:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Why tiktoken and &quot;4 characters per token&quot; drift"><table><caption class="sr-only">Why tiktoken and "4 characters per token" drift</caption>
+<thead>
+<tr>
+<th scope="col">Sample</th>
+<th scope="col">Characters</th>
+<th scope="col">tiktoken (<code>o200k_base</code>)</th>
+<th scope="col">Characters / 4</th>
+<th scope="col">Rule vs tiktoken</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>English prose</td>
+<td>244</td>
+<td>50</td>
+<td>61</td>
+<td>+22%</td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>322</td>
+<td>79</td>
+<td>81</td>
+<td>+3%</td>
+</tr>
+<tr>
+<td>JSON tool schema</td>
+<td>245</td>
+<td>58</td>
+<td>61</td>
+<td>+5%</td>
+</tr>
+<tr>
+<td>German prose</td>
+<td>255</td>
+<td>56</td>
+<td>64</td>
+<td>+14%</td>
+</tr>
+</tbody>
+</table></div>
+<p>On these samples the 4-characters rule came out higher than tiktoken every time, by 3% to 22%. A cruder "1 token per character" guess was about 4 to 5 times the tiktoken count. Neither number is what the API will count, for three reasons:</p>
+<ul>
+<li><strong>Structure and tools.</strong> A local count only sees the text you give it. The OpenAI guide says the endpoint count includes formatting tokens that "might not appear in the text or fields you tokenize locally", and that images and files aren't covered by local tokenizers: "Images and files are not supported—estimates like <code>characters / 4</code> are inaccurate".</li>
+<li><strong>It's OpenAI's encoding.</strong> tiktoken implements OpenAI's encodings. Anthropic's docs point to the count endpoint for Claude, not to tiktoken.</li>
+<li><strong>Tokenizers change between models.</strong> Anthropic's guide says: "Claude 4.7 and later models and Claude Mythos Preview use a newer tokenizer. The same input text produces approximately 30 percent more tokens than on earlier models." Its advice: "Recount prompts against the model you plan to use rather than reusing counts measured against earlier models."</li>
+</ul>
+<p>A local count is still handy as a fast fallback, or for trimming text before you count properly.</p>
+<h2>A pre-call check for Next.js</h2>
+<p>The helper does two jobs. <code>countOpenAI()</code> and <code>countAnthropic()</code> ask the provider for the exact count, with a 2-second timeout and no retries, and fall back to 1 token per character if the call fails. <code>preflight()</code> checks that input plus your output limit fits the context window and estimates the cost of the call:</p>
+<pre tabindex="0"><code class="language-ts">// lib/token-count.ts
+import type OpenAI from &quot;openai&quot;;
+import type Anthropic from &quot;@anthropic-ai/sdk&quot;;
+
+export type Counted = { tokens: number; source: &quot;api&quot; | &quot;fallback&quot; };
+
+// Ask the provider for an exact input count. On error or timeout, fall
+// back to 1 token per character, which errs high for English text.
+async function countOrFallback(
+  call: () =&gt; Promise&lt;{ input_tokens: number }&gt;,
+  fallbackChars: number,
+): Promise&lt;Counted&gt; {
+  try {
+    const { input_tokens } = await call();
+    if (Number.isInteger(input_tokens) &amp;&amp; input_tokens &gt;= 0) {
+      return { tokens: input_tokens, source: &quot;api&quot; };
+    }
+  } catch {
+    // fall through to the estimate
+  }
+  return { tokens: Math.max(fallbackChars, 1), source: &quot;fallback&quot; };
+}
+
+const COUNT_OPTS = { timeout: 2_000, maxRetries: 0 }; // fail fast
+
+export function countOpenAI(
+  client: OpenAI,
+  body: OpenAI.Responses.InputTokenCountParams,
+  fallbackChars: number,
+): Promise&lt;Counted&gt; {
+  return countOrFallback(
+    () =&gt; client.responses.inputTokens.count(body, COUNT_OPTS),
+    fallbackChars,
+  );
+}
+
+export function countAnthropic(
+  client: Anthropic,
+  body: Anthropic.MessageCountTokensParams,
+  fallbackChars: number,
+): Promise&lt;Counted&gt; {
+  return countOrFallback(
+    () =&gt; client.messages.countTokens(body, COUNT_OPTS),
+    fallbackChars,
+  );
+}
+
+export type ModelLimits = {
+  contextWindow: number; // from the model's docs page
+  inputPerM: number; // USD per 1M input tokens, from the pricing page
+  outputPerM: number; // USD per 1M output tokens
+};
+
+export type Preflight =
+  | { ok: true; estimateUsd: number }
+  | { ok: false; reason: &quot;too_long&quot;; overBy: number }
+  | { ok: false; reason: &quot;bad_input&quot; };
+
+// Input plus the output you allow must fit the context window. The
+// estimate assumes the full output budget is used, so it errs high.
+export function preflight(
+  inputTokens: number,
+  maxOutputTokens: number,
+  m: ModelLimits,
+): Preflight {
+  const nums = [inputTokens, maxOutputTokens, m.contextWindow,
+    m.inputPerM, m.outputPerM];
+  if (!nums.every((n) =&gt; Number.isFinite(n) &amp;&amp; n &gt;= 0)) {
+    return { ok: false, reason: &quot;bad_input&quot; };
+  }
+  const total = inputTokens + maxOutputTokens;
+  if (total &gt; m.contextWindow) {
+    return { ok: false, reason: &quot;too_long&quot;, overBy: total - m.contextWindow };
+  }
+  const estimateUsd =
+    (inputTokens * m.inputPerM + maxOutputTokens * m.outputPerM) / 1_000_000;
+  return { ok: true, estimateUsd };
+}
+</code></pre>
+<p>The cost estimate assumes the whole output budget gets used, so it errs high. That's deliberate: OpenAI's guide says "The <code>max_output_tokens</code> and <code>max_completion_tokens</code> parameters limit all tokens generated by the model, including non-visible tokens", and advises: "Leave headroom in these limits when you need a specific amount of visible output."</p>
+<p>Our 21 unit tests run the real SDKs against the mock and cover:</p>
+<ul>
+<li>the API count being used when it returns a whole number</li>
+<li>falling back after exactly one request on a 429</li>
+<li>falling back on a 500 or a non-integer count</li>
+<li>falling back at the 2-second timeout when the count takes 3 seconds</li>
+<li>the context-window edge cases, and rejecting <code>NaN</code>, <code>Infinity</code> and negative inputs</li>
+</ul>
+<h2>Wiring it into a route</h2>
+<p>The route counts the exact body it's about to send, refuses a message that won't fit, and then makes the real call with the same body plus <code>max_output_tokens</code>:</p>
+<pre tabindex="0"><code class="language-ts">// app/api/chat/route.ts
+import OpenAI from &quot;openai&quot;;
+import { createClient } from &quot;@/lib/supabase/server&quot;;
+import { countOpenAI, preflight, type ModelLimits } from &quot;@/lib/token-count&quot;;
+
+const openai = new OpenAI();
+const MODEL = process.env.OPENAI_MODEL!; // your model id
+const LIMITS: ModelLimits = {
+  contextWindow: 100_000, // example values: copy yours from the docs
+  inputPerM: 1,
+  outputPerM: 5,
+};
+const MAX_OUTPUT_TOKENS = 2_000;
+const INSTRUCTIONS = &quot;You are a concise assistant.&quot;;
+
+export async function POST(req: Request) {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getClaims();
+  if (!auth?.claims.sub) {
+    return Response.json({ error: &quot;Sign in first&quot; }, { status: 401 });
+  }
+
+  const { message } = (await req.json()) as { message: string };
+  const body = { model: MODEL, instructions: INSTRUCTIONS, input: message };
+
+  // 1. Count the exact payload you're about to send.
+  const counted = await countOpenAI(openai, body,
+    INSTRUCTIONS.length + message.length);
+
+  // 2. Check it fits, and get a cost estimate for this call.
+  const check = preflight(counted.tokens, MAX_OUTPUT_TOKENS, LIMITS);
+  if (!check.ok) {
+    return Response.json({ error: &quot;Message is too long&quot; }, { status: 413 });
+  }
+  // 3. Reserve check.estimateUsd against the user's cap here.
+
+  const res = await openai.responses.create({
+    ...body,
+    max_output_tokens: MAX_OUTPUT_TOKENS,
+  });
+  return Response.json({ text: res.output_text, usage: res.usage });
+}
+</code></pre>
+<p>Notes on the choices:</p>
+<ul>
+<li><strong>The numbers in <code>LIMITS</code> are examples, not real prices or limits.</strong> Copy your model's context window from its docs page and its prices from the pricing page.</li>
+<li><strong>The count is an extra request before every call.</strong> With the 2-second timeout, a slow count adds at most about 2 seconds before the fallback kicks in. If that's too much, count only when the message is long.</li>
+<li><strong>Anthropic works the same way.</strong> Call <code>countAnthropic()</code> with the request minus <code>max_tokens</code>, then <code>messages.create</code> with it.</li>
+<li><strong>Step 3 is where a spend cap goes.</strong> Our <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user spend limits post</a> estimates with 1 token per character; <code>check.estimateUsd</code> can replace that guess with a counted number.</li>
+</ul>
+<p>To turn a typical count into a monthly figure, enter it as "Input tokens per request" in our free <a href="/tools/ai-api-cost-calculator">OpenAI and Claude API cost calculator</a>.</p>
+<h2>Checklist</h2>
+<ul>
+<li>Count the same body you'll send, including <code>instructions</code> or <code>system</code>, history and <code>tools</code>.</li>
+<li>Use <code>responses.inputTokens.count()</code> for OpenAI and <code>messages.countTokens()</code> for Anthropic.</li>
+<li>Set a short timeout and <code>maxRetries: 0</code> on the count call, and fall back to an estimate.</li>
+<li>Check input plus your output limit against the context window before calling.</li>
+<li>Recount when you change models; don't reuse counts across tokenizers.</li>
+<li>For Anthropic, send images and PDFs as base64 when counting.</li>
+</ul>
+<h2>Related</h2>
+<ul>
+<li><a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">OpenAI and Anthropic spend limits per user in Next.js</a>: a per-user rate limit and a monthly dollar cap in Supabase.</li>
+<li><a href="/blog/openai-anthropic-429-rate-limit-error-nextjs">OpenAI and Anthropic 429 errors in Next.js: which to retry, which to stop</a>: reading the error code before you retry.</li>
+<li><a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</a>: how to confirm cache hits and price cached tokens.</li>
+<li><a href="/blog/claude-code-reduce-token-usage-limits">Claude Code: reduce token usage and make limits last</a>: if you meant Claude Code plan limits rather than the API.</li>
+</ul>
+<hr />
+<p><em>Disclosure: this is our own paid product.</em> <a href="/spend-caps-kit?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=e50">Spend Caps Kit</a> ($19 plus VAT where applicable) is copy-paste TypeScript and one Supabase migration for Next.js. It adds per-user rate limits and a monthly dollar cap per user, priced from each response's token usage, and it reserves an up-front cost estimate that you pass in before each AI call. The Spend Caps Kit does not count tokens itself: it doesn't call either count endpoint, so a count like the one in this post is something you supply.</p>
+<p><strong>Sources (checked 17 October 2026):</strong></p>
+<ul>
+<li><a href="https://developers.openai.com/api/docs/guides/token-counting">OpenAI: Counting tokens</a></li>
+<li><a href="https://developers.openai.com/api/reference/resources/responses/subresources/input_tokens/methods/count/">OpenAI API reference: Get input token counts</a></li>
+<li><a href="https://help.openai.com/en/articles/4936856-understanding-and-counting-tokens">OpenAI Help Center: Understanding and counting tokens</a></li>
+<li><a href="https://platform.claude.com/docs/en/build-with-claude/token-counting">Anthropic: Token counting</a></li>
+<li><a href="https://platform.claude.com/docs/en/api/messages/count_tokens">Anthropic API reference: Count tokens in a Message</a></li>
+</ul>
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="openai-anthropic-count-tokens-api-nextjs">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside><aside class="cta" aria-label="Product"><p class="eyebrow">Spend Caps Kit&nbsp;· <span class="nw">$19 plus VAT where applicable</span></p><h2>Spend Caps Kit</h2><p>Per-user rate limits and AI spend caps for Next.js + Supabase + Stripe</p><a class="btn btn-p" href="/spend-caps-kit?ref=seo-openai-anthropic-count-tokens-api-nextjs" data-ev="blog-to-product" data-ev-post="openai-anthropic-count-tokens-api-nextjs">See what's in Spend Caps Kit</a></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</a></li><li><a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">OpenAI and Anthropic spend limits per user in Next.js</a></li><li><a href="/blog/openai-anthropic-429-rate-limit-error-nextjs">OpenAI and Anthropic 429 errors in Next.js: which to retry, which to stop</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal, or accounting advice. Notion, Cursor, Supabase, Stripe, and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/spend-caps-kit">Spend Caps Kit</a> · <a href="/guardrails">Guardrails Pack</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script><script>(function(){var W=document.querySelectorAll('.table-wrap[aria-label]');if(!W.length)return;W.forEach(function(w){w.setAttribute('data-tw-l',w.getAttribute('aria-label'))});function f(){W.forEach(function(w){if(w.scrollWidth>w.clientWidth+1){w.setAttribute('tabindex','0');w.setAttribute('role','region');w.setAttribute('aria-label',w.getAttribute('data-tw-l'))}else{if(document.activeElement===w)w.blur();w.removeAttribute('tabindex');w.removeAttribute('role');w.removeAttribute('aria-label')}})}f();addEventListener('load',f);var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(f,100)})})();</script></body></html>
