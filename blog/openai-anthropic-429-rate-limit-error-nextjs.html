@@ -1,0 +1,345 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenAI &amp; Anthropic 429 Errors: Retry or Stop? (Next.js)</title><meta name="description" content="OpenAI 429 too many requests or insufficient_quota? Anthropic 429 or 529? Read the error code, retry only what can clear, and stop wasted calls in Next.js."><link rel="canonical" href="https://edtrackai.github.io/blog/openai-anthropic-429-rate-limit-error-nextjs"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="OpenAI &amp; Anthropic 429 Errors: Retry or Stop? (Next.js)"><meta property="og:description" content="OpenAI 429 too many requests or insufficient_quota? Anthropic 429 or 529? Read the error code, retry only what can clear, and stop wasted calls in Next.js."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/openai-anthropic-429-rate-limit-error-nextjs.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="OpenAI &amp; Anthropic 429 Errors: Retry or Stop? (Next.js): Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/openai-anthropic-429-rate-limit-error-nextjs.png"><meta property="og:url" content="https://edtrackai.github.io/blog/openai-anthropic-429-rate-limit-error-nextjs"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "OpenAI and Anthropic 429 errors in Next.js: which to retry, which to stop", "description": "OpenAI 429 too many requests or insufficient_quota? Anthropic 429 or 529? Read the error code, retry only what can clear, and stop wasted calls in Next.js.", "datePublished": "2026-10-17", "dateModified": "2026-10-17", "image": "https://edtrackai.github.io/visuals/og/openai-anthropic-429-rate-limit-error-nextjs.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/openai-anthropic-429-rate-limit-error-nextjs"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "OpenAI and Anthropic 429 errors in Next.js: which to retry, which to stop", "item": "https://edtrackai.github.io/blog/openai-anthropic-429-rate-limit-error-nextjs"}]}</script><meta property="article:published_time" content="2026-10-17"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/spend-caps-kit" data-ev="cta-click" data-ev-cta="nav">Spend Caps Kit</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">OpenAI and Anthropic 429 errors in Next.js: whic…</li></ol></nav>
+<p class="eyebrow">Next.js · AI costs · <time datetime="2026-10-17">2026-10-17</time></p><h1 class="h1-long h1-xlong">OpenAI and Anthropic 429 errors in Next.js: which to retry, which to stop</h1><p>Your Next.js route calls OpenAI or Anthropic and gets a 429. The usual advice is to add a retry with backoff. That fixes some 429s and makes others worse, because both providers now use the same status for problems that clear in a second and problems that won't clear until someone changes a billing setting. This post shows how to tell them apart from the error code, what the official SDKs do by default, and a small helper that retries rate limits and overload but stops on the billing codes it knows.</p><p>This guide pairs with <a href="/spend-caps-kit?ref=seo-openai-anthropic-429-rate-limit-error-nextjs" data-ev="blog-to-product" data-ev-post="openai-anthropic-429-rate-limit-error-nextjs">Spend Caps Kit</a>, and if you want the next step, read <a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</a>.</p>
+<p><strong>Checked 17 Oct 2026 with <code>openai</code> 7.36.0 and <code>@anthropic-ai/sdk</code> 0.135.0</strong> (Node 20.19, TypeScript strict). Error codes and their meanings come from the OpenAI and Anthropic docs, quoted below and listed in Sources. Providers add codes from time to time, so check the docs against the date above.</p>
+<p><strong>What we did and didn't test.</strong> We didn't trigger a real 429. We ran both SDKs against a local mock server that returns error bodies and headers we rebuilt from the docs, so the bodies are our reconstruction, not captured failures. What the mock does show is real SDK behaviour: the error class each SDK throws, which fields it fills in, how many requests it sends with its default retries, and how it handles <code>retry-after</code>. Our helper type-checks with <code>tsc --strict</code> and has 20 unit tests. We aren't affiliated with or endorsed by OpenAI or Anthropic; their product and model names are their trademarks, used here only to identify them.</p>
+<h2>Quick answer: read the code, not the status</h2>
+<p>A 429 on its own doesn't tell you what to do. Look one level down:</p>
+<ul>
+<li><strong>OpenAI:</strong> read <code>error.code</code>. The error codes guide says: "For billing-related errors, inspect <code>error.code</code> to identify the specific cause. The broader <code>error.type</code> can still be <code>insufficient_quota</code>."</li>
+<li><strong>Anthropic:</strong> read the error <code>type</code>, and for a spend cap, <code>error.details.error_code</code>.</li>
+</ul>
+<p>Then split the result into two groups:</p>
+<ol>
+<li><strong>Can clear by waiting:</strong> rate limits, ramp-up limits and overload. Retry a few times, honouring <code>Retry-After</code>.</li>
+<li><strong>Won't clear by waiting:</strong> credits, quota and spend limits. OpenAI is direct about it: "Retrying billing, spend, or quota errors won't restore API access. Update the relevant credits or limits before sending another request." Stop, log it and show the user a clear message.</li>
+</ol>
+<h2>The OpenAI 429s</h2>
+<p>The OpenAI error codes guide lists several 429 causes. Here they are with what each one likely needs from you:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="The OpenAI 429s"><table><caption class="sr-only">The OpenAI 429s</caption>
+<thead>
+<tr>
+<th scope="col">What you see</th>
+<th scope="col">Code</th>
+<th scope="col">Retry?</th>
+<th scope="col">What the docs say to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rate limit reached for requests</td>
+<td>(rate limit)</td>
+<td>Yes, with a cap</td>
+<td>"Pace your requests and follow the <code>Retry-After</code> header when it's present."</td>
+</tr>
+<tr>
+<td>Slow down</td>
+<td><code>slow_down</code></td>
+<td>Yes, with a cap</td>
+<td>Follow <code>Retry-After</code>, "reduce your request rate, and increase it gradually."</td>
+</tr>
+<tr>
+<td>Credit balance exhausted</td>
+<td><code>credit_balance_exhausted</code></td>
+<td>No</td>
+<td>"Add credits to continue using the API."</td>
+</tr>
+<tr>
+<td>Project spend limit reached</td>
+<td><code>project_spend_limit_exceeded</code></td>
+<td>No</td>
+<td>"Increase or remove the spend limit in your project settings."</td>
+</tr>
+<tr>
+<td>Organization spend limit reached</td>
+<td>organization spend code (below)</td>
+<td>No</td>
+<td>"Increase or remove your organization spend limit."</td>
+</tr>
+<tr>
+<td>Organization usage limit reached</td>
+<td>organization usage code (below)</td>
+<td>No</td>
+<td>"Request a higher approved usage limit or contact support."</td>
+</tr>
+</tbody>
+</table></div>
+<p>The two organization codes are too long for a table cell:</p>
+<pre tabindex="0"><code class="language-text">organization_spend_limit_exceeded
+organization_usage_limit_exceeded
+</code></pre>
+<p>Two of these can surprise you:</p>
+<ul>
+<li><strong><code>slow_down</code> can appear under your limits.</strong> The guide says it "can occur even when your traffic is within its requests-per-minute and tokens-per-minute limits." It's about how fast your traffic grows. As a rule of thumb, once traffic reaches 1 million input tokens per minute, the guide suggests you "increase it by no more than 50% every 15 minutes."</li>
+<li><strong>A 429 on your first request</strong> is unlikely to be a rate limit. It's more likely one of the billing codes, which share the 429 status. Check <code>error.code</code> before you add retries.</li>
+</ul>
+<p>Overload isn't a 429 on OpenAI. The guide lists "503 - Model temporarily overloaded" with code <code>server_is_overloaded</code>, and notes that "Video overload, for example, now returns <code>503</code> where it previously returned <code>429</code>." If your handler only catches rate-limit errors, it may miss this one.</p>
+<p>OpenAI also sends rate-limit headers on responses. The rate limits guide lists these, among others:</p>
+<pre tabindex="0"><code class="language-text">retry-after
+x-ratelimit-limit-requests
+x-ratelimit-remaining-requests
+x-ratelimit-reset-requests
+x-ratelimit-limit-tokens
+x-ratelimit-remaining-tokens
+x-ratelimit-reset-tokens
+</code></pre>
+<p>The same guide warns that <code>Retry-After</code> "does not mean that quota, billing, or other errors that require user action can be resolved by retrying."</p>
+<h2>The Anthropic 429, 529 and the spend-limit 400</h2>
+<p>Anthropic's errors page describes one 429 type that covers several causes:</p>
+<blockquote>
+<p>429 - <code>rate_limit_error</code>: Your organization has hit a rate limit, reached its usage tier's monthly spend cap, or reached a spend limit on the Claude Code workspace. A tier spend-cap 429 has no <code>retry-after</code> header and keeps failing until access resumes</p>
+</blockquote>
+<p>The rate limits page explains how to tell the spend cap apart: on the Messages API, <code>error.details.error_code</code> is <code>enforced_spend_limit_reached</code>. A real rate limit names the limit you hit (requests, input tokens or output tokens per minute), and "When the response has a <code>retry-after</code> header, wait that many seconds before retrying."</p>
+<p>Three more cases are worth handling:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="The Anthropic 429, 529 and the spend-limit 400"><table><caption class="sr-only">The Anthropic 429, 529 and the spend-limit 400</caption>
+<thead>
+<tr>
+<th scope="col">What you see</th>
+<th scope="col">Status and type</th>
+<th scope="col">Retry?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rate limit (RPM, ITPM or OTPM)</td>
+<td>429 <code>rate_limit_error</code></td>
+<td>Yes, with a cap</td>
+</tr>
+<tr>
+<td>Tier spend cap</td>
+<td>429 <code>rate_limit_error</code>, <code>enforced_spend_limit_reached</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td>API overloaded</td>
+<td>529 <code>overloaded_error</code></td>
+<td>Yes, with a cap</td>
+</tr>
+<tr>
+<td>Spend limit you set on the organization or workspace</td>
+<td>400 <code>invalid_request_error</code></td>
+<td>No</td>
+</tr>
+</tbody>
+</table></div>
+<p>The 400 one is easy to miss. The errors page says: "The API also returns a 400 when usage reaches an organization or workspace spend limit you set." It won't show up in a 429 handler at all.</p>
+<p>The errors page also mentions acceleration limits: "if your organization has a sharp increase in usage, you might see 429 errors because of acceleration limits on the API. To avoid hitting acceleration limits, ramp up your traffic gradually and maintain consistent usage patterns."</p>
+<p>Anthropic's rate-limit headers have longer names, for example:</p>
+<pre tabindex="0"><code class="language-text">retry-after
+anthropic-ratelimit-requests-limit
+anthropic-ratelimit-requests-remaining
+anthropic-ratelimit-requests-reset
+anthropic-ratelimit-input-tokens-remaining
+</code></pre>
+<h2>What the SDKs do by default (our mock test)</h2>
+<p>Both SDKs retry for you. The OpenAI SDK README says: "Certain errors will be automatically retried 2 times by default, with a short exponential backoff." It lists "429 Rate Limit, and &gt;=500 Internal errors" among them. Anthropic's errors page says the SDK "automatically retries transient failures (such as connection errors, rate limits, and 5xx server errors) with exponential backoff, twice by default, honoring the <code>retry-after</code> header when present."</p>
+<p>We counted the requests our mock server received. These are the results from our run:</p>
+<ul>
+<li><strong>Every 429 arrived as <code>RateLimitError</code> in both SDKs</strong>, including the credit, quota and spend-limit bodies. The class alone doesn't tell you whether to retry.</li>
+<li><strong>With default settings, the mock received 3 requests for every 429, 503 and 529 body</strong>, including <code>insufficient_quota</code>, <code>credit_balance_exhausted</code>, the spend-limit codes and Anthropic's spend cap. So by default each failed user action can cost three calls that the docs say won't succeed. The Anthropic 400 got 1 request.</li>
+<li><strong>With <code>maxRetries: 0</code>, the mock received exactly 1 request</strong> for every case.</li>
+<li><strong>OpenAI 503 and Anthropic 529 arrived as <code>InternalServerError</code></strong>, not <code>RateLimitError</code>. The Anthropic 400 arrived as <code>BadRequestError</code>.</li>
+<li><strong><code>retry-after: 1</code></strong> produced gaps of about one second in both SDKs.</li>
+<li><strong><code>retry-after: 120</code></strong> was handled differently. <code>openai</code> 7.36.0 retried after about half a second and one second, so it didn't wait the 120 seconds. We didn't check whether that's a deliberate limit in the SDK; either way, don't rely on it to honour long waits. <code>@anthropic-ai/sdk</code> 0.135.0 waited over two minutes before each retry, so the call took about five minutes to fail. In a serverless route, a wait that long may hit your function timeout first.</li>
+<li><strong>Where the code lives differs.</strong> In <code>openai</code>, <code>err.code</code> and <code>err.type</code> were set (for example <code>project_spend_limit_exceeded</code> and <code>insufficient_quota</code>). In <code>@anthropic-ai/sdk</code>, <code>err.code</code> was empty, and the type and details were inside <code>err.error.error</code>.</li>
+</ul>
+<p>Our mock bodies are reconstructions, and real responses can differ. The SDK behaviour above is what the code did with those bodies.</p>
+<h2>One classifier for both SDKs</h2>
+<p>This helper reads both SDKs' errors and returns what to do. It looks at spend and billing codes first, so a billing 429 with one of these codes is never treated as a rate limit. A code added later would be treated as a rate limit and retried within the caps, so check the docs for new codes:</p>
+<pre tabindex="0"><code class="language-ts">// lib/provider-error.ts
+export type ProviderErrorKind =
+  | &quot;rate_limit&quot; | &quot;overloaded&quot; | &quot;quota_or_billing&quot; | &quot;spend_limit&quot; | &quot;other&quot;;
+export type Classified = {
+  kind: ProviderErrorKind; retryable: boolean;
+  retryAfterMs: number | null; code: string | null;
+};
+
+const BILLING = new Set([&quot;insufficient_quota&quot;, &quot;credit_balance_exhausted&quot;,
+  &quot;organization_usage_limit_exceeded&quot;]);
+const SPEND = new Set([&quot;project_spend_limit_exceeded&quot;,
+  &quot;organization_spend_limit_exceeded&quot;, &quot;enforced_spend_limit_reached&quot;]);
+
+type Headersish = { get(name: string): string | null } | undefined;
+const str = (v: unknown) =&gt; (typeof v === &quot;string&quot; ? v : null);
+
+export function parseRetryAfter(h: Headersish, now = Date.now()): number | null {
+  const ms = h?.get(&quot;retry-after-ms&quot;);
+  if (ms &amp;&amp; Number.isFinite(Number(ms))) return Math.max(0, Number(ms));
+  const v = h?.get(&quot;retry-after&quot;);
+  if (!v) return null;
+  const s = Number(v);
+  if (Number.isFinite(s)) return Math.max(0, s * 1000);
+  const d = Date.parse(v); // HTTP-date form
+  return Number.isNaN(d) ? null : Math.max(0, d - now);
+}
+
+export function classifyProviderError(err: unknown): Classified {
+  const e = (err ?? {}) as Record&lt;string, unknown&gt;;
+  const status = typeof e.status === &quot;number&quot; ? e.status : undefined;
+  const h = e.headers instanceof Headers ? e.headers : undefined;
+  const body = (e.error ?? {}) as Record&lt;string, unknown&gt;;
+  const inner = (body.error ?? body) as Record&lt;string, unknown&gt;; // Anthropic nests it
+  const details = (inner.details ?? {}) as Record&lt;string, unknown&gt;;
+  const code = str(details.error_code) ?? str(e.code) ?? str(inner.code);
+  const type = str(e.type) ?? str(inner.type);
+  const retryAfterMs = parseRetryAfter(h);
+  const out = (kind: ProviderErrorKind, retryable: boolean): Classified =&gt;
+    ({ kind, retryable, retryAfterMs: retryable ? retryAfterMs : null, code: code ?? type });
+
+  if (code &amp;&amp; SPEND.has(code)) return out(&quot;spend_limit&quot;, false);
+  if ((code &amp;&amp; BILLING.has(code)) || type === &quot;insufficient_quota&quot;)
+    return out(&quot;quota_or_billing&quot;, false);
+  if (status === 429) return out(&quot;rate_limit&quot;, true);
+  if (status === 529 || status === 503 || type === &quot;overloaded_error&quot;)
+    return out(&quot;overloaded&quot;, true);
+  return out(&quot;other&quot;, false);
+}
+</code></pre>
+<p>The Anthropic spend-limit 400 comes out as <code>other</code>, not retryable. The docs don't give a separate code for it, so we don't guess from the message text.</p>
+<h2>A capped retry that stops on known billing errors</h2>
+<p>Turn the SDK's own retries off with <code>maxRetries: 0</code>, so you don't stack two retry loops, and use one you control. This one caps attempts, caps each wait and the total wait, honours <code>Retry-After</code> inside those caps, and gives up straight away on anything not retryable:</p>
+<pre tabindex="0"><code class="language-ts">// lib/provider-retry.ts
+import { classifyProviderError } from &quot;./provider-error&quot;;
+
+export async function withProviderRetry&lt;T&gt;(
+  fn: () =&gt; Promise&lt;T&gt;,
+  { maxAttempts = 3, maxTotalWaitMs = 20_000, maxSingleWaitMs = 10_000 } = {},
+): Promise&lt;T&gt; {
+  const attempts = Math.min(maxAttempts, 5);
+  let waited = 0;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const c = classifyProviderError(err);
+      if (!c.retryable || attempt &gt;= attempts) throw err;
+      const backoff = 500 * 2 ** (attempt - 1) * (1 - Math.random() * 0.25);
+      const wait = c.retryAfterMs ?? backoff;
+      // A Retry-After longer than our caps means &quot;not now&quot;: fail fast.
+      if (wait &gt; maxSingleWaitMs || waited + wait &gt; maxTotalWaitMs) throw err;
+      waited += wait;
+      await new Promise((r) =&gt; setTimeout(r, wait));
+    }
+  }
+}
+</code></pre>
+<p>In our unit tests, a billing or spend error led to one call and no wait. A rate limit with <code>retry-after: 1</code> led to three calls with two one-second waits. A <code>retry-after: 120</code> failed at once without sleeping, and a 529 with no header backed off at 500 ms and then 1 s.</p>
+<p>Pick the caps to fit your route's timeout. If your platform stops functions after a set time, keep the total wait well under it.</p>
+<h2>Wiring it into a Next.js route</h2>
+<p>The route takes the user id from the auth session, never from the request body, and returns a status your UI can act on:</p>
+<pre tabindex="0"><code class="language-ts">// app/api/chat/route.ts
+import { createHash } from &quot;node:crypto&quot;;
+import OpenAI from &quot;openai&quot;;
+import { createClient } from &quot;@/lib/supabase/server&quot;;
+import { classifyProviderError } from &quot;@/lib/provider-error&quot;;
+import { withProviderRetry } from &quot;@/lib/provider-retry&quot;;
+
+const openai = new OpenAI({ maxRetries: 0 }); // our helper does the retrying
+
+export async function POST(req: Request) {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getClaims();
+  const userId = auth?.claims.sub; // from the verified session only
+  if (!userId) return Response.json({ error: &quot;Sign in first&quot; }, { status: 401 });
+  // OpenAI gets a hash, not the raw id
+  const safetyId = createHash(&quot;sha256&quot;).update(userId).digest(&quot;hex&quot;);
+
+  const { message } = (await req.json()) as { message: string };
+  try {
+    const res = await withProviderRetry(() =&gt;
+      openai.responses.create({
+        model: process.env.OPENAI_MODEL!,
+        input: message,
+        safety_identifier: safetyId,
+      }),
+    );
+    return Response.json({ text: res.output_text });
+  } catch (err) {
+    const c = classifyProviderError(err);
+    console.error(&quot;provider error&quot;, { userId, kind: c.kind, code: c.code });
+    if (c.kind === &quot;rate_limit&quot; || c.kind === &quot;overloaded&quot;) {
+      const secs = Math.ceil((c.retryAfterMs ?? 5_000) / 1000);
+      return Response.json({ error: &quot;Busy, try again shortly&quot; },
+        { status: 503, headers: { &quot;Retry-After&quot;: String(secs) } });
+    }
+    if (c.kind === &quot;quota_or_billing&quot; || c.kind === &quot;spend_limit&quot;) {
+      return Response.json({ error: &quot;AI is unavailable right now&quot; }, { status: 503 });
+    }
+    return Response.json({ error: &quot;Something went wrong&quot; }, { status: 500 });
+  }
+}
+</code></pre>
+<p>A few choices here are deliberate:</p>
+<ul>
+<li><strong>Your users get a 503, not the provider's 429.</strong> A 429 from your route should mean "this user is sending too much". When the provider is the problem, that's a service issue on your side.</li>
+<li><strong>Known billing errors are logged, not retried</strong>, and the message doesn't expose your account state to users. Alert yourself on <code>quota_or_billing</code> and <code>spend_limit</code>.</li>
+<li><strong>OpenAI gets a hash of the user id, not the raw id.</strong> OpenAI suggests hashing the identifier you send, so we pass a SHA-256 hash of the user id as <code>safety_identifier</code>.</li>
+<li><strong>The same pattern works for Anthropic.</strong> Create the Anthropic client with <code>maxRetries: 0</code> and call <code>messages.create</code>. The classifier already reads the nested Anthropic error.</li>
+</ul>
+<h2>Why one user can cause 429s for everyone</h2>
+<p>OpenAI's guide says that "limits are applied per organization and not per user." Anthropic's limits are also set at the organization level. If one signed-in user scripts your chat route, they use up the shared requests and tokens per minute, and every other user starts seeing errors.</p>
+<p>Retries don't help with that. What helps is a limit per user in your own app, keyed on the session user id, so one account can't use up the shared allowance. Our <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user spend limits post</a> walks through a per-user rate limit and a monthly dollar cap in Supabase.</p>
+<h2>Reduce rate-limit pressure with prompt caching</h2>
+<p>On Anthropic, cached reads can take pressure off your input-token limit. The rate limits page says: "For most Claude models, only uncached input tokens count toward your ITPM rate limits." If your prompts share a long prefix, getting caching to work can leave more room under that limit. Our <a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">prompt caching post</a> covers how to check whether requests actually hit the cache.</p>
+<h2>Checklist</h2>
+<ul>
+<li>Read <code>error.code</code> (OpenAI) or the type and <code>details.error_code</code> (Anthropic) before deciding to retry.</li>
+<li>Never retry credit, quota or spend-limit errors. Alert on them.</li>
+<li>Set <code>maxRetries: 0</code> on the SDK if you run your own retry loop, so the two don't stack.</li>
+<li>Cap attempts, each wait and the total wait. Honour <code>Retry-After</code> only within those caps.</li>
+<li>Handle OpenAI 503 and Anthropic 529 as overload, and the Anthropic spend-limit 400 as not retryable.</li>
+<li>Take the user id from the session, and limit each user so one account can't exhaust the organization's limits.</li>
+</ul>
+<h2>Related</h2>
+<ul>
+<li><a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">OpenAI and Anthropic spend limits per user in Next.js</a>: a per-user rate limit and a monthly dollar cap in Supabase.</li>
+<li><a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</a>: how to confirm cache hits and price cached tokens.</li>
+</ul>
+<hr />
+<p><em>Disclosure: this is our own paid product.</em> <a href="/spend-caps-kit?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=e49">Spend Caps Kit</a> ($19 plus VAT where applicable) is copy-paste TypeScript and one Supabase migration for Next.js. It adds per-user rate limits (five presets, on Upstash or a Supabase Postgres counter, returning 429 with <code>Retry-After</code> when a user goes over) and a monthly dollar cap per user, priced from each response's token usage. It doesn't fix provider 429s or classify them; it helps limit how much any one user can consume, so a single account is less likely to use up your shared limits.</p>
+<p><strong>Sources (checked 17 October 2026):</strong></p>
+<ul>
+<li><a href="https://platform.openai.com/docs/guides/error-codes">OpenAI: Error codes</a></li>
+<li><a href="https://platform.openai.com/docs/guides/rate-limits">OpenAI: Rate limits</a></li>
+<li><a href="https://github.com/openai/openai-node#retries">OpenAI Node SDK README (Retries)</a></li>
+<li><a href="https://platform.claude.com/docs/en/api/errors">Anthropic: Errors</a></li>
+<li><a href="https://platform.claude.com/docs/en/api/rate-limits">Anthropic: Rate limits</a></li>
+<li><a href="https://github.com/anthropics/anthropic-sdk-typescript">Anthropic TypeScript SDK</a></li>
+</ul>
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="openai-anthropic-429-rate-limit-error-nextjs">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside><aside class="cta" aria-label="Product"><p class="eyebrow">Spend Caps Kit&nbsp;· <span class="nw">$19 plus VAT where applicable</span></p><h2>Spend Caps Kit</h2><p>Per-user rate limits and AI spend caps for Next.js + Supabase + Stripe</p><a class="btn btn-p" href="/spend-caps-kit?ref=seo-openai-anthropic-429-rate-limit-error-nextjs" data-ev="blog-to-product" data-ev-post="openai-anthropic-429-rate-limit-error-nextjs">See what's in Spend Caps Kit</a></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</a></li><li><a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">OpenAI and Anthropic spend limits per user in Next.js</a></li><li><a href="/blog/chatgpt-pro-200-codex-usage-limits">ChatGPT Pro 200 limits drop after 29 Oct: how to make Codex usage last</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal, or accounting advice. Notion, Cursor, Supabase, Stripe, and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/spend-caps-kit">Spend Caps Kit</a> · <a href="/guardrails">Guardrails Pack</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script></body></html>
