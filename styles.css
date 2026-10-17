@@ -137,7 +137,7 @@ pre{background:var(--color-surface-2);color:var(--color-ink);padding:var(--space
 p code,li code,td code{background:var(--color-brand-soft);color:var(--color-ink);padding:1px 6px;border-radius:var(--radius-sm);font-size:.88em}
 article{padding:var(--space-12) 0}article h1{font-size:clamp(2rem,1.4rem + 2.6vw,3rem)}
 .prose{max-width:var(--container-prose)}.prose>p:not(.eyebrow):first-of-type{font-size:var(--text-lg);color:var(--color-ink-2)}
-.table-wrap{overflow-x:auto;margin:var(--space-4) 0;-webkit-overflow-scrolling:touch}
+.table-wrap{overflow-x:auto;max-width:100%;margin:var(--space-4) 0;-webkit-overflow-scrolling:touch;border:2px solid transparent}.table-wrap:focus-visible{outline:2px solid var(--color-brand);outline-offset:-2px}
 table{border-collapse:separate;border-spacing:0;width:100%;font-size:var(--text-sm)}td,th{border:1px solid var(--color-border);border-width:0 1px 1px 0;padding:10px 12px;text-align:left;vertical-align:top;background:var(--color-surface)}
 tr>:first-child{border-left-width:1px}thead tr:first-child>*,table>tbody:first-child>tr:first-child>*{border-top-width:1px}
 thead th,tr:first-child>th[scope=col]{background:var(--color-surface-2);font:600 var(--text-sm)/1.4 var(--font-sans)}tbody tr:nth-child(even)>td{background:var(--table-row-alt)}

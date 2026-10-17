@@ -49,7 +49,7 @@ expired token      -&gt; &quot;JWT has expired&quot;; 0 requests
 <p>A forged or edited token fails locally, without any network call, once the keys are cached.</p>
 <p>The trade-off: a valid signature only proves Supabase issued the token. It doesn't prove the session is still active. If a user signs out or is banned, an access token they already hold keeps passing <code>getClaims()</code> until it expires. That's why the guidance is <code>getClaims()</code> for reads and pages, and <code>getUser()</code> where you want the Auth server's answer.</p>
 <h2>Which one where in a Next.js App Router app</h2>
-<div class="table-wrap"><table><caption class="sr-only">Which one where in a Next.js App Router app</caption>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Which one where in a Next.js App Router app"><table><caption class="sr-only">Which one where in a Next.js App Router app</caption>
 <thead>
 <tr>
 <th scope="col">Where</th>

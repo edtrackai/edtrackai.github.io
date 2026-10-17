@@ -1,0 +1,42 @@
+# Stack & Ship
+
+> Solo Founder Tools. Tested kits, free tools and guides for Next.js + Supabase + Stripe builders.
+
+## Tools
+
+- [Free Next.js + Supabase + Stripe Security Checker](https://edtrackai.github.io/checker): Free, MIT-licensed security checker for Next.js + Supabase + Stripe apps: 24 checks for leaked keys, RLS, Data API grants and webhooks.
+- [OpenAI and Claude API cost calculator, per user per month](https://edtrackai.github.io/tools/ai-api-cost-calculator): Free OpenAI and Claude API cost calculator: estimate monthly token spend per user, with cached input, and see what a per-user dollar cap would hold.
+
+## Products
+
+- [Launch Audit: Supabase & Stripe Security Audit for Next.js](https://edtrackai.github.io/launch-audit): Run /audit before launch: 28 checks for leaked keys, RLS gaps, auth and Stripe webhooks, verified by an AI auditor with no Edit or Write tools. $12.
+- [Paid MCP Starter: Charge for Your MCP Server with Stripe](https://edtrackai.github.io/paid-mcp-starter): Next.js + Supabase template for a paid MCP server: API keys, free tier, Stripe usage billing, rate limits, usage dashboard. $49 plus VAT where applicable.
+- [Ship It Bundle: AI Rules v2, Launch Audit & Solo Founder OS](https://edtrackai.github.io/ship-it-bundle): Build it safely, audit it before launch, then run the business. AI Rules v2, Launch Audit and Solo Founder OS Pro in one $39 checkout.
+- [Guardrails Pack for Claude Code and Cursor | Stack & Ship](https://edtrackai.github.io/guardrails): Hooks, presets, git guards, and a Claude Code plugin that help stop your AI coding agent leaking secrets or touching production in Next.js + Supabase apps.
+- [Spend Caps Kit: Next.js + Supabase + Stripe | Stack & Ship](https://edtrackai.github.io/spend-caps-kit): Per-user rate limits, a monthly AI spend cap in dollars, and a Stripe checkout guard for Next.js + Supabase. Copy-paste TypeScript, 51 tests, one-off fee.
+- [AI Rules v2: Claude Code Hooks for Next.js + Supabase](https://edtrackai.github.io/ai-rules): 3 guardrail hooks, 18 skills, and 6 subagents that block .env reads, prod migrations, and leaked Stripe keys in Next.js + Supabase + Stripe. $19.
+- [Solo Founder OS: Notion Template for Solo Founders](https://edtrackai.github.io/solo-founder-os): A Notion workspace for solo founders: projects, tasks, revenue with MRR and VAT, expenses, subscriptions and monthly profit per product. Free Lite.
+- [UK Sole Trader Self-Assessment Tracker 2026/27 | Sheets](https://edtrackai.github.io/uk-sole-trader-tracker): Spreadsheet for UK sole traders: income, expenses, mileage, use of home, income tax and Class 4 NI estimates, VAT and MTD threshold watch. 2026/27.
+
+## Blog
+
+- [Supabase getSession vs getUser vs getClaims in Next.js](https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims): Which Supabase auth method to trust on the server in Next.js: getClaims for pages, getUser for writes, and getSession never for authorisation. With code.
+- [Prompt caching not working? OpenAI and Anthropic checks](https://edtrackai.github.io/blog/prompt-caching-not-working-openai-anthropic-nextjs): Prompt caching not working? Check the OpenAI and Anthropic cache usage fields in a Next.js AI SDK route, common causes of misses and cached token pricing.
+- [OpenAI and Anthropic spend limits per user in Next.js](https://edtrackai.github.io/blog/openai-anthropic-spend-limit-per-user-nextjs): OpenAI and Anthropic cap spend per project or workspace, not per user. Add a per-user rate limit and monthly dollar cap in Next.js with Supabase.
+- [Codex usage limits: ChatGPT Pro 200 changes after 29 Oct](https://edtrackai.github.io/blog/chatgpt-pro-200-codex-usage-limits): Grandfathered ChatGPT Pro 200 plans move to a lower Codex allowance after 29 Oct. What OpenAI's help pages say, and documented ways to make usage last.
+- [Supabase RLS policies that pass review but still leak data](https://edtrackai.github.io/blog/supabase-rls-policies-pass-review-leak-data): Two Supabase RLS policy shapes that look secure and still leak: auth.uid() is not null, and free credits keyed on raw emails. SQL to find and fix both.
+- [Supabase Service Role Key Exposed? Check, Rotate, Prevent](https://edtrackai.github.io/blog/supabase-service-role-key-exposed): How a Supabase service role or secret key leaks in Next.js apps, how to check your build and git history, how to rotate it, and how to stop it recurring.
+- [Supabase Permission Denied for Table? Data API Grants Fix](https://edtrackai.github.io/blog/supabase-permission-denied-for-table-data-api-grants): Supabase plans a 30 Oct 2026 change: new public tables need explicit grants for the Data API. SQL checks, fixes and an FAQ.
+- [Subscription Audit for Indie Developers: Cut Tool Spend](https://edtrackai.github.io/blog/subscription-audit-indie-developers): A 20-minute audit to list every tool you pay for, turn yearly plans into monthly costs and never miss a renewal. Notion formulas and a free template.
+- [Stripe Webhook Signature Verification Failed? Next.js Fix](https://edtrackai.github.io/blog/stripe-webhook-signature-verification-failed-nextjs): Fix Stripe's 'No signatures found matching the expected signature for payload' in Next.js App Router: raw body, the right secret, runtime and clock.
+- [Notion Template for Indie Hackers: What to Look For](https://edtrackai.github.io/blog/notion-template-for-indie-hackers): How to choose a Notion template for indie hacking: the databases that matter, the formulas worth having, red flags, and a free option to start with.
+- [Track MRR and Profit per Product in Notion (Free Template)](https://edtrackai.github.io/blog/notion-mrr-profit-tracker): Build a Notion system that calculates MRR and monthly profit for each product with relations, formulas and rollups. Step-by-step, with copy-paste formulas.
+- [Security-Focused Cursor Rules: Next.js + Supabase + Stripe](https://edtrackai.github.io/blog/cursor-rules-nextjs-supabase-stripe): Cursor rules (.mdc) and AGENTS.md guidance for Next.js 16, Supabase RLS and Stripe webhooks, with the mistake each rule prevents. Free sample included.
+- [How to Charge for an MCP Server with Stripe Usage Billing](https://edtrackai.github.io/blog/charge-for-mcp-server-stripe-usage-billing): Bill per tool call on a remote MCP server: API keys, a free quota, Stripe Billing Meters with idempotent meter events, webhooks and rate limits.
+
+## Other
+
+- [Stack & Ship: tested AI coding rules for Next.js + Supabase](https://edtrackai.github.io/): Small, tested kits for indie hackers and solo founders. Start with Cursor rules, AGENTS.md and Claude Code skills for Next.js, Supabase and Stripe.
+- [Blog: secure AI coding, Notion systems & founder finance](https://edtrackai.github.io/blog/): Practical guides for solo developers: securing AI-written Next.js, Supabase and Stripe code, Notion MRR tracking and cutting tool spend.
+- [About Stack & Ship](https://edtrackai.github.io/about): Stack & Ship makes small, tested kits for indie hackers, solo founders and UK sole traders: AI coding rules, a Notion OS and a tax tracker.
+- [Contact Stack & Ship](https://edtrackai.github.io/contact): How to contact Stack & Ship about an order, a product question, a refund or a privacy request.
