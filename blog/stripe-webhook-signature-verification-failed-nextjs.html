@@ -35,7 +35,7 @@ const body = await req.text();
 const event = stripe.webhooks.constructEvent(body, sig, secret);
 </code></pre>
 <p>The Next.js docs show <code>request.text()</code> for webhooks in route handlers and note that, unlike Pages Router API routes, you don't need any <code>bodyParser</code> configuration. If you're still on the Pages Router, Stripe's docs say to disable <code>bodyParser</code> for the route and read the raw buffer instead.</p>
-<p>Anything that rewrites the body before your handler sees it causes the same failure: a custom server using <code>express.json()</code> before the webhook route, a proxy that re-encodes JSON, or a wrapper that "helpfully" parses every request. We cover this bug pattern, and why agents write it, in <a href="/blog/7-security-bugs-ai-agents-write-nextjs-supabase-stripe?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-stripe-webhook-signature-verification-failed-nextjs">7 security bugs AI agents write in Next.js, Supabase and Stripe</a>.</p>
+<p>Anything that rewrites the body before your handler sees it causes the same failure: a custom server using <code>express.json()</code> before the webhook route, a proxy that re-encodes JSON, or a wrapper that "helpfully" parses every request. We cover this bug pattern, and why agents write it, in <a href="https://dev.to/edtrackai/7-security-bugs-ai-agents-write-in-nextjs-supabase-stripe-apps-and-the-rules-that-stop-them-3o64">7 security bugs AI agents write in Next.js, Supabase and Stripe</a>.</p>
 <h2>Cause 2: the wrong signing secret</h2>
 <p>Stripe's troubleshooting page calls this the most common cause. Every endpoint has its own secret, and several situations hand you a different one:</p>
 <ul>

@@ -57,7 +57,7 @@
 <p>A request to a table with no grant fails before RLS is evaluated, with Postgres error code <code>42501</code> and the message "permission denied for table …". Supabase says the Data API response includes a hint naming the missing grant, which is also what lets agents self-correct.</p>
 <p>Two points catch people out:</p>
 <ol>
-<li><strong>The secret key doesn't fix it.</strong> <code>service_role</code> also loses its default grant on new tables. Swapping in the admin client, a tempting "fix" we covered in <a href="/blog/supabase-service-role-key-exposed?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-supabase-permission-denied-for-table-data-api-grants">what to do if your Supabase service role key is exposed</a>, won't help here and adds risk.</li>
+<li><strong>The secret key doesn't fix it.</strong> <code>service_role</code> also loses its default grant on new tables. Swapping in the admin client, a tempting "fix" we covered in <a href="/blog/supabase-service-role-key-exposed">what to do if your Supabase service role key is exposed</a>, won't help here and adds risk.</li>
 <li><strong>It isn't always an RLS problem, and the error code alone won't tell you.</strong> RLS violations also return <code>42501</code>, so read the message: "permission denied for table X" means a missing grant, while "new row violates row-level security policy for table X" means RLS blocked an insert or update. A read that RLS filters out usually returns an empty result rather than an error. Check the message before rewriting policies.</li>
 </ol>
 <h2>Check your project: three SQL queries</h2>
@@ -164,7 +164,7 @@ If the change goes ahead as scheduled, existing tables won't break: they keep th
 <p><strong>I get "permission denied for table" on a new table. Is RLS wrong?</strong>
 Probably not. That message means a missing grant: add the grant the hint names, and keep RLS enabled. <code>42501</code> on its own isn't enough to tell, because RLS violations use the same code with a different message ("new row violates row-level security policy for table …"). That one means a policy problem, not a grant problem.</p>
 <p><strong>Can I just use the service role key?</strong>
-No. <code>service_role</code> needs a grant on new tables too, and using the secret key in app code bypasses RLS. If it has leaked anywhere, read our <a href="/blog/supabase-service-role-key-exposed?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-supabase-permission-denied-for-table-data-api-grants">service role key exposure guide</a>.</p>
+No. <code>service_role</code> needs a grant on new tables too, and using the secret key in app code bypasses RLS. If it has leaked anywhere, read our <a href="/blog/supabase-service-role-key-exposed">service role key exposure guide</a>.</p>
 <p><strong>Does this affect <code>storage</code>, <code>auth</code> or custom schemas?</strong>
 No. Only default privileges in <code>public</code> change.</p>
 <p><strong>Does it affect sequences and functions?</strong>

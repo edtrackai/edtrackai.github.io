@@ -26,7 +26,7 @@ create policy &quot;read own subscriptions&quot; on public.subscriptions
 </code></pre>
 <p><strong>Rule:</strong> <em>Every table in <code>public</code> has RLS enabled. Never write <code>using (true)</code>. If a query returns no rows, fix the policy — never switch keys.</em></p>
 <h2>2. "Fixing" an empty result with the service-role key</h2>
-<p>The second half of bug #1. When RLS correctly returns nothing, agents often swap in the secret/service-role key, which bypasses RLS completely. Keep two clearly named clients and make the dangerous one obvious. (If that key has already reached a client bundle or a repo, see <a href="/blog/supabase-service-role-key-exposed?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-7-security-bugs-ai-agents-write-nextjs-supabase-stripe">Supabase service role key exposed? How to check, rotate and stop it happening again</a>.)</p>
+<p>The second half of bug #1. When RLS correctly returns nothing, agents often swap in the secret/service-role key, which bypasses RLS completely. Keep two clearly named clients and make the dangerous one obvious. (If that key has already reached a client bundle or a repo, see <a href="/blog/supabase-service-role-key-exposed">Supabase service role key exposed? How to check, rotate and stop it happening again</a>.)</p>
 <p>The pattern:</p>
 <pre tabindex="0"><code class="language-ts">/** Per-request client acting as the signed-in user. RLS applies. */
 export async function createUserClient() { /* createServerClient(url, PUBLISHABLE_KEY, { cookies }) */ }
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
 </code></pre>
 <p><strong>Rule:</strong> <em>Webhook handlers read <code>request.text()</code> and verify the signature before touching the payload.</em></p>
 <h2>5. Non-idempotent webhooks</h2>
-<p>Stripe retries deliveries and can send events more than once. (The same rule applies if you bill per use: see how to make usage reporting retry-safe in <a href="/blog/charge-for-mcp-server-stripe-usage-billing?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-7-security-bugs-ai-agents-write-nextjs-supabase-stripe">How to charge for an MCP server with Stripe usage billing</a>.) Record each event id with a primary key and bail on duplicates:</p>
+<p>Stripe retries deliveries and can send events more than once. (The same rule applies if you bill per use: see how to make usage reporting retry-safe in <a href="/blog/charge-for-mcp-server-stripe-usage-billing">How to charge for an MCP server with Stripe usage billing</a>.) Record each event id with a primary key and bail on duplicates:</p>
 <pre tabindex="0"><code class="language-sql">create table public.stripe_events (
   id text primary key,
   type text not null,

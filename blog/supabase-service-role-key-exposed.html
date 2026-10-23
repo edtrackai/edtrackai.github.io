@@ -95,7 +95,7 @@ git ls-files | grep -E &quot;(^|/)\.env&quot;
 - A new table without an explicit <code>grant</code> is invisible to the Data API (REST, GraphQL and <code>supabase-js</code>). Requests fail with error <code>42501</code> "permission denied for table", and the response includes a hint naming the missing grant.
 - <strong>That includes the secret key.</strong> <code>service_role</code> loses its default grant on new tables too, so "switch to the admin client" won't fix a 42501. The right fix is a minimal <code>grant</code> in the same migration that enables RLS.
 - <strong>RLS behaviour doesn't change</strong>, and direct Postgres connections (psql, an ORM, a connection string) aren't affected.</p>
-<p>For SQL to check your project, the migration fix and an FAQ, see <a href="/blog/supabase-permission-denied-for-table-data-api-grants?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-supabase-service-role-key-exposed">Supabase "permission denied for table" after 30 October: the Data API grants change</a>.</p>
+<p>For SQL to check your project, the migration fix and an FAQ, see <a href="/blog/supabase-permission-denied-for-table-data-api-grants">Supabase "permission denied for table" after 30 October: the Data API grants change</a>.</p>
 <h2>Prevent it: the server-only pattern</h2>
 <p>The fix is structural: make it impossible for the admin client to reach the browser.</p>
 <pre tabindex="0"><code class="language-ts">// lib/supabase/admin.ts
