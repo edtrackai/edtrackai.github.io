@@ -9,7 +9,7 @@
 
 ## Products
 
-- [Launch Audit: Supabase & Stripe Security Audit for Next.js](https://edtrackai.github.io/launch-audit): Run /audit before launch: 28 checks for leaked keys, RLS gaps, auth and Stripe webhooks, verified by an AI auditor with no Edit or Write tools. $12.
+- [Launch Audit: Supabase & Stripe Security Audit for Next.js](https://edtrackai.github.io/launch-audit): Run /audit before launch: 28 checks for leaked keys, RLS gaps, auth and Stripe webhooks, verified by an AI auditor with no Edit or Write tools.
 - [Paid MCP Starter: Charge for Your MCP Server with Stripe](https://edtrackai.github.io/paid-mcp-starter): Next.js + Supabase template for a paid MCP server: API keys, free tier, Stripe usage billing, rate limits, usage dashboard. $49 plus VAT where applicable.
 - [Ship It Bundle: AI Rules v2, Launch Audit & Solo Founder OS](https://edtrackai.github.io/ship-it-bundle): Build it carefully, audit it before launch, then run the business. AI Rules v2, Launch Audit and Solo Founder OS Pro in one $39 checkout.
 - [Guardrails Pack for Claude Code and Cursor | Stack & Ship](https://edtrackai.github.io/guardrails): Hooks, presets, git guards, and a Claude Code plugin that help stop your AI coding agent leaking secrets or touching production in Next.js + Supabase apps.
