@@ -18,7 +18,7 @@
 <li>A model that isn't in the table is refused, not counted as $0.</li>
 <li>Each call reserves its estimated cost first, so parallel calls can't all slip under the cap at once.</li></ul>
 <p><b>Checkout guard (<code>lib/checkout-guard.ts</code>).</b> For the same user and cart within 10 minutes, it hands back the open Stripe Checkout Session instead of creating another. It adds idempotency keys and a per-user limit, and dedupes webhooks on <code>event.id</code> with a pending/completed status.</p>
-<p><b>SQL (<code>sql/001_spend_caps_kit.sql</code>).</b> Four tables with RLS on, and two <code>security definer</code> functions with a pinned <code>search_path</code> that only your server's service role can call.</p>
+<p><b><span class="nw">SQL (</span><code>sql/001_spend_caps_kit.sql</code>).</b> Four tables with RLS on, and two <code>security definer</code> functions with a pinned <code>search_path</code> that only your server's service role can call.</p>
 <h2>Also in the zip</h2><ul class="check">
 <li>Example wiring: <code>proxy.ts</code> (Next 16) or <code>middleware.ts</code>, an AI route, a checkout route, a webhook route, and a checkout button that disables itself.</li>
 <li>A backstop checklist for provider-side limits in OpenAI, Anthropic, Vercel, Supabase, and Upstash, each marked "verify in your dashboard".</li>
