@@ -48,7 +48,7 @@ Net this month = if(
 <p>Each product page now shows what it cost you this month.</p>
 
 <h2>Step 4: Pull recurring tools from Subscriptions (monthly equivalent of yearly plans)</h2>
-<p>Recurring tools are easier to manage in their own database, because you care about the renewal date as much as the amount. Create <b>Subscriptions</b> with <code>Cost</code>, a <code>Billing</code> select (Monthly, Yearly), a <code>Status</code> select (Active, Cancelled), <code>Next renewal</code>, and a <code>Product</code> relation. Then normalise every plan to a monthly figure:</p>
+<p>Recurring tools are easier to manage in their own database, because you care about the renewal date as much as the amount. <a href="/blog/notion-subscription-tracker-template">Our Notion subscription tracker guide</a> covers renewal dates, trials, and a keep-or-cancel review in full; here's the short version that feeds your expense totals. Create <b>Subscriptions</b> with <code>Cost</code>, a <code>Billing</code> select (Monthly, Yearly), a <code>Status</code> select (Active, Cancelled), <code>Next renewal</code>, and a <code>Product</code> relation. Then normalise every plan to a monthly figure:</p>
 <pre tabindex="0"><code>Cost per month = if(prop("Status") == "Cancelled", 0,
   if(prop("Billing") == "Yearly", round(prop("Cost") / 12 * 100) / 100, prop("Cost")))</code></pre>
 <p>On Products, add one more rollup, <code>Tool costs / month</code> ← Subscriptions → Cost per month (Sum), and a formula that adds both:</p>
