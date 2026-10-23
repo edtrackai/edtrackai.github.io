@@ -21,7 +21,7 @@
 
 ## Blog
 
-- [Notion Expense Tracker for Solo Founders (Free Template)](https://edtrackai.github.io/blog/notion-expense-tracker-template): Build a Notion business expense tracker that tags each cost to a product, splits out VAT and recurring tools, and totals the month. Free step-by-step build inside.
+- [Notion Expense Tracker for Solo Founders (Free Template)](https://edtrackai.github.io/blog/notion-expense-tracker-template): Build a Notion expense tracker that tags each cost to a product, splits out VAT and recurring tools, and totals the month. Free step-by-step build inside.
 - [Better Auth + Polar in Next.js with Drizzle (Guide)](https://edtrackai.github.io/blog/better-auth-polar-nextjs-drizzle): Wire the Better Auth Polar plugin into a Next.js app with Drizzle: schema, checkout, customer portal, webhooks and gating paid routes, with working code.
 - [Supabase getSession vs getUser vs getClaims in Next.js](https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims): Which Supabase auth method to trust on the server in Next.js: getClaims for pages, getUser for writes, and getSession never for authorisation. With code.
 - [Prompt caching not working? OpenAI and Anthropic checks](https://edtrackai.github.io/blog/prompt-caching-not-working-openai-anthropic-nextjs): Prompt caching not working? Check the OpenAI and Anthropic cache usage fields in a Next.js AI SDK route, common causes of misses and cached token pricing.
