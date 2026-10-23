@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://edtrackai.github.io/blog/notion-expense-tracker-template</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/better-auth-polar-nextjs-drizzle</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/prompt-caching-not-working-openai-anthropic-nextjs</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/openai-anthropic-spend-limit-per-user-nextjs</loc><lastmod>2026-10-18</lastmod></url>
@@ -28,7 +30,7 @@
   <url><loc>https://edtrackai.github.io/spend-caps-kit</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://edtrackai.github.io/stack-pack</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/ai-rules</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/solo-founder-os</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://edtrackai.github.io/solo-founder-os</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/uk-sole-trader-tracker</loc><lastmod>2026-10-14</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/about</loc><lastmod>2026-10-14</lastmod></url>

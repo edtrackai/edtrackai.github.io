@@ -1,0 +1,319 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Better Auth + Polar in Next.js with Drizzle (Guide)</title><meta name="description" content="Wire the Better Auth Polar plugin into a Next.js app with Drizzle: schema, checkout, customer portal, webhooks and gating paid routes, with working code."><link rel="canonical" href="https://edtrackai.github.io/blog/better-auth-polar-nextjs-drizzle"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Better Auth + Polar in Next.js with Drizzle (Guide)"><meta property="og:description" content="Wire the Better Auth Polar plugin into a Next.js app with Drizzle: schema, checkout, customer portal, webhooks and gating paid routes, with working code."><meta property="og:image" content="https://edtrackai.github.io/visuals/stack-pack-8/v1.0.1/og-1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Better Auth + Polar in Next.js with Drizzle (Guide): Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/stack-pack-8/v1.0.1/og-1200x630.png"><meta property="og:url" content="https://edtrackai.github.io/blog/better-auth-polar-nextjs-drizzle"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Better Auth + Polar in Next.js with Drizzle (Guide)", "description": "Wire the Better Auth Polar plugin into a Next.js app with Drizzle: schema, checkout, customer portal, webhooks and gating paid routes, with working code.", "datePublished": "2026-10-23", "dateModified": "2026-10-23", "image": "https://edtrackai.github.io/visuals/stack-pack-8/v1.0.1/og-1200x630.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/better-auth-polar-nextjs-drizzle"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "Better Auth + Polar in Next.js with Drizzle (Guide)", "item": "https://edtrackai.github.io/blog/better-auth-polar-nextjs-drizzle"}]}</script><meta property="article:published_time" content="2026-10-23"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/spend-caps-kit" data-ev="cta-click" data-ev-cta="nav">Spend Caps Kit</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Better Auth + Polar in Next.js with Drizzle (Gui…</li></ol></nav>
+<p class="eyebrow">Next.js · Better Auth · Polar · <time datetime="2026-10-23">2026-10-23</time></p><h1 class="h1-long">Better Auth + Polar in Next.js with Drizzle (Guide)</h1><p>If you'd rather have your AI agent follow these patterns for you, the <a href="/stack-pack">Stack Pack</a> has Cursor rules, skills, and Claude Code hooks for exactly this stack: $15 (plus VAT where applicable).</p><p>This guide pairs with <a href="/ai-rules?ref=seo-better-auth-polar-nextjs-drizzle" data-ev="blog-to-product" data-ev-post="better-auth-polar-nextjs-drizzle">Ship-Ready AI Rules</a>, and if you want the next step, read <a href="/blog/notion-expense-tracker-template">Notion Expense Tracker for Solo Founders (Free Template)</a>.</p>
+<p>This guide wires the <b>Better Auth Polar plugin</b> (<code>@polar-sh/better-auth</code>) into a Next.js 16 App Router app that uses Drizzle on Postgres. By the end you'll have sign-up that creates a Polar customer, a checkout button, a customer portal, verified webhooks that write access into your own table, and paid routes that check that table on the server.</p>
+<p><b>What we checked.</b> Every API below was checked against the Better Auth and Polar docs on 23 Oct 2026 (links at the end). The server code type-checks with TypeScript 7.0.2 against better-auth 1.7.12, @better-auth/drizzle-adapter 1.7.12, @polar-sh/better-auth 2.1.0, @polar-sh/sdk 1.0.2, drizzle-orm 0.45.4, drizzle-kit 0.31.11, and next 16.4.2, and <code>drizzle-kit generate</code> produced a migration from the schema. We didn't run it against a live Polar account or a hosted database. Versions move quickly, so check the docs before you copy.</p>
+
+<h2>What you're building (auth, checkout, portal, webhooks, gated routes)</h2>
+<ul><li><b>Auth:</b> Better Auth with email and password, stored in Postgres through the Drizzle adapter.</li><li><b>Checkout:</b> <code>authClient.checkout({ slug: "pro" })</code> sends the signed-in user to Polar checkout.</li><li><b>Portal:</b> <code>authClient.customer.portal()</code> lets them manage billing.</li><li><b>Webhooks:</b> Polar tells your server when a customer's state changes, and you write that into an <code>entitlement</code> table.</li><li><b>Gating:</b> paid pages and route handlers read <code>entitlement</code> on the server, never client state.</li></ul>
+<p>Polar's Better Auth adapter page says the plugin needs Better Auth 1.7 or later and Node.js 22 or later. As of 23 Oct 2026, <code>@polar-sh/better-auth</code> 2.1.0 itself declares Node 24 or later in its package metadata, so plan for Node 24.</p>
+
+<h2>Install and configure Better Auth with the Drizzle adapter</h2>
+<pre tabindex="0"><code>npm install better-auth @better-auth/drizzle-adapter @polar-sh/better-auth @polar-sh/sdk zod drizzle-orm postgres
+npm install -D drizzle-kit</code></pre>
+<p>The Drizzle adapter now ships as its own package, <code>@better-auth/drizzle-adapter</code>. Better Auth 1.7.12 also still exports <code>better-auth/adapters/drizzle</code>; we use the package the current docs show. Polar's install command also includes <code>zod</code>, so we install it here too.</p>
+<p>Your Drizzle client:</p>
+<pre tabindex="0"><code>// db/index.ts
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "./schema";
+
+const client = postgres(process.env.DATABASE_URL!);
+export const db = drizzle(client, { schema });</code></pre>
+
+<h3>Generating the Better Auth Drizzle schema</h3>
+<p>Better Auth's CLI reads your auth config (next section) and writes the tables it needs (<code>user</code>, <code>session</code>, <code>account</code>, <code>verification</code>) as a Drizzle schema:</p>
+<pre tabindex="0"><code>npx auth@latest generate --config lib/auth.ts --output db/auth-schema.ts</code></pre>
+<p>Run it again whenever you add a Better Auth plugin that needs its own tables. Next to it, add the table that records who has paid:</p>
+<pre tabindex="0"><code>// db/entitlements.ts
+import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { user } from "./auth-schema";
+
+export const entitlement = pgTable("entitlement", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() =&gt; user.id, { onDelete: "cascade" }),
+  plan: text("plan").notNull(), // "free" | "pro"
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// db/schema.ts
+export * from "./auth-schema";
+export * from "./entitlements";</code></pre>
+
+<h3>Running migrations</h3>
+<pre tabindex="0"><code>// drizzle.config.ts
+import { defineConfig } from "drizzle-kit";
+
+export default defineConfig({
+  dialect: "postgresql",
+  schema: "./db/schema.ts",
+  out: "./drizzle",
+  dbCredentials: { url: process.env.DATABASE_URL! },
+});</code></pre>
+<pre tabindex="0"><code>npx drizzle-kit generate   # writes a SQL migration to ./drizzle
+npx drizzle-kit migrate    # applies it</code></pre>
+<p>Commit the migration files. <code>drizzle-kit push</code> skips the migration file, which is fine for a throwaway local database but makes production changes hard to review.</p>
+
+<h2>Add the Polar plugin</h2>
+<p>Create an Organization Access Token in your Polar organization settings and add <code>POLAR_ACCESS_TOKEN</code> to <code>.env.local</code>, plus <code>POLAR_WEBHOOK_SECRET</code> and your Pro product's ID. Sandbox and production are separate: tokens and products from one don't work in the other.</p>
+<pre tabindex="0"><code>// lib/auth.ts
+import { betterAuth } from "better-auth";
+import { nextCookies } from "better-auth/next-js";
+import { drizzleAdapter } from "@better-auth/drizzle-adapter";
+import { polar, checkout, portal, webhooks } from "@polar-sh/better-auth";
+import { createPolarCore } from "@polar-sh/sdk/2026-10";
+import { db } from "@/db";
+import * as schema from "@/db/schema";
+import { syncEntitlement } from "@/lib/entitlements";
+
+const polarClient = createPolarCore({
+  accessToken: process.env.POLAR_ACCESS_TOKEN!,
+  // "sandbox" while testing; tokens and products don't carry across environments
+  environment: process.env.POLAR_ENV === "production" ? "production" : "sandbox",
+});
+
+export const auth = betterAuth({
+  database: drizzleAdapter(db, { provider: "pg", schema }),
+  emailAndPassword: { enabled: true },
+  plugins: [
+    polar({
+      client: polarClient,
+      createCustomerOnSignUp: true, // Polar customer external_id = your user id
+      use: [
+        checkout({
+          products: [{ productId: process.env.POLAR_PRO_PRODUCT_ID!, slug: "pro" }],
+          successUrl: "/dashboard?checkout_id={CHECKOUT_ID}",
+          authenticatedUsersOnly: true,
+        }),
+        portal(),
+        webhooks({
+          secret: process.env.POLAR_WEBHOOK_SECRET!,
+          onCustomerStateChanged: async (payload) =&gt; {
+            await syncEntitlement(payload.data);
+          },
+        }),
+      ],
+    }),
+    nextCookies(), // keep this last
+  ],
+});</code></pre>
+<p>Three details here are easy to get wrong:</p>
+<ul><li><b>The Polar client.</b> Polar's docs create it with <code>createPolarCore</code> from <code>@polar-sh/sdk/2026-10</code>. Some older examples (including, on 23 Oct 2026, the Polar page on better-auth.com) still use <code>new Polar()</code> from <code>@polar-sh/sdk</code>, which the 1.0.2 SDK no longer exports from its root.</li><li><b><code>createCustomerOnSignUp: true</code></b> creates a Polar customer whose external ID is your Better Auth user ID, so you don't need a mapping table.</li><li><b><code>nextCookies()</code> goes last</b> in the plugins array, so Server Actions that sign users in can set cookies.</li></ul>
+<p>Mount the handler:</p>
+<pre tabindex="0"><code>// app/api/auth/[...all]/route.ts
+import { auth } from "@/lib/auth";
+import { toNextJsHandler } from "better-auth/next-js";
+
+export const { GET, POST } = toNextJsHandler(auth);</code></pre>
+
+<h3>Checkout</h3>
+<p>Add the client plugin, then call <code>checkout</code> from a button in a client component:</p>
+<pre tabindex="0"><code>// lib/auth-client.ts
+import { createAuthClient } from "better-auth/react";
+import { polarClient } from "@polar-sh/better-auth/client";
+
+export const authClient = createAuthClient({
+  plugins: [polarClient()],
+});
+
+// In a client component:
+export const upgrade = () =&gt; authClient.checkout({ slug: "pro" });
+export const manageBilling = () =&gt; authClient.customer.portal();</code></pre>
+<p>With <code>authenticatedUsersOnly: true</code>, signed-out users can't start a checkout, and the signed-in user is attached as the customer. The <code>{CHECKOUT_ID}</code> placeholder in <code>successUrl</code> is filled in by Polar. Don't grant access on the success page: anyone can visit that URL. Access comes from the webhook.</p>
+<p class="fine">Type-check note: with TypeScript 5.9.3 and 6.0.3, the <code>polarClient()</code> line in this file reported a type error against these package versions; TypeScript 7.0.2 passed with no errors. The server files passed on all three.</p>
+
+<h3>Customer portal</h3>
+<p><code>portal()</code> on the server adds <code>authClient.customer.portal()</code>, which redirects to Polar's customer portal for orders, subscriptions, and benefits. It also adds <code>authClient.customer.state()</code> and list methods for benefits, orders, and subscriptions. Those are handy for showing billing details in your UI, but for access decisions use your own table, filled from webhooks.</p>
+
+<h3>Usage and benefits (brief)</h3>
+<p>Polar's <code>usage()</code> plugin adds event ingestion and customer meters for usage-based billing. Polar's docs recommend ingesting billable events from your server, with <code>external_customer_id: session.user.id</code>, rather than from the browser, because the client endpoint trusts whatever the client sends. If you only sell a plan, you can leave <code>usage()</code> out.</p>
+
+<h2>Polar webhooks: verify, then sync state into your DB</h2>
+<p>With the <code>webhooks()</code> plugin in the config above, Better Auth serves the endpoint at <code>/api/auth/polar/webhooks</code> (the default base path plus <code>/polar/webhooks</code>). Add that URL as a webhook endpoint in your Polar organization settings and copy its secret into <code>POLAR_WEBHOOK_SECRET</code>.</p>
+<p>Per Polar's docs, the plugin checks the <code>webhook-id</code>, <code>webhook-timestamp</code>, and <code>webhook-signature</code> headers before calling any handler. A missing or invalid signature returns 403, a malformed payload returns 400, and if your handler throws, the request fails so Polar retries. Payloads use the SDK's snake_case field names.</p>
+<p>The <code>onCustomerStateChanged</code> handler receives the customer's full state, including <code>external_id</code> and <code>active_subscriptions</code>, so you can write the whole answer each time:</p>
+<pre tabindex="0"><code>// lib/entitlements.ts
+import { db } from "@/db";
+import { entitlement } from "@/db/schema";
+
+const PRO_PRODUCT_ID = process.env.POLAR_PRO_PRODUCT_ID!;
+
+type CustomerState = {
+  external_id?: string | null;
+  active_subscriptions: { product_id: string }[];
+};
+
+export async function syncEntitlement(state: CustomerState) {
+  const userId = state.external_id;
+  if (!userId) return; // not one of our users
+
+  const plan = state.active_subscriptions.some((s) =&gt; s.product_id === PRO_PRODUCT_ID)
+    ? "pro"
+    : "free";
+
+  await db
+    .insert(entitlement)
+    .values({ userId, plan })
+    .onConflictDoUpdate({
+      target: entitlement.userId,
+      set: { plan, updatedAt: new Date() },
+    });
+}</code></pre>
+<p>Because it's an upsert of the current state, receiving the same event twice is designed to leave the same row behind.</p>
+<p><b>Prefer a separate route?</b> You can skip the <code>webhooks()</code> plugin and verify in your own route handler with the SDK's <code>validateEvent</code>. Read the raw body with <code>request.text()</code> and verify before you parse anything:</p>
+<pre tabindex="0"><code>// app/api/webhooks/polar/route.ts
+import { webhooks } from "@polar-sh/sdk/2026-10";
+
+export async function POST(request: Request) {
+  const body = await request.text(); // raw body: verify before parsing
+  let event;
+  try {
+    event = await webhooks.validateEvent(
+      body,
+      {
+        "webhook-id": request.headers.get("webhook-id") ?? "",
+        "webhook-timestamp": request.headers.get("webhook-timestamp") ?? "",
+        "webhook-signature": request.headers.get("webhook-signature") ?? "",
+      },
+      process.env.POLAR_WEBHOOK_SECRET!,
+    );
+  } catch (error) {
+    if (error instanceof webhooks.PolarWebhookVerificationError) {
+      return new Response(null, { status: 403 });
+    }
+    if (error instanceof webhooks.PolarWebhookUnknownTypeError) {
+      return new Response(null, { status: 202 }); // newer event type: acknowledge
+    }
+    throw error;
+  }
+
+  // dedupe on the webhook-id header, then update your tables
+  console.log(event.type);
+  return new Response(null, { status: 202 });
+}</code></pre>
+<p>Polar retries failed deliveries and disables an endpoint after 10 consecutive failures, and it treats redirects as failures. So make sure the webhook path isn't caught by an auth redirect, and return quickly. For the Stripe version of the same problem, see <a href="/blog/stripe-webhook-signature-verification-failed-nextjs">why Stripe webhook signature verification fails in Next.js</a>.</p>
+
+<h2>Gate paid routes in Next.js (server components, route handlers, middleware)</h2>
+<p>Check the session and the entitlement on the server, in one helper:</p>
+<pre tabindex="0"><code>// lib/require-pro.ts
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { db } from "@/db";
+import { entitlement } from "@/db/schema";
+
+export async function requirePro() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/sign-in");
+
+  const row = await db.query.entitlement.findFirst({
+    where: eq(entitlement.userId, session.user.id),
+  });
+  if (row?.plan !== "pro") redirect("/pricing");
+
+  return session;
+}</code></pre>
+<p>In a server component:</p>
+<pre tabindex="0"><code>// app/dashboard/page.tsx
+import { requirePro } from "@/lib/require-pro";
+
+export default async function DashboardPage() {
+  const session = await requirePro();
+  return &lt;h1&gt;Welcome, {session.user.name}&lt;/h1&gt;;
+}</code></pre>
+<p>In a route handler, return a status instead of redirecting:</p>
+<pre tabindex="0"><code>// app/api/export/route.ts
+import { headers } from "next/headers";
+import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { db } from "@/db";
+import { entitlement } from "@/db/schema";
+
+export async function GET() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return new Response(null, { status: 401 });
+
+  const row = await db.query.entitlement.findFirst({
+    where: eq(entitlement.userId, session.user.id),
+  });
+  if (row?.plan !== "pro") return new Response(null, { status: 403 });
+
+  return Response.json({ ok: true });
+}</code></pre>
+<p>In Next.js 16, middleware is now <code>proxy.ts</code>. Better Auth's docs recommend using it only for an optimistic redirect based on the session cookie, and doing the real check in each page or route:</p>
+<pre tabindex="0"><code>// proxy.ts
+import { NextRequest, NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
+
+export async function proxy(request: NextRequest) {
+  // Optimistic redirect only. The real check is requirePro() on the server.
+  if (!getSessionCookie(request)) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
+  }
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/dashboard/:path*"], // never match /api/auth/polar/webhooks
+};</code></pre>
+<p><code>getSessionCookie</code> only checks that a cookie exists. It doesn't validate it, so it's never the access check on its own.</p>
+
+<h2>Common mistakes AI agents make with this stack</h2>
+<ul><li><b>Trusting client state.</b> Granting access because the success page loaded, or because <code>authClient.customer.state()</code> said so in the browser. Gate on your server-side <code>entitlement</code> row.</li><li><b>Skipping webhook verification.</b> Parsing <code>request.json()</code> first, or "temporarily" disabling the signature check to make a test pass. Verify the raw body, then parse.</li><li><b>Leaking secrets to the client.</b> Importing <code>lib/auth.ts</code> or the database into a client component, or renaming <code>POLAR_ACCESS_TOKEN</code> to <code>NEXT_PUBLIC_</code> to "fix" an undefined value.</li><li><b>Stale APIs.</b> <code>new Polar()</code> from the SDK root, or <code>middleware.ts</code> examples copied into a Next.js 16 app.</li><li><b>Pushing schema to production.</b> Running <code>drizzle-kit push</code> against a shared database instead of committing a migration.</li></ul>
+<p>For more on this pattern, see <a href="/blog/cursor-rules-nextjs-supabase-stripe">our security-focused Cursor rules for Next.js, Supabase, and Stripe</a>.</p>
+
+<h2>Keep your AI agent on these patterns</h2>
+<div class="cta"><b>Stack Pack: Next.js + Drizzle + Better Auth + Polar</b> is a rules pack, not a boilerplate. It adds 6 Cursor rules, 6 skills, and 3 Claude Code hooks to your own app, designed to keep your agent on current APIs and away from mistakes like the ones above. It also includes a 20-check launch script that runs offline (pattern matching, so it can miss issues). Version 1.0.1 has 247 automated tests and was written against better-auth 1.7.12. <a data-ev="buy-click" data-ev-product="stack-pack" data-ev-position="blog-end" data-ev-post="better-auth-polar-nextjs-drizzle" href="https://luxurydrive0.gumroad.com/l/stack-pack-nextjs?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-better-auth-polar-nextjs-drizzle">Get the Stack Pack: $15 (plus VAT where applicable)</a> or <a href="/stack-pack">see what's inside</a>.<br><em>Disclosure: this is our own paid product.</em></div>
+<p>Using a different stack? <a href="/ai-rules">Ship-Ready AI Rules</a> covers Next.js, Supabase, and Stripe, and <a href="/guardrails">Guardrails</a> focuses on keeping coding agents away from destructive commands.</p>
+
+<h2>FAQ</h2>
+<h3>Does Better Auth support Polar?</h3><p>Yes, through the <code>@polar-sh/better-auth</code> plugin, which Polar maintains. It adds checkout, a customer portal, usage billing, and webhook handling to Better Auth.</p>
+<h3>How do I handle Polar webhooks with Better Auth?</h3><p>Add the <code>webhooks()</code> plugin with your <code>POLAR_WEBHOOK_SECRET</code> and point Polar at <code>/api/auth/polar/webhooks</code>. The plugin verifies signatures before your handlers run. Or verify in your own route with <code>validateEvent</code> from <code>@polar-sh/sdk/2026-10</code>.</p>
+<h3>Which Drizzle schema does Better Auth need?</h3><p>The core tables are <code>user</code>, <code>session</code>, <code>account</code>, and <code>verification</code>. Let <code>npx auth@latest generate</code> write them from your config instead of typing them by hand, then create a migration with <code>drizzle-kit generate</code>.</p>
+<h3>Can I use Polar with Next.js App Router?</h3><p>Yes. Mount Better Auth with <code>toNextJsHandler</code> in <code>app/api/auth/[...all]/route.ts</code>. Polar also publishes a separate <code>@polar-sh/nextjs</code> adapter if you aren't using Better Auth.</p>
+<h3>Polar or Stripe for an indie SaaS?</h3><p>It depends on your situation. Polar describes itself as a merchant of record for developers. Compare how each one handles sales tax, current fees, and supported countries on both sites before you choose.</p>
+
+<h2>Sources</h2>
+<p class="fine">Checked 23 Oct 2026: better-auth.com/docs/plugins/polar, better-auth.com/docs/adapters/drizzle, better-auth.com/docs/integrations/next, polar.sh/docs/integrate/sdk/adapters/better-auth, polar.sh/docs/integrate/webhooks/delivery. Package versions from the npm registry on the same day.</p>
+
+<p class="fine">Cursor is a trademark of Anysphere, Inc. Claude and Claude Code are trademarks of Anthropic. Next.js and Vercel are trademarks of Vercel, Inc. Codex is a trademark of OpenAI. GitHub Copilot is a trademark of GitHub, Inc. Postgres and PostgreSQL are registered trademarks of the PostgreSQL Community Association of Canada. Better Auth, Polar, Drizzle, Stripe, Supabase, and other product names belong to their respective owners. They are used here only to identify those products. We aren't affiliated with, sponsored by, or endorsed by any of them.</p>
+
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="better-auth-polar-nextjs-drizzle">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside><aside class="cta" aria-label="Product"><p class="eyebrow">AI Rules · Next.js + Supabase + Stripe</p><h2>Ship-Ready AI Rules</h2><p>3 guardrail hooks, 18 Claude Code skills, and 6 subagents, plus Cursor rules and AGENTS.md, for Next.js, Supabase, and Stripe.</p><a class="btn btn-p" href="/ai-rules?ref=seo-better-auth-polar-nextjs-drizzle" data-ev="blog-to-product" data-ev-post="better-auth-polar-nextjs-drizzle">See what's in Ship-Ready AI Rules</a></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/notion-expense-tracker-template">Notion Expense Tracker for Solo Founders (Free Template)</a></li><li><a href="/blog/supabase-getsession-vs-getuser-vs-getclaims">Supabase getSession vs getUser vs getClaims: which to use where</a></li><li><a href="/blog/prompt-caching-not-working-openai-anthropic-nextjs">Prompt caching not working? Check it in OpenAI and Anthropic (Next.js)</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal, or accounting advice. Notion, Cursor, Supabase, Stripe, and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/spend-caps-kit">Spend Caps Kit</a> · <a href="/guardrails">Guardrails Pack</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script></body></html>
