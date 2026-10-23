@@ -272,7 +272,6 @@ export const config = {
 <ul><li><b>Trusting client state.</b> Granting access because the success page loaded, or because <code>authClient.customer.state()</code> said so in the browser. Gate on your server-side <code>entitlement</code> row.</li><li><b>Skipping webhook verification.</b> Parsing <code>request.json()</code> first, or "temporarily" disabling the signature check to make a test pass. Verify the raw body, then parse.</li><li><b>Leaking secrets to the client.</b> Importing <code>lib/auth.ts</code> or the database into a client component, or renaming <code>POLAR_ACCESS_TOKEN</code> to <code>NEXT_PUBLIC_</code> to "fix" an undefined value.</li><li><b>Stale APIs.</b> <code>new Polar()</code> from the SDK root, or <code>middleware.ts</code> examples copied into a Next.js 16 app.</li><li><b>Pushing schema to production.</b> Running <code>drizzle-kit push</code> against a shared database instead of committing a migration.</li></ul>
 <p>For more on this pattern, see <a href="/blog/cursor-rules-nextjs-supabase-stripe">our security-focused Cursor rules for Next.js, Supabase, and Stripe</a>.</p>
 
-<h2>Keep your AI agent on these patterns</h2>
 <p>Using a different stack? <a href="/ai-rules">Ship-Ready AI Rules</a> covers Next.js, Supabase, and Stripe, and <a href="/guardrails">Guardrails</a> focuses on keeping coding agents away from destructive commands.</p>
 
 <h2>FAQ</h2>
