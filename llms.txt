@@ -21,6 +21,8 @@
 
 ## Blog
 
+- [How to Track Subscriptions in Notion (Free Template)](https://edtrackai.github.io/blog/notion-subscription-tracker-template): Build a Notion subscription tracker that shows each tool's monthly cost, days to renewal, and a renewing-soon flag, so renewals don't catch you out. Free template.
+- [Notion Income Tracker for Solo Founders (Free Build Guide)](https://edtrackai.github.io/blog/notion-income-tracker-template): Build a Notion income tracker that logs every sale by source and product, nets out fees and refunds, and totals each month. Copy-paste formulas, free build guide.
 - [Notion Expense Tracker for Solo Founders (Free Template)](https://edtrackai.github.io/blog/notion-expense-tracker-template): Build a Notion expense tracker that tags each cost to a product, splits out VAT and recurring tools, and totals the month. Free step-by-step build inside.
 - [Better Auth + Polar in Next.js with Drizzle (Guide)](https://edtrackai.github.io/blog/better-auth-polar-nextjs-drizzle): Wire the Better Auth Polar plugin into a Next.js app with Drizzle: schema, checkout, customer portal, webhooks and gating paid routes, with working code.
 - [Supabase getSession vs getUser vs getClaims in Next.js](https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims): Which Supabase auth method to trust on the server in Next.js: getClaims for pages, getUser for writes, and getSession never for authorisation. With code.
