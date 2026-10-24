@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://edtrackai.github.io/blog/supabase-data-api-changes-30-oct-production</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/npm-min-release-age-exclude-security-patch</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/litellm-1-107-0-compromised-what-to-do</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/codex-windows-helper-unknown-error</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/codex-stream-disconnected-before-completion</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/codex-selected-model-is-at-capacity</loc><lastmod>2026-10-24</lastmod></url>
@@ -19,12 +20,12 @@
   <url><loc>https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/prompt-caching-not-working-openai-anthropic-nextjs</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/openai-anthropic-spend-limit-per-user-nextjs</loc><lastmod>2026-10-18</lastmod></url>
-  <url><loc>https://edtrackai.github.io/blog/openai-anthropic-count-tokens-api-nextjs</loc><lastmod>2026-10-17</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/openai-anthropic-count-tokens-api-nextjs</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/openai-anthropic-429-rate-limit-error-nextjs</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/cursor-usage-limits-reset-weekly-pool</loc><lastmod>2026-10-17</lastmod></url>
-  <url><loc>https://edtrackai.github.io/blog/codex-credits-cost-usage-limit-resets</loc><lastmod>2026-10-17</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/codex-credits-cost-usage-limit-resets</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/claude-temperature-deprecated-400-nextjs</loc><lastmod>2026-10-24</lastmod></url>
-  <url><loc>https://edtrackai.github.io/blog/claude-code-reduce-token-usage-limits</loc><lastmod>2026-10-17</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/claude-code-reduce-token-usage-limits</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/claude-code-monthly-spend-limit-usage-credits</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/chatgpt-pro-200-codex-usage-limits</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/supabase-rls-policies-pass-review-leak-data</loc><lastmod>2026-10-16</lastmod></url>
