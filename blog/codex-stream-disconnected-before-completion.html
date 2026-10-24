@@ -47,7 +47,7 @@
 <pre tabindex="0"><code>Error running remote compact task: stream disconnected before completion: stream closed before response.completed</code></pre>
 <p>That reporter had just switched models in an existing chat. If you see this, try compacting again, or start a new chat with a short handoff note (goal, what's done, what's next, files touched).</p>
 
-<h2>Keep long <code>codex exec</code> runs alive</h2>
+<h2>Keep long <code class="nb">codex exec</code> runs alive</h2>
 <p>For long or unattended runs, keep each step small and committed, so a dropped stream costs you one step, not the whole job. When a session stops, resume it with <code>codex resume</code> rather than starting fresh.</p>
 
 <h2>When to file an issue</h2>
