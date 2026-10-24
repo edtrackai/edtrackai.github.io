@@ -1,0 +1,125 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GitHub Copilot hooks not working? Port them to the harness</title><meta name="description" content="VS Code hooks stopped running in the Copilot harness? Move them to a Copilot hook source, switch to the version: 1 format and rewrite the script."><link rel="canonical" href="https://edtrackai.github.io/blog/github-copilot-hooks-not-working-copilot-harness"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="GitHub Copilot hooks not working? Port them to the harness"><meta property="og:description" content="VS Code hooks stopped running in the Copilot harness? Move them to a Copilot hook source, switch to the version: 1 format and rewrite the script."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/github-copilot-hooks-not-working-copilot-harness.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="GitHub Copilot hooks not working? Port them to the harness: Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/github-copilot-hooks-not-working-copilot-harness.png"><meta property="og:url" content="https://edtrackai.github.io/blog/github-copilot-hooks-not-working-copilot-harness"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/Inter-400.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/Inter-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "GitHub Copilot hooks not working? Port them to the harness", "description": "VS Code hooks stopped running in the Copilot harness? Move them to a Copilot hook source, switch to the version: 1 format and rewrite the script.", "datePublished": "2026-10-24", "dateModified": "2026-10-24", "image": "https://edtrackai.github.io/visuals/og/github-copilot-hooks-not-working-copilot-harness.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/github-copilot-hooks-not-working-copilot-harness"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "GitHub Copilot hooks not working? Port them to the harness", "item": "https://edtrackai.github.io/blog/github-copilot-hooks-not-working-copilot-harness"}]}</script><meta property="article:published_time" content="2026-10-24"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/spend-caps-kit" data-ev="cta-click" data-ev-cta="nav">Spend Caps Kit</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">GitHub Copilot hooks not working? Port them to t…</li></ol></nav>
+<p class="eyebrow">AI coding tools · Copilot · <time datetime="2026-10-24">2026-10-24</time></p><h1 class="h1-long">GitHub Copilot hooks not working? Port them to the harness</h1><p>Your VS Code chat hooks used to run, and now a new chat on the Copilot harness skips them, or the hook file loads but nothing happens. As of October 2026, VS Code's <a href="https://code.visualstudio.com/docs/agent-customization/migrate-customizations">migration guide</a> says "there is no automatic hook migration", so hooks written for the older Local harness have to be moved and rewritten by hand. This guide covers the checks the guide and two user reports point to.</p><p>If you want the next step, read <a href="/blog/vscode-copilot-skills-not-working-agent-host">VS Code Copilot skills not working? Fix personal skills</a>.</p>
+<h2>Quick fix</h2>
+<ul>
+<li><strong>Check where the hook lives.</strong> The Copilot harness reads <code>.github/hooks/*.json</code>, <code>~/.copilot/hooks/</code> and inline hooks in <code>.github/copilot/settings.json</code>, <code>~/.copilot/settings.json</code> and the repository's <code>.claude/settings.json</code>. It doesn't read <code>~/.claude/settings.json</code> or <code>chat.hookFilesLocations</code>.</li>
+<li><strong>Use the Copilot format:</strong> a standalone file with <code>version: 1</code>, camelCase events such as <code>preToolUse</code>, and <code>bash</code> or <code>powershell</code> commands.</li>
+<li><strong>Rewrite the script, not just the JSON.</strong> Tool input arrives as <code>toolName</code> and <code>toolArgs</code>, and decisions go in a top-level <code>permissionDecision</code>.</li>
+</ul>
+<h2>Step 1: move the hook to a source the Copilot harness reads</h2>
+<p>The migration guide lists the sources the Copilot harness reads: repository hook files in <code>.github/hooks/*.json</code>, user hook files under <code>~/.copilot/hooks/</code> (or <code>%USERPROFILE%\.copilot\hooks\</code> on Windows, or <code>$COPILOT_HOME/hooks/</code> when <code>COPILOT_HOME</code> is set), and inline <code>hooks</code> maps in <code>.github/copilot/settings.json</code>, <code>.github/copilot/settings.local.json</code>, the repository's <code>.claude/settings.json</code> and <code>.claude/settings.local.json</code>, and <code>~/.copilot/settings.json</code>.</p>
+<p>It also warns: "Do not assume a Local hook in <code>~/.claude/settings.json</code> is discovered by Copilot", and says <code>chat.hookFilesLocations</code> "does not configure Copilot discovery". The settings <code>chat.useHooks</code>, <code>chat.useClaudeHooks</code> and <code>chat.hookFilesLocations</code> don't carry over either, so the guide notes that "a previously ignored file can become active without being moved".</p>
+<p>Before you change anything, the guide says to back up the original configuration and scripts, and to stage untested files with a <code>.json.disabled</code> suffix so they aren't discovered yet. Don't run the original and converted hook together.</p>
+<h2>Step 2: switch to the Copilot hook format</h2>
+<p>Per the migration guide, the Copilot harness uses a standalone JSON file with <code>version: 1</code>, or an inline <code>hooks</code> map in a supported settings file. Events change name, for example:</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Step 2: switch to the Copilot hook format"><table><caption class="sr-only">Step 2: switch to the Copilot hook format</caption>
+<thead>
+<tr>
+<th scope="col">Local event</th>
+<th scope="col">Copilot event</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SessionStart</code></td>
+<td><code>sessionStart</code></td>
+</tr>
+<tr>
+<td><code>UserPromptSubmit</code></td>
+<td><code>userPromptSubmitted</code></td>
+</tr>
+<tr>
+<td><code>PreToolUse</code></td>
+<td><code>preToolUse</code></td>
+</tr>
+<tr>
+<td><code>PostToolUse</code></td>
+<td><code>postToolUse</code></td>
+</tr>
+<tr>
+<td><code>Stop</code></td>
+<td><code>agentStop</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>For commands, the guide says standalone command hooks "document <code>command</code> as a fallback and <code>bash</code> or <code>powershell</code> as platform commands". On timeouts, Copilot "prefers <code>timeoutSec</code> over its <code>timeout</code> alias", so set only one.</p>
+<p>As of October 2026, two user reports in open VS Code issues match this:</p>
+<ul>
+<li>In <a href="https://github.com/microsoft/vscode/issues/342664">#342664</a> (19 Oct 2026), one user reports that a <code>SessionStart</code> hook using the VS Code-style <code>windows</code> field didn't run in the Copilot harness, and that it ran after replacing <code>windows</code> with <code>powershell</code>.</li>
+<li>In <a href="https://github.com/microsoft/vscode/issues/343595">#343595</a> (22 Oct 2026), one user reports that VS Code's JSON validation underlines <code>version: 1</code> hooks that only set <code>command</code>, while <code>bash</code> passes. The reporter says live execution wasn't tested, so this may be a validation warning only. One other user commented on the issue.</li>
+</ul>
+<pre tabindex="0"><code class="language-json">{
+  &quot;version&quot;: 1,
+  &quot;hooks&quot;: {
+    &quot;preToolUse&quot;: [
+      {
+        &quot;type&quot;: &quot;command&quot;,
+        &quot;bash&quot;: &quot;node .github/hooks/guard.cjs&quot;,
+        &quot;powershell&quot;: &quot;node .github/hooks/guard.cjs&quot;,
+        &quot;timeoutSec&quot;: 10
+      }
+    ]
+  }
+}
+</code></pre>
+<h2>Step 3: rewrite what the script reads and returns</h2>
+<p>The guide says "copying a file or changing an event name alone does not verify a migration". It lists these changes for camelCase events:</p>
+<ul>
+<li><strong>Tool input:</strong> <code>tool_name</code> and <code>tool_input</code> become <code>toolName</code> and <code>toolArgs</code>. Tool names aren't a one-to-one match, so inspect the real arguments.</li>
+<li><strong>Tool result:</strong> <code>postToolUse</code> receives <code>toolResult</code> instead of <code>tool_response</code>.</li>
+<li><strong>Decisions:</strong> use top-level <code>permissionDecision</code>, <code>permissionDecisionReason</code> and <code>modifiedArgs</code> instead of <code>hookSpecificOutput</code>. Return <code>{}</code> when there is no decision, rather than <code>allow</code>.</li>
+<li><strong>Exit codes:</strong> the guide says GitHub documents <code>preToolUse</code> errors and nonzero exits as denying the tool, but timeouts as continuing through normal permissions. Test each event's error path.</li>
+</ul>
+<h2>Plugin hooks that load but never run</h2>
+<p>As of October 2026, in <a href="https://github.com/microsoft/vscode/issues/342924">#342924</a> (20 Oct 2026), one user reports that an agent plugin's hooks are listed as loaded in the Copilot harness but don't execute, while they work in the Local harness. The issue is still open. The migration guide says to update a plugin's source package or get an updated version from its publisher, and "Do not patch an installation cache".</p>
+<p>If your skills stopped loading too, see <a href="/blog/vscode-copilot-skills-not-working-agent-host">Copilot skills not working in VS Code</a>.</p>
+<h2>Port your hooks with the kit</h2>
+<p><em>Disclosure: this is our own paid product.</em> The <a href="https://luxurydrive0.gumroad.com/l/gpxixr?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-github-copilot-hooks-not-working-copilot-harness" data-ev="buy-click" data-ev-product="copilot-harness-port-kit" data-ev-position="blog" data-ev-post="github-copilot-hooks-not-working-copilot-harness">Copilot Harness Port Kit</a> is designed to help you keep chat on Local, move personal skills to folders the Copilot harness reads, and port your hooks. Its hook config converter turns a Local or Claude-style <code>hooks</code> map into the Copilot <code>version: 1</code> format (event renames, <code>timeoutSec</code>, flattened matcher groups), saves the result as a staged <code>.json.disabled</code> file and warns about what still needs a human, such as matchers and the hook script itself. It also has a dual-format guard template that reads both <code>tool_name</code>/<code>tool_input</code> and <code>toolName</code>/<code>toolArgs</code> and fails closed on bad input. Its 62 automated tests ran against local fixtures and temporary folders, not a live Copilot session or VS Code install, and the hook converter and guard are backed only by fixture tests. It needs Node.js 20 or later. It costs $12 (plus VAT where applicable).</p>
+<h2>Sources</h2>
+<p>As of October 2026 (sources checked 24 Oct 2026):</p>
+<ul>
+<li>VS Code docs, migrate customizations to the Copilot harness: https://code.visualstudio.com/docs/agent-customization/migrate-customizations</li>
+<li>GitHub issue #342664, Copilot harness does not respect existing hooks: https://github.com/microsoft/vscode/issues/342664</li>
+<li>GitHub issue #343595, hook JSON validation rejects command-only hooks: https://github.com/microsoft/vscode/issues/343595</li>
+<li>GitHub issue #342924, agent plugin hooks don't run in the Copilot harness: https://github.com/microsoft/vscode/issues/342924</li>
+</ul>
+<p>GitHub, GitHub Copilot, Visual Studio Code (VS Code), Microsoft, Claude Code, Anthropic and other names belong to their owners. Names are used only to identify products and compatibility. Stack &amp; Ship is not affiliated with or endorsed by any of them.</p>
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="github-copilot-hooks-not-working-copilot-harness">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/vscode-copilot-skills-not-working-agent-host">VS Code Copilot skills not working? Fix personal skills</a></li><li><a href="/blog/codex-vscode-extension-not-working-could-not-start">Codex VS Code extension not working? Roll back and pin it</a></li><li><a href="/blog/claude-code-anthropic-base-url-not-working-gateway">Claude Code ANTHROPIC_BASE_URL not working? Gateway fixes</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal, or accounting advice. Notion, Cursor, Supabase, Stripe, and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/spend-caps-kit">Spend Caps Kit</a> · <a href="/guardrails">Guardrails Pack</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function bf(){var a=navigator.userAgent||'';return /googlebot/i.test(a)?'googlebot':/bingbot/i.test(a)?'bingbot':/bot|crawl|spider|slurp/i.test(a)?'other-bot':/Edg(e|A|iOS)?[/]/.test(a)?'edge':/Firefox[/]|FxiOS/.test(a)?'firefox':/Chrome[/]|CriOS/.test(a)?'chrome':/Safari[/]/.test(a)?'safari':'other'}
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s,b:bf()}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script><script>(function(){var W=document.querySelectorAll('.table-wrap[aria-label]');if(!W.length)return;W.forEach(function(w){w.setAttribute('data-tw-l',w.getAttribute('aria-label'))});function f(){W.forEach(function(w){if(w.scrollWidth>w.clientWidth+1){w.setAttribute('tabindex','0');w.setAttribute('role','region');w.setAttribute('aria-label',w.getAttribute('data-tw-l'))}else{if(document.activeElement===w)w.blur();w.removeAttribute('tabindex');w.removeAttribute('role');w.removeAttribute('aria-label')}})}f();addEventListener('load',f);var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(f,100)})})();</script></body></html>
