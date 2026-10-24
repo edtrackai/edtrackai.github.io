@@ -1,0 +1,175 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anthropic API 2026-10-21 broke my code: the fixes</title><meta name="description" content="Upgraded the Anthropic SDK and got 400s on temperature or auth errors at your proxy? What API version 2026-10-21 changed, and how to fix or pin it."><link rel="canonical" href="https://edtrackai.github.io/blog/anthropic-api-version-2026-10-21-migration"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Anthropic API 2026-10-21 broke my code: the fixes"><meta property="og:description" content="Upgraded the Anthropic SDK and got 400s on temperature or auth errors at your proxy? What API version 2026-10-21 changed, and how to fix or pin it."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/anthropic-api-version-2026-10-21-migration.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Anthropic API 2026-10-21 broke my code: the fixes: Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/anthropic-api-version-2026-10-21-migration.png"><meta property="og:url" content="https://edtrackai.github.io/blog/anthropic-api-version-2026-10-21-migration"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/Inter-400.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/Inter-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Anthropic API 2026-10-21 broke my code: the fixes", "description": "Upgraded the Anthropic SDK and got 400s on temperature or auth errors at your proxy? What API version 2026-10-21 changed, and how to fix or pin it.", "datePublished": "2026-10-24", "dateModified": "2026-10-24", "image": "https://edtrackai.github.io/visuals/og/anthropic-api-version-2026-10-21-migration.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/anthropic-api-version-2026-10-21-migration"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "Anthropic API 2026-10-21 broke my code: the fixes", "item": "https://edtrackai.github.io/blog/anthropic-api-version-2026-10-21-migration"}]}</script><meta property="article:published_time" content="2026-10-24"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/spend-caps-kit" data-ev="cta-click" data-ev-cta="nav">Spend Caps Kit</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Anthropic API 2026-10-21 broke my code: the fixe…</li></ol></nav>
+<p class="eyebrow">Claude API · fixes · <time datetime="2026-10-24">2026-10-24</time></p><h1 class="h1-long">Anthropic API 2026-10-21 broke my code: the fixes</h1><p>You ran <code>pip install -U anthropic</code> or bumped <code>@anthropic-ai/sdk</code>, and now requests fail with a 400 about sampling parameters, or your proxy or gateway starts rejecting them. The likely cause is API version <code>2026-10-21</code>, which the new SDK major versions send by default. This post covers the two breaks we expect most people to hit first: <code>temperature</code>, <code>top_p</code>, and <code>top_k</code>, and API keys moving from <code>X-Api-Key</code> to <code>Authorization: Bearer</code>.</p><p>If you want the next step, read <a href="/blog/claude-temperature-deprecated-400-nextjs">Claude ‘temperature is deprecated for this model’: the 400 error and the fix in Next.js</a>.</p>
+<p><strong>What we did and didn't test.</strong> We don't have an Anthropic API key and made no live API calls, so we haven't seen these errors ourselves. Everything about what the API and SDKs do is quoted from Anthropic's docs and changelog as of 24 Oct 2026 (listed in Sources), plus public GitHub issues where noted. Anthropic does not print the 400 response body for the sampling change, so we don't show one. Check the docs before you rely on a detail here.</p>
+<h2>Quick fix: what to do right now</h2>
+<h3>1. Remove <code>temperature</code>, <code>top_p</code>, and <code>top_k</code></h3>
+<p>Anthropic's <a href="https://platform.claude.com/docs/en/api/migration-2026-10-21">migration guide</a> says: "In <code>2026-10-21</code>, a request that sends <code>temperature</code>, <code>top_p</code>, or <code>top_k</code> returns a 400 error, even at the parameter's default value." Its instruction is: "Remove the three parameters from your requests."</p>
+<p>For the model-level rules on <code>2023-06-01</code>, and a Next.js helper that removes these parameters, see our <a href="/blog/claude-temperature-deprecated-400-nextjs">temperature 400 fix</a>.</p>
+<h3>2. Make your proxy read <code>Authorization</code>, or send <code>X-Api-Key</code> yourself</h3>
+<p>The guide says: "The SDK and the CLI send your API key as <code>Authorization: Bearer</code> instead of in the <code>X-Api-Key</code> header, so change any proxy or gateway that reads or sets <code>X-Api-Key</code> to use <code>Authorization</code>, or send the key in <code>X-Api-Key</code> yourself." It also says: "The Claude API accepts a key in either header."</p>
+<h3>3. Or stay on the old version until you’re ready</h3>
+<p>The guide says: "If you use an SDK, your requests use the API version that was current when your SDK's major version was released." So pinning your SDK below the new major keeps your requests on <code>2023-06-01</code>. For the sampling parameters in particular, the guide says that if a request relies on a non-default value, "either stop sending the parameter, or keep that request on <code>2023-06-01</code>."</p>
+<h2>How to tell which version you’re on</h2>
+<p>The <a href="https://platform.claude.com/docs/en/release-notes/overview">21 Oct 2026 release notes</a> list the first versions that send <code>2026-10-21</code> by default: "Python SDK 2.0.0, TypeScript SDK 1.0.0, C# SDK 13.0.0, Go SDK 2.0.0, Java SDK 3.0.0, PHP SDK 1.0.0, Ruby SDK 2.0.0, and <code>ant</code> CLI 2.0.0."</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="How to tell which version you&#x27;re on"><table><caption class="sr-only">How to tell which version you're on</caption>
+<thead>
+<tr>
+<th scope="col">SDK</th>
+<th scope="col">First version on <code>2026-10-21</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python (<code>anthropic</code>)</td>
+<td>2.0.0</td>
+</tr>
+<tr>
+<td>TypeScript (<code>@anthropic-ai/sdk</code>)</td>
+<td>1.0.0</td>
+</tr>
+<tr>
+<td>C# (<code>Anthropic</code>)</td>
+<td>13.0.0</td>
+</tr>
+<tr>
+<td>Go (<code>anthropic-sdk-go/v2</code>)</td>
+<td>2.0.0</td>
+</tr>
+<tr>
+<td>Java (<code>anthropic-java</code>)</td>
+<td>3.0.0</td>
+</tr>
+<tr>
+<td>PHP (<code>anthropic-ai/sdk</code>)</td>
+<td>1.0.0</td>
+</tr>
+<tr>
+<td>Ruby (<code>anthropic</code>)</td>
+<td>2.0.0</td>
+</tr>
+<tr>
+<td><code>ant</code> CLI</td>
+<td>2.0.0</td>
+</tr>
+</tbody>
+</table></div>
+<p>If you call the API without an SDK, you choose the version yourself with the <code>anthropic-version</code> header. The guide's cURL example sends <code>anthropic-version: 2026-10-21</code>.</p>
+<p>If your dependency range is unpinned, such as <code>"*"</code> or <code>latest</code>, a fresh install can pull the new major. Check your lockfile for the version you actually have.</p>
+<h2>Sampling parameters: why even <code>temperature: 1</code> now fails</h2>
+<p>On <code>2023-06-01</code>, newer models already rejected non-default values but accepted the defaults. On <code>2026-10-21</code> the rule moves from the model to the API version. The <a href="https://platform.claude.com/docs/en/api/versioning">versioning page</a> says: "The <code>temperature</code>, <code>top_p</code>, and <code>top_k</code> request parameters are removed. A request that sends any of them returns a 400 error on every model."</p>
+<p>The guide also says: "As of the latest major versions, the SDK and the CLI no longer have the three parameters." So code that still sets them may also fail type checks after the upgrade.</p>
+<p>If you lowered <code>temperature</code> for steadier output on an older model, the guide is clear about what you lose: "On models that accept other values, such as Claude Sonnet 4.6, a request that lowered <code>temperature</code> for more consistent output loses that effect. No other setting replaces it. If a request relies on a non-default value, either stop sending the parameter, or keep that request on <code>2023-06-01</code>."</p>
+<h2><code>Authorization: Bearer</code> and proxies, gateways, and middleware</h2>
+<h3>What breaks</h3>
+<p>Anything that expects the key in <code>X-Api-Key</code>. The guide lists the places to check: "Also change code in your own program that reads <code>X-Api-Key</code>, such as middleware, a log filter, or a test stub."</p>
+<p>One public example: the <a href="https://github.com/AI-Safety-Institute/portunus/issues/215">Portunus issue #215</a> (opened 24 Oct 2026) reports that a proxy configured to read <code>x-api-key</code> "rejects clients on <code>anthropic</code> 2.x". What your users see depends on your proxy, so the error text varies. Searches for "anthropic invalid x api key" suggest some people may see an invalid key message.</p>
+<h3>Fix in the proxy</h3>
+<p>If you control the proxy, have it read the key from <code>Authorization</code> (stripping the <code>Bearer</code> prefix). If you have clients on both old and new SDKs, it may need to accept either header for a while.</p>
+<h3>Fix in the client</h3>
+<p>These snippets are from the migration guide. We haven't run them against the API.</p>
+<p>TypeScript: "Set the header yourself. <code>Authorization: null</code> stops the key from going out there as well:"</p>
+<pre tabindex="0"><code class="language-ts">const client = new Anthropic({
+  apiKey,
+  defaultHeaders: { &quot;X-Api-Key&quot;: apiKey, Authorization: null }
+});
+</code></pre>
+<p>Python: "Move the key back with an <code>auth</code> function on the HTTP client. It runs on every request the client sends, including retries:"</p>
+<pre tabindex="0"><code class="language-python">import httpx2
+from anthropic import Anthropic, DefaultHttpxClient
+
+def send_x_api_key(request: httpx2.Request) -&gt; httpx2.Request:
+    if request.headers.get(&quot;Authorization&quot;) == f&quot;Bearer {api_key}&quot;:
+        del request.headers[&quot;Authorization&quot;]
+        request.headers[&quot;X-Api-Key&quot;] = api_key
+    return request
+
+client = Anthropic(api_key=api_key, http_client=DefaultHttpxClient(auth=send_x_api_key))
+</code></pre>
+<p>The guide has the equivalent for C#, Go, Java, PHP, and Ruby. For the <code>ant</code> CLI it says: "<code>ant</code> has no flag or environment variable for adding a header of your own, so it can't send <code>X-Api-Key</code>." There, the proxy has to change.</p>
+<h3>Foundry and Bedrock</h3>
+<p>Not every client moved. For TypeScript, the guide says "<code>apiKey</code> in <code>@anthropic-ai/foundry-sdk</code> still goes out as <code>X-Api-Key</code>", and for Python, "<code>AnthropicFoundry</code> still sends its key as <code>x-api-key</code>".</p>
+<p>On Bedrock, the guide says: "On Amazon Bedrock, <code>2026-10-21</code> is available only for Claude 4.7 and later models." An open issue, <a href="https://github.com/anthropics/anthropic-sdk-python/issues/2031">anthropic-sdk-python #2031</a>, reports this 400 from <code>AnthropicBedrock</code> 2.x on older models such as Claude Sonnet 4.5:</p>
+<pre tabindex="0"><code class="language-text">anthropic.BadRequestError: Error code: 400 - {'message': 'Invalid API version: 2026-10-21'}
+</code></pre>
+<p>The reporter's workaround is to pass <code>extra_body={"anthropic_version": "bedrock-2023-05-31"}</code>. That's a user report, not official guidance, so check the issue for updates first.</p>
+<h2>One credential per client</h2>
+<p>The guide says: "An API key and an authentication token now share a header, so an SDK client holds one credential." Passing both now fails: in Python, two credentials "raise <code>ValueError</code>", and in TypeScript they "throw a <code>TypeError</code>". In PHP the documented message is:</p>
+<pre tabindex="0"><code class="language-text">Pass at most one of `apiKey`, `authToken`, or `credentials`. Received `apiKey`, `authToken`.
+</code></pre>
+<p>If both environment variables are set and you pass none in code, PHP and Ruby print this warning:</p>
+<pre tabindex="0"><code class="language-text">Anthropic: ANTHROPIC_API_KEY and ANTHROPIC_AUTH_TOKEN are both set. Using ANTHROPIC_API_KEY.
+</code></pre>
+<p>If you sent a gateway token and an API key together, the guide's pattern is to keep the token as the auth token and set <code>X-Api-Key</code> in the default headers, then: "Have the gateway remove its <code>Authorization</code> header before it forwards the request. The Claude API expects one credential for each request."</p>
+<h2>Other breaks you may hit</h2>
+<p>The guide lists more. A few that are easy to miss:</p>
+<ul>
+<li><strong><code>MessageParam</code> in Python.</strong> "Calling either name now raises a <code>TypeError</code>". Write messages as dicts instead.</li>
+<li><strong>Document blocks in assistant messages.</strong> "a request that places a <code>document</code> block directly in an <code>assistant</code> message returns a 400 error."</li>
+<li><strong>Citations in user messages.</strong> "a request that sends a <code>text</code> block with a non-empty <code>citations</code> array in a <code>user</code> message returns a 400 error."</li>
+<li><strong><code>ant --api-key</code>.</strong> The flag is removed. "A command that still passes one stops with <code>flag provided but not defined</code>."</li>
+</ul>
+<h2>Checklist before you upgrade</h2>
+<ul>
+<li>Pin your SDK major version in your lockfile until you've tested.</li>
+<li>Search your code for <code>temperature</code>, <code>top_p</code>, and <code>top_k</code>, and for <code>X-Api-Key</code> in proxies, middleware, log filters, and test stubs.</li>
+<li>Check that each client is given one credential.</li>
+<li>The guide says: "Test your integration against <code>2026-10-21</code> before you release." Run your CI against the new version too.</li>
+</ul>
+<p>Anthropic's release notes also mention a free Claude API skill for Claude Code. Check its docs to see whether it covers this upgrade for you.</p>
+<h2>FAQ</h2>
+<p><strong>Is <code>2023-06-01</code> going away?</strong> The versioning page still lists it, and the guide tells you to keep a request on it if you rely on a non-default <code>temperature</code>. We found no retirement date for it in the pages we checked on 24 Oct 2026.</p>
+<p><strong>Why does <code>temperature: 1</code> return a 400 now?</strong> On <code>2026-10-21</code> the parameter is removed, so sending it at any value is rejected, "even at the parameter's default value."</p>
+<p><strong>Can I keep using a custom <code>temperature</code>?</strong> Only by keeping that request on <code>2023-06-01</code>, per the guide, and only on models that accept other values.</p>
+<p><strong>Does the Claude API still accept <code>x-api-key</code>?</strong> Yes. The guide says: "The Claude API accepts a key in either header." What changed is what the SDKs send.</p>
+<p><strong>Why did my proxy start rejecting requests after an SDK upgrade?</strong> It probably reads <code>X-Api-Key</code>, and the new SDK sends the key in <code>Authorization: Bearer</code>. Change the proxy or set the header yourself, as above.</p>
+<p><strong>Can I set both an API key and an auth token?</strong> Not on one client in the new majors. Pick one, or use the gateway pattern above.</p>
+<p>For other Claude API errors, see our <a href="/blog/openai-anthropic-429-rate-limit-error-nextjs">429 rate limit error guide</a>.</p>
+<hr />
+<aside class="cta" aria-label="Product"><p class="fine"><em>Disclosure: this is our own paid product.</em></p><p class="eyebrow">Claude API 2026-10-21 Upgrade Kit · code and proxy checks</p><h2>Find what else 2026-10-21 touches in your code</h2><p>The fixes above cover the two breaks we expect most people to hit first. To check the rest of your codebase, this kit has a scanner designed to flag code and proxy settings that break on API version 2026-10-21, such as <code>temperature</code>, <code>top_p</code> or <code>top_k</code> in requests and a proxy that only reads <code>X-Api-Key</code>. Each finding links to Anthropic's migration guide. You run it locally or in a GitHub Actions step, and it comes with proxy snippets for the switch to <code>Authorization: Bearer</code> and a rules block designed to help stop coding agents re-adding removed parameters. It doesn't rewrite your code or call the API, and being pattern-based, it can miss requests built dynamically.</p><p class="price">$9 (plus VAT where applicable)</p><a class="btn btn-p" href="https://luxurydrive0.gumroad.com/l/ydirlg" data-ev="buy-click" data-ev-product="claude-api-upgrade-kit" data-ev-post="anthropic-api-version-2026-10-21-migration">See what's in the Claude API 2026-10-21 Upgrade Kit</a><p class="meta">Anthropic and Claude are trademarks of Anthropic. GitHub is a trademark of GitHub, Inc. Other names belong to their owners. Names are used only to identify products and compatibility. Stack &amp; Ship is not affiliated with or endorsed by any of them.</p></aside>
+<p><strong>Sources (checked 24 October 2026):</strong></p>
+<ul>
+<li><a href="https://platform.claude.com/docs/en/api/migration-2026-10-21">Anthropic: Migrating to API version 2026-10-21</a></li>
+<li><a href="https://platform.claude.com/docs/en/api/versioning">Anthropic: API versions</a></li>
+<li><a href="https://platform.claude.com/docs/en/release-notes/overview">Anthropic: Release notes</a></li>
+<li><a href="https://github.com/AI-Safety-Institute/portunus/issues/215">GitHub: AI-Safety-Institute/portunus #215</a></li>
+<li><a href="https://github.com/anthropics/anthropic-sdk-python/issues/2031">GitHub: anthropics/anthropic-sdk-python #2031</a></li>
+</ul>
+<p>Anthropic, Claude, and Claude Code are trademarks of Anthropic. Cursor is a trademark of Anysphere Inc. Amazon Bedrock is a trademark of Amazon.com, Inc. or its affiliates. Microsoft Foundry and TypeScript are trademarks of Microsoft. Next.js is a trademark of Vercel Inc. Supabase is a trademark of Supabase Inc. Stripe is a trademark of Stripe, Inc. GitHub is a trademark of GitHub, Inc. Python is a trademark of the Python Software Foundation. Java is a trademark of Oracle and/or its affiliates. Go is a trademark of Google LLC. PHP is a trademark of The PHP Group. Other names belong to their owners. Names are used only to identify products and compatibility. Stack &amp; Ship is not affiliated with or endorsed by any of them.</p>
+<aside class="lead-end" aria-label="Free download"><article class="lead-card"><h2>Supabase + Stripe Security Checklist</h2><p>20 checks for AI-built Next.js apps: RLS, service keys, webhook signatures. PDF, free.</p><a class="btn btn-s" href="https://luxurydrive0.gumroad.com/l/security-checklist?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="free-download-click" data-ev-product="checklist" data-ev-position="blog-end" data-ev-post="anthropic-api-version-2026-10-21-migration">Get the free checklist</a></article><p class="fine">Free download by email. No marketing emails unless you <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=blog-end" data-ev="cta-click" data-ev-cta="inline">follow us on Gumroad</a>.</p></aside>
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/claude-temperature-deprecated-400-nextjs">Claude ‘temperature is deprecated for this model’: the 400 error and the fix in Next.js</a></li><li><a href="/blog/openai-anthropic-429-rate-limit-error-nextjs">OpenAI and Anthropic 429 errors in Next.js: which to retry, which to stop</a></li><li><a href="/blog/openai-anthropic-count-tokens-api-nextjs">Count tokens before you call OpenAI or Claude: the count tokens APIs in Next.js</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal, or accounting advice. Notion, Cursor, Supabase, Stripe, and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/spend-caps-kit">Spend Caps Kit</a> · <a href="/guardrails">Guardrails Pack</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script><script>(function(){var W=document.querySelectorAll('.table-wrap[aria-label]');if(!W.length)return;W.forEach(function(w){w.setAttribute('data-tw-l',w.getAttribute('aria-label'))});function f(){W.forEach(function(w){if(w.scrollWidth>w.clientWidth+1){w.setAttribute('tabindex','0');w.setAttribute('role','region');w.setAttribute('aria-label',w.getAttribute('data-tw-l'))}else{if(document.activeElement===w)w.blur();w.removeAttribute('tabindex');w.removeAttribute('role');w.removeAttribute('aria-label')}})}f();addEventListener('load',f);var t;addEventListener('resize',function(){clearTimeout(t);t=setTimeout(f,100)})})();</script></body></html>

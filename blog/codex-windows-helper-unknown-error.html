@@ -1,0 +1,94 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><script>window.__eaS=location.search;window.__eaT=function(){var m=/[?&]qa=1(&|$)/.test(location.search)&&location.search.match(/[?&]qa_now=(\d{13})/);return m?+m[1]:Date.now();};</script><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Codex “helper_unknown_error” on Windows: how to fix it</title><meta name="description" content="Codex on Windows fails with “Failed to create unified exec process: helper_unknown_error”? Rerun sandbox setup, try MXC, or use unelevated."><link rel="canonical" href="https://edtrackai.github.io/blog/codex-windows-helper-unknown-error"><meta property="og:type" content="article"><meta property="og:site_name" content="Stack & Ship"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Codex “helper_unknown_error” on Windows: how to fix it"><meta property="og:description" content="Codex on Windows fails with “Failed to create unified exec process: helper_unknown_error”? Rerun sandbox setup, try MXC, or use unelevated."><meta property="og:image" content="https://edtrackai.github.io/visuals/og/codex-windows-helper-unknown-error.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Codex “helper_unknown_error” on Windows: how to fix it: Stack &amp; Ship"><meta name="twitter:image" content="https://edtrackai.github.io/visuals/og/codex-windows-helper-unknown-error.png"><meta property="og:url" content="https://edtrackai.github.io/blog/codex-windows-helper-unknown-error"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0B0F19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/visuals/logo/favicon.ico" sizes="48x48"><link rel="icon" href="/visuals/logo/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/visuals/logo/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/SpaceGrotesk-700.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/Inter-400.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/Inter-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/styles.css"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Codex “helper_unknown_error” on Windows: how to fix it", "description": "Codex on Windows fails with “Failed to create unified exec process: helper_unknown_error”? Rerun sandbox setup, try MXC, or use unelevated.", "datePublished": "2026-10-24", "dateModified": "2026-10-24", "image": "https://edtrackai.github.io/visuals/og/codex-windows-helper-unknown-error.png", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://edtrackai.github.io/blog/codex-windows-helper-unknown-error"}, "author": {"@type": "Organization", "name": "Stack & Ship", "url": "https://edtrackai.github.io/"}, "publisher": {"@type": "Organization", "@id": "https://edtrackai.github.io/#org", "name": "Stack & Ship", "alternateName": "Solo Founder Tools", "url": "https://edtrackai.github.io/", "logo": {"@type": "ImageObject", "url": "https://edtrackai.github.io/visuals/logo/apple-touch-icon.png", "width": 180, "height": 180}}}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://edtrackai.github.io/"}, {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://edtrackai.github.io/blog/"}, {"@type": "ListItem", "position": 3, "name": "Codex “helper_unknown_error” on Windows: how to fix it", "item": "https://edtrackai.github.io/blog/codex-windows-helper-unknown-error"}]}</script><meta property="article:published_time" content="2026-10-24"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/spend-caps-kit" data-ev="cta-click" data-ev-cta="nav">Spend Caps Kit</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
+<main id="main"><div class="wrap narrow"><article class="prose">
+<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Codex “helper_unknown_error” on Windows: how to …</li></ol></nav>
+<p class="eyebrow">AI coding · fixes · <time datetime="2026-10-24">2026-10-24</time></p><h1 class="h1-long">Codex “helper_unknown_error” on Windows: how to fix it</h1><p class="fine">As of 24 October 2026. This is a fast-moving problem. OpenAI may change things at any time, so check the linked issue and docs before you follow any step.</p><p>If you want the next step, read <a href="/blog/codex-desktop-new-worktree-chat-fix">Codex desktop “Cannot serialize value” error on new worktree chats: how to fix it</a>.</p>
+<p>If every command in Codex on Windows fails before it runs, you may see this:</p>
+<pre tabindex="0"><code>Failed to create unified exec process: helper_unknown_error: setup refresh had errors</code></pre>
+<p>That's the exact line quoted in <a href="https://github.com/openai/codex/issues/53623">openai/codex #53623</a> (opened 13 Oct 2026), on Codex CLI 0.162.1 in PowerShell on Windows 11 Pro. The reporter says the same command runs fine in PowerShell outside Codex, and "Restarting the computer and opening Codex again did not fix the issue."</p>
+
+<h2>Quick fix: rerun the Windows sandbox setup</h2>
+<p>OpenAI's <a href="https://developers.openai.com/codex/windows">Windows sandbox page</a> says, for a failed setup: "Try the elevated sandbox setup again and approve the administrator prompt if your environment allows it." Restart Codex, run the setup again, and approve the Windows UAC prompt if you're allowed to.</p>
+
+<h2>What the error means</h2>
+<p>OpenAI's docs don't name <code>helper_unknown_error</code> as of 24 October 2026. In #53623, the <code>codex doctor</code> report ties it to the sandbox: its <code>sandbox.helpers</code> check failed with the summary "elevated Windows sandbox provisioning recorded a structured failure", <code>"sandbox backend": "elevated"</code>, and <code>"error code": "helper_unknown_error"</code>. So the likely meaning is that the elevated sandbox setup didn't complete.</p>
+<p>Per OpenAI's troubleshooting page, the most common causes of a failed elevated setup are: "the Windows UAC or administrator prompt was declined, the machine does not allow local user or group creation, the machine does not allow firewall rule changes, the machine blocks the logon rights needed by the sandbox users, or another enterprise policy blocks part of the setup flow."</p>
+
+<h2>Try MXC instead</h2>
+<p>The docs call <code>mxc</code> "The recommended sandbox on compatible Windows devices", which "Uses native process isolation without administrator-approved setup, additional Windows accounts, or local firewall rules." In Codex CLI 0.162.0 and later, you can test it for one command from your project directory:</p>
+<pre tabindex="0"><code>codex -c windows.sandbox=mxc sandbox --include-managed-config --permission-profile :workspace -- cmd.exe /d /c echo MXC_OK
+$LASTEXITCODE</code></pre>
+<p>The docs say the expected output is <code>MXC_OK</code> with exit code 0. If it works, turn MXC on in <code>config.toml</code>:</p>
+<pre tabindex="0"><code>[features]
+prefer_mxc = true</code></pre>
+<p>The docs say Microsoft introduced MXC process isolation in Windows 11 24H2 (build 26100.9278) and 25H2 (build 26200.9278), so older builds may not support it.</p>
+
+<h2>Fall back to the unelevated sandbox</h2>
+<p>If setup still fails and your organization's policy allows it, the docs suggest using <code>unelevated</code> "while the issue is investigated":</p>
+<pre tabindex="0"><code>[windows]
+sandbox = "unelevated"</code></pre>
+<p>Know the trade-off. The docs call unelevated "A legacy fallback when elevated setup is unavailable and organizational policy permits it" that "Has weaker network isolation than elevated and doesn’t support denied read paths." Treat it as a temporary step and switch back once setup works.</p>
+
+<h2>On a work laptop: what to ask IT</h2>
+<p>The docs suggest asking IT "whether the machine allows administrator-approved setup for local user/group creation, firewall configuration, and the required sandbox-user logon rights." IT can also set up the elevated sandbox for you from an elevated deployment process:</p>
+<pre tabindex="0"><code>codex sandbox setup --elevated --user 'DOMAIN\alice' --codex-home 'C:\Users\alice\.codex'</code></pre>
+<p>They replace the identity and path with yours. If Codex warns that some folders are writable by Everyone, the docs suggest reviewing those folders, removing Everyone write access where appropriate, and re-running setup.</p>
+
+<h2>Don’t do this</h2>
+<ul>
+<li><b>Don't try to turn off unified exec.</b> The <a href="https://developers.openai.com/codex/config-reference">config reference</a> says <code>features.unified_exec</code> is "(stable; enabled on all platforms). User opt-outs are ignored."</li>
+<li><b>Don't switch to full access as a fix.</b> The <a href="https://developers.openai.com/codex/windows">Windows sandbox page</a> warns: "Running Codex in full access mode means Codex is not limited to your project directory and might perform unintentional destructive actions that can lead to data loss." Commands may run again, but you lose the sandbox's protection for your files.</li>
+</ul>
+
+<h2>Send diagnostics</h2>
+<p>If none of this helps, add your details to <a href="https://github.com/openai/codex/issues/53623">#53623</a> or contact OpenAI. The docs ask for <code>CODEX_HOME/.sandbox/sandbox.log</code>, the sandbox implementation you selected, the error message, your Windows build, and whether you're on Windows 11 or Windows 10. They also say: do not send the contents of <code>CODEX_HOME/.sandbox-secrets/</code>.</p>
+
+<h2>FAQ</h2>
+<p><b>Can I turn off unified exec?</b> No. The config reference says user opt-outs are ignored.</p>
+<p><b>Is unelevated safe?</b> It's still sandboxed, but the docs say it has weaker network isolation than elevated. Use it as a temporary fallback where policy allows.</p>
+<p><b>Does WSL avoid it?</b> This error comes from the native Windows sandbox. OpenAI has a separate WSL page, but we haven't tested whether WSL avoids it.</p>
+<p><b>Which Windows builds support MXC?</b> The docs name Windows 11 24H2 (build 26100.9278) and 25H2 (build 26200.9278). Run the probe above to check your device.</p>
+<p><b>What's error 1385?</b> The docs say it means "Windows is denying the logon type the sandbox user needs in order to start the command", which is usually a device policy for IT to check.</p>
+<p><b>Do I need admin rights?</b> The elevated sandbox "Requires administrator-approved setup", per the docs. MXC doesn't, on compatible devices.</p>
+<p>Related: <a href="/blog/codex-desktop-new-worktree-chat-fix">other Codex desktop breakages</a> and <a href="/blog/codex-credits-cost-usage-limit-resets">Codex credits, costs, and usage limit resets</a>.</p>
+
+<h2>Sources</h2>
+<p class="fine">Checked 24 Oct 2026: github.com/openai/codex issue #53623 and its comments; developers.openai.com/codex/windows; developers.openai.com/codex/config-reference.</p>
+
+<p class="fine">OpenAI and Codex are trademarks of OpenAI. Windows, Windows 11, PowerShell, and WSL are trademarks of Microsoft Corporation. GitHub is a trademark of GitHub, Inc. Other names belong to their owners. Names are used only to identify products and compatibility. Stack &amp; Ship is not affiliated with or endorsed by any of them.</p>
+
+
+<section class="related" aria-labelledby="rel"><h2 id="rel">Related posts</h2><ul><li><a href="/blog/codex-desktop-new-worktree-chat-fix">Codex desktop “Cannot serialize value” error on new worktree chats: how to fix it</a></li><li><a href="/blog/codex-stream-disconnected-before-completion">Codex “stream disconnected before completion”: how to fix</a></li><li><a href="/blog/codex-selected-model-is-at-capacity">Codex “Selected model is at capacity”: what to do</a></li></ul></section></article></div></main>
+<footer><div class="wrap"><p class="fine">New kits and fixes, about 2 emails a month: <a href="https://luxurydrive0.gumroad.com/subscribe?utm_source=site&amp;utm_medium=web&amp;utm_campaign=list&amp;utm_content=footer" data-ev="cta-click" data-ev-cta="footer">follow Stack &amp; Ship on Gumroad</a> (optional; unsubscribe any time).</p><p class="fine">Prices exclude VAT; UK and EU VAT is added at Gumroad checkout.</p><p><b>© 2026 Stack & Ship</b> · Solo Founder Tools</p><p>Products sold via Gumroad (merchant of record). Not tax, legal, or accounting advice. Notion, Cursor, Supabase, Stripe, and other names are trademarks of their owners; not affiliated or endorsed.</p><p><a href="/">Home</a> · <a href="/ai-rules">Ship-Ready AI Rules</a> · <a href="/solo-founder-os">Solo Founder OS</a> · <a href="/uk-sole-trader-tracker">UK Sole Trader Self-Assessment Tracker</a> · <a href="/launch-audit">Launch Audit</a> · <a href="/paid-mcp-starter">Paid MCP Starter</a> · <a href="/ship-it-bundle">Ship It Bundle</a> · <a href="/spend-caps-kit">Spend Caps Kit</a> · <a href="/guardrails">Guardrails Pack</a> · <a href="/blog/">Blog</a> · <a href="/about">About</a> · <a href="/contact">Contact</a></p><p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/refunds">Refunds</a> · <a href="/sitemap.xml">Sitemap</a> · <a href="#" data-optout role="button">Turn off analytics on this browser</a></p></div></footer>
+<script>(function(){var O;function off(){O=true;try{localStorage.setItem('ea_optout','1');localStorage.removeItem('ft');['s','utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){sessionStorage.removeItem(k);localStorage.removeItem(k);});}catch(e){}}
+document.addEventListener('click',function(e){var o=e.target.closest('[data-optout]');if(!o)return;e.preventDefault();off();o.textContent='Analytics off';o.setAttribute('aria-disabled','true');});
+var S=(typeof window.__eaS=='string'?window.__eaS:location.search),QP=new URLSearchParams(S).get('qa'),QA=QP==='1';try{if(QP==='1')localStorage.setItem('ea_qa','1');else if(QP==='0')localStorage.removeItem('ea_qa');QA=QA||localStorage.getItem('ea_qa')==='1';}catch(e){}
+var O=true;try{O=QA||localStorage.getItem('ea_optout')==='1'||!!navigator.globalPrivacyControl;}catch(e){}
+if(O&&!QA){var oo=document.querySelector('[data-optout]');if(oo)oo.textContent='Analytics off';}
+var F='https://br-soft-rain-b9akm4v6-track.compute.c-7.eu-central-1.aws.neon.tech/e',q=new URLSearchParams(S),K=['utm_source','utm_medium','utm_campaign','utm_content'];
+if(q.get('ref')&&!q.get('utm_content'))q.set('utm_content',q.get('ref'));
+var s='',u={},T=window.__eaT(),n=K.some(function(k){return q.get(k);});
+if(!O){s=sessionStorage.getItem('s')||Math.random().toString(36).slice(2);sessionStorage.setItem('s',s);
+if(n)K.forEach(function(k){sessionStorage.removeItem(k);});
+try{localStorage.removeItem('ft');}catch(e){}
+K.forEach(function(k){var v=n?q.get(k):sessionStorage.getItem(k);if(v){u[k]=v;sessionStorage.setItem(k,v);}});}
+var OP={"ffjsf": "ONEPOUND", "launch-audit": "ONEPOUND-AUDIT"},OE=1793213940000,OS=["ONEPOUND", "ONEPOUND-AUDIT"],C={"reddit": "REDDIT25", "devto": "DEVTO25", "x": "X25", "hn": "HN25", "newsletter": "NEWS25", "bluesky": "BSKY25", "cursor-directory": "CURSORDIR", "cursor-forum": "CURSORFORUM", "dailydev": "DAILYDEV", "bsky": "BSKY25", "dev.to": "DEVTO25", "twitter": "X25", "hackernews": "HN25", "cursordirectory": "CURSORDIR", "cursorforum": "CURSORFORUM", "daily.dev": "DAILYDEV"},LC="",LE=1792609140000,CE=1793213940000,CB=true,src=String((O?q.get('utm_source'):u.utm_source)||'').toLowerCase(),Z=(T<CE&&(CB||T>=LE)&&Object.prototype.hasOwnProperty.call(C,src)&&typeof C[src]=='string')?C[src]:null,CS=Object.keys(C).map(function(k){return C[k];});
+function send(n,d){try{navigator.sendBeacon(F,JSON.stringify({n:n,p:location.pathname,r:document.referrer,u:{utm_source:u.utm_source||null,utm_medium:u.utm_medium||null,utm_campaign:u.utm_campaign||null,utm_content:u.utm_content||null},d:d||{},s:s}));}catch(e){}}
+if(!O){send('pageview');
+document.addEventListener('click',function(e){if(O)return;var a=e.target.closest('[data-ev]');if(!a)return;var d={};
+for(var k in a.dataset)if(k.indexOf('ev')==0&&k!='ev')d[k.slice(2).toLowerCase()]=a.dataset[k];send(a.dataset.ev,d);});}
+document.querySelectorAll('a[href*="gumroad.com"]').forEach(function(a){var x=new URL(a.href);
+if(Object.keys(u).length){K.forEach(function(k){x.searchParams.delete(k);if(u[k])x.searchParams.set(k,u[k]);});}
+if(!x.searchParams.get('utm_source')){x.searchParams.set('utm_source','site');x.searchParams.set('utm_medium','web');x.searchParams.set('utm_campaign','sprint1');}
+var c=x.searchParams.get('code'),m=x.pathname.match(/\/l\/([^\/]+)\/?$/),g=m?m[1]:'',P=(T<OE&&Object.prototype.hasOwnProperty.call(OP,g))?OP[g]:null;
+if(c&&((c==LC&&T>=LE)||(CS.indexOf(c)>=0&&T>=CE)||(OS.indexOf(c)>=0&&T>=OE))){x.searchParams.delete('code');delete a.dataset.evCode;}
+if(P&&a.dataset.op){x.searchParams.set('code',P);a.dataset.evCode=P;}
+else if(Z&&g=='ffjsf'&&a.dataset.op){x.searchParams.set('code',Z);a.dataset.evCode=Z;}
+a.href=x.toString();});
+if(T>=OE){document.querySelectorAll('[data-op-lede]').forEach(function(p){p.style.display='none';});document.querySelectorAll('[data-op-base]').forEach(function(p){p.style.display='';});document.querySelectorAll('[data-op-dup]').forEach(function(a){a.style.display='none';});document.querySelectorAll('[data-op-off]').forEach(function(a){a.textContent=a.dataset.opOff;a.removeAttribute('aria-label');if(a.dataset.opOffHref){a.href=a.dataset.opOffHref;delete a.dataset.evCode;a.dataset.ev='cta-click';a.dataset.evCta='hero';}var n=a.nextElementSibling;if(n&&n.classList.contains('btn-sub'))n.hidden=true;});}})();</script></body></html>

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://edtrackai.github.io/blog/supabase-data-api-changes-30-oct-production</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/npm-min-release-age-exclude-security-patch</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/codex-windows-helper-unknown-error</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/codex-stream-disconnected-before-completion</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/codex-selected-model-is-at-capacity</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/claude-code-safeguards-flagged-this-message</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/anthropic-api-version-2026-10-21-migration</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/notion-subscription-tracker-template</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/notion-income-tracker-template</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/notion-expense-tracker-template</loc><lastmod>2026-10-23</lastmod></url>
@@ -15,7 +22,7 @@
   <url><loc>https://edtrackai.github.io/blog/openai-anthropic-429-rate-limit-error-nextjs</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/cursor-usage-limits-reset-weekly-pool</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/codex-credits-cost-usage-limit-resets</loc><lastmod>2026-10-17</lastmod></url>
-  <url><loc>https://edtrackai.github.io/blog/claude-temperature-deprecated-400-nextjs</loc><lastmod>2026-10-17</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/claude-temperature-deprecated-400-nextjs</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/claude-code-reduce-token-usage-limits</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/claude-code-monthly-spend-limit-usage-credits</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/chatgpt-pro-200-codex-usage-limits</loc><lastmod>2026-10-23</lastmod></url>
@@ -28,20 +35,21 @@
   <url><loc>https://edtrackai.github.io/blog/notion-mrr-profit-tracker</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/cursor-rules-nextjs-supabase-stripe</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/charge-for-mcp-server-stripe-usage-billing</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/launch-audit</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/paid-mcp-starter</loc><lastmod>2026-10-17</lastmod></url>
-  <url><loc>https://edtrackai.github.io/ship-it-bundle</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/guardrails</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/spend-caps-kit</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/usage-limit-saver</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/stack-pack</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/ai-rules</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/solo-founder-os</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/uk-sole-trader-tracker</loc><lastmod>2026-10-14</lastmod></url>
-  <url><loc>https://edtrackai.github.io/blog/</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://edtrackai.github.io/</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/launch-audit</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/paid-mcp-starter</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/ship-it-bundle</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/guardrails</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/spend-caps-kit</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/usage-limit-saver</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/api-bill-panic-kit</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/stack-pack</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/ai-rules</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/solo-founder-os</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/uk-sole-trader-tracker</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/about</loc><lastmod>2026-10-14</lastmod></url>
   <url><loc>https://edtrackai.github.io/contact</loc><lastmod>2026-10-14</lastmod></url>
   <url><loc>https://edtrackai.github.io/checker</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://edtrackai.github.io/tools/ai-api-cost-calculator</loc><lastmod>2026-10-17</lastmod></url>
+  <url><loc>https://edtrackai.github.io/tools/ai-api-cost-calculator</loc><lastmod>2026-10-24</lastmod></url>
 </urlset>
