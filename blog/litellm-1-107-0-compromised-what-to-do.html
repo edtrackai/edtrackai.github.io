@@ -16,7 +16,7 @@
 <ul>
 <li><b>PyPI:</b> you're affected if <code>litellm==1.107.0</code> was installed from PyPI. The report lists the sha256 of every affected file in its "Affected" table; compare against that table rather than any copy.</li>
 <li><b>Docker:</b> a follow-up comment in the issue (<a href="https://github.com/BerriAI/litellm/issues/47826#issuecomment-6316601885">Docker update</a>) says the <code>v1.107.0</code>, <code>latest</code>, <code>main-latest</code>, and <code>main-stable</code> tags of <code>litellm</code>, <code>litellm-database</code>, and <code>litellm-non_root</code> pointed to the infected image for a time, and says to "treat every v1.107.0 image as compromised". The report's status line now says those floating tags "no longer point to the v1.107.0 stealer image".</li>
-<li><b>Source code:</b> the report says "The payload is NOT in the <code>v1.107.0</code> git tag". A maintainer later added that "there is no official v.1.107.0 source tag".</li>
+<li><b>Source code:</b> the report says "The payload is NOT in the <code>v1.107.0</code> git tag". The report and the maintainers describe the tag differently. A maintainer later added that "there is no official v.1.107.0 source tag".</li>
 <li><b>When:</b> LiteLLM's <a href="https://docs.litellm.ai/blog/security-incident-oct-21-2026">incident post</a> says the PyPI package was "live from 11:39:51 to 13:23 UTC" on 21 October, and that the Docker tags pointed to the compromised images from 11:46:56 UTC until 14:20 UTC on Docker Hub, and on GHCR until they "were made unavailable by 13:51 UTC".</li>
 <li><b>Other versions:</b> a maintainer wrote that "Older versions of LiteLLM are not impacted." The report lists the wheels of 1.106.2 and several earlier releases as "Checked and clean".</li>
 </ul>
@@ -57,6 +57,7 @@ docker image ls --digests | grep -i litellm</code></pre>
 <h2>Pin a known version</h2>
 <p>The report says: "pin <code>litellm==1.106.2</code>". A maintainer wrote: "please pin your version to 1.106.2 or any explicit version published prior to now." In a requirements file that's:</p>
 <pre tabindex="0"><code>litellm==1.106.2</code></pre>
+<p>As of 25 October 2026, <a href="https://pypi.org/project/litellm/">PyPI</a> also lists 1.106.3, but LiteLLM's official guidance still says to pin 1.106.2.</p>
 <p>Use the same exact pin in <code>pyproject.toml</code> for uv or Poetry, then refresh the lockfile. For Docker, an earlier status line in the report said to "Pin <code>v1.106.2</code> by digest" instead of using a floating tag such as <code>latest</code>.</p>
 
 <h2>Stop the next one: a release-age cooldown</h2>
