@@ -66,14 +66,14 @@ Stripe webhook ──▶ /api/stripe/webhook  (verify signature → update plan)
 <h2>7. Show users what they’re paying for</h2>
 <p>A small dashboard with plan, usage this period, usage by tool, and API keys cuts down "why was I charged?" support emails a lot.</p>
 <h2>Checklist</h2>
-<ul>
-<li>[ ] Keys hashed, revocable, <code>401</code> on bad keys</li>
-<li>[ ] Meter + metered price created in <strong>test mode</strong> first</li>
-<li>[ ] One meter event per paid call, with <code>identifier</code> = your usage row ID</li>
-<li>[ ] Usage written to the DB before the Stripe call, plus a re-send cron</li>
-<li>[ ] Free quota counted from your DB, upgrade link in the tool result</li>
-<li>[ ] Webhook verifies the raw body and de-duplicates event IDs</li>
-<li>[ ] Per-user rate limit with <code>429</code> + <code>Retry-After</code></li>
+<ul class="checklist">
+<li><span class="cb" aria-hidden="true"></span>Keys hashed, revocable, <code>401</code> on bad keys</li>
+<li><span class="cb" aria-hidden="true"></span>Meter + metered price created in <strong>test mode</strong> first</li>
+<li><span class="cb" aria-hidden="true"></span>One meter event per paid call, with <code>identifier</code> = your usage row ID</li>
+<li><span class="cb" aria-hidden="true"></span>Usage written to the DB before the Stripe call, plus a re-send cron</li>
+<li><span class="cb" aria-hidden="true"></span>Free quota counted from your DB, upgrade link in the tool result</li>
+<li><span class="cb" aria-hidden="true"></span>Webhook verifies the raw body and de-duplicates event IDs</li>
+<li><span class="cb" aria-hidden="true"></span>Per-user rate limit with <code>429</code> + <code>Retry-After</code></li>
 </ul>
 <h2>Skip the plumbing</h2>
 <section class="pitch" aria-label="Our product"><p><em>Disclosure: this is our own paid product.</em></p>

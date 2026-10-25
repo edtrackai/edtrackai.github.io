@@ -25,7 +25,7 @@ minimumReleaseAgeExclude:
 <p>npm's <code>min-release-age</code> (added in npm 11.10.0) takes a number of days. It's off by default (<code>null</code>). When set, npm only installs versions that were published more than that many days ago, and if no version fits your dependency ranges, the command errors.</p>
 <p>The npm docs say that when the window stops <code>npm audit fix</code> from installing a patched version, npm keeps the package at its vulnerable version, warns that the fix was blocked, and exits with a non-zero code (npm 11.18.0 and later; earlier versions skip the fix silently). So in CI, the step fails, and locally, the vulnerable version stays.</p>
 <p>There's a related setting, <code>before</code>, which takes an absolute date. If both are set in the same source, <code>before</code> wins. Across sources the usual precedence applies (command line, then environment, then project, then user, then global), so a higher-priority source can relax a lower-priority one.</p>
-<h2>npm: exempt one package with <code>min-release-age-exclude</code></h2>
+<h2>npm: exempt one package with <code class="wb">min-release-age-exclude</code></h2>
 <p><code>min-release-age-exclude</code> is a list of package names or minimatch globs that skip the <code>min-release-age</code> (and <code>before</code>) filter. It was backported to npm v11 in June 2026 (<a href="https://github.com/npm/cli/pull/9534">npm/cli#9534</a>), and shipped in npm 11.17.0, so you need 11.17.0 or later.</p>
 <pre tabindex="0"><code class="language-ini"># .npmrc
 min-release-age = 7
@@ -41,7 +41,7 @@ min-release-age-exclude[] = the-vulnerable-pkg
 <li><strong>Only the named package is exempt.</strong> Its own dependencies still follow the release-age policy unless they also match a pattern. If the patch pulls in a brand-new transitive dependency, you may need to exempt that too.</li>
 <li><strong>It doesn't change the registry.</strong> An excluded package is fetched from the same registry as before.</li>
 </ul>
-<h2>pnpm: exempt one exact version with <code>minimumReleaseAgeExclude</code></h2>
+<h2>pnpm: exempt one exact version with <code class="wb">minimum<wbr>Release<wbr>Age<wbr>Exclude</code></h2>
 <p>pnpm's <code>minimumReleaseAge</code> lives in <code>pnpm-workspace.yaml</code> and is in <strong>minutes</strong>, not days. It was added in pnpm 10.16.0. The default is 1440 (one day) since pnpm 11, and 0 before that. It applies to transitive dependencies too.</p>
 <p><code>minimumReleaseAgeExclude</code> takes package names (10.16), patterns such as <code>'@myorg/*'</code> (10.17), and since 10.19 exact versions, which is what you want for a security patch:</p>
 <pre tabindex="0"><code class="language-yaml"># pnpm-workspace.yaml

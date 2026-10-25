@@ -67,7 +67,7 @@ exclude-newer = "7 days"</code></pre>
 <p>To let one urgent security fix through, the same page documents <code>exclude-newer-package</code>: "Set a package to false to exempt it from the global exclude-newer constraint entirely." Its example:</p>
 <pre tabindex="0"><code>[tool.uv]
 exclude-newer-package = { tqdm = "2022-04-04T00:00:00Z", markupsafe = false }</code></pre>
-<h3>pip: <code>--uploaded-prior-to</code></h3>
+<h3>pip: <code class="wb">--uploaded-prior-to</code></h3>
 <p>The <a href="https://pip.pypa.io/en/stable/cli/pip_install/">pip install docs</a> describe <code>--uploaded-prior-to &lt;datetime_or_duration&gt;</code>: "Only consider packages uploaded prior to the given value." It accepts "a duration in days (e.g., ‘P3D’ for packages uploaded at least 3 days ago)", and is "Only effective when using indexes that provide upload-time metadata." The environment variable is <code>PIP_UPLOADED_PRIOR_TO</code>.</p>
 <pre tabindex="0"><code>pip install --uploaded-prior-to P7D -r requirements.txt</code></pre>
 <p>Neither page says which release added the option, so check that your installed uv or pip lists it before you rely on it.</p>
