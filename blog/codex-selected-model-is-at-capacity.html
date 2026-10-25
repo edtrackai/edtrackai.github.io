@@ -9,55 +9,55 @@
 <main id="main"><div class="wrap narrow"><article class="prose">
 <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Codex “Selected model is at capacity”: what to d…</li></ol></nav>
 <p class="eyebrow">AI coding · fixes · <time datetime="2026-10-24">2026-10-24</time></p><h1 class="h1-long">Codex “Selected model is at capacity”: what to do</h1><p class="fine">As of 24 October 2026. This is a fast-moving problem. OpenAI may change things at any time, so check the linked issues before you follow any step.</p><p>If you want the next step, read <a href="/blog/codex-credits-cost-usage-limit-resets">Codex credits explained: what they cost, earned limit resets and how to cap auto reload</a>.</p>
-<p>If Codex stops a turn with this message, you're not alone:</p>
+<p>If Codex stops a turn with this message, you’re not alone:</p>
 <pre tabindex="0"><code>Selected model is at capacity. Please try a different model.</code></pre>
-<p>That's the exact text quoted in <a href="https://github.com/openai/codex/issues/55740">openai/codex #55740</a> (opened 21 Oct 2026), where the reporter says it happens on all models and across Web, the desktop app, and the CLI, with quota left. Many similar issues have been opened since. OpenAI has not published a cause as of 24 October 2026.</p>
+<p>That’s the exact text quoted in <a href="https://github.com/openai/codex/issues/55740">openai/codex #55740</a> (opened 21 Oct 2026), where the reporter says it happens on all models and across Web, the desktop app, and the CLI, with quota left. Many similar issues have been opened since. OpenAI has not published a cause as of 24 October 2026.</p>
 
 <h2>Quick fix: what to try right now</h2>
 <ol>
-<li><b>Check <a href="https://status.openai.com">status.openai.com</a>.</b> When we checked on 24 October 2026, it read "All Systems Operational", so a green page doesn't rule this error out.</li>
-<li><b>Try a different model</b>, as the message itself suggests. Reporters in #55740 say switching didn't help them, so treat this as a quick test, not a sure fix.</li>
+<li><b>Check <a href="https://status.openai.com">status.openai.com</a>.</b> When we checked on 24 October 2026, it read “All Systems Operational”, so a green page doesn’t rule this error out.</li>
+<li><b>Try a different model</b>, as the message itself suggests. Reporters in #55740 say switching didn’t help them, so treat this as a quick test, not a sure fix.</li>
 <li><b>Wait and retry.</b> One reporter in #55740 says failures came and went, not on every request.</li>
-<li><b>Resume, don't restart.</b> If a long task stopped, pick it back up with <code>codex resume</code> (see the <a href="https://developers.openai.com/codex/cli/reference">Codex CLI reference</a>) so you keep its context.</li>
+<li><b>Resume, don’t restart.</b> If a long task stopped, pick it back up with <code>codex resume</code> (see the <a href="https://developers.openai.com/codex/cli/reference">Codex CLI reference</a>) so you keep its context.</li>
 </ol>
 
 <h2>What “at capacity” means (and why it isn’t your usage limit)</h2>
 <h3>It shows up on many models and plans</h3>
-<p>In #55740, a Pro user reports the error on every model they tried. A commenter on the same issue logged about 73% of their turns failing on 21 October, with weekly usage far from used up (<a href="https://github.com/openai/codex/issues/55740">#55740 comments</a>). Some reporters suspect an account flag, others a capacity problem. Nobody in the thread has confirmed either, so we don't guess.</p>
+<p>In #55740, a Pro user reports the error on every model they tried. A commenter on the same issue logged about 73% of their turns failing on 21 October, with weekly usage far from used up (<a href="https://github.com/openai/codex/issues/55740">#55740 comments</a>). Some reporters suspect an account flag, others a capacity problem. Nobody in the thread has confirmed either, so we don’t guess.</p>
 <h3>At capacity vs usage limit vs 429</h3>
 <ul>
-<li><b>At capacity</b> (this post): Codex can't serve the request right now, even when you have quota left.</li>
-<li><b>Usage limit reached</b>: you've used your plan's allowance. See <a href="/blog/codex-credits-cost-usage-limit-resets">Codex credits, costs, and usage limit resets</a> and <a href="/blog/chatgpt-pro-200-codex-usage-limits">ChatGPT Pro and Codex usage limits</a>.</li>
-<li><b>429 in your own app</b>: your code hit the API's rate limit. See <a href="/blog/openai-anthropic-429-rate-limit-error-nextjs">the 429 rate limit guide</a>.</li>
+<li><b>At capacity</b> (this post): Codex can’t serve the request right now, even when you have quota left.</li>
+<li><b>Usage limit reached</b>: you’ve used your plan’s allowance. See <a href="/blog/codex-credits-cost-usage-limit-resets">Codex credits, costs, and usage limit resets</a> and <a href="/blog/chatgpt-pro-200-codex-usage-limits">ChatGPT Pro and Codex usage limits</a>.</li>
+<li><b>429 in your own app</b>: your code hit the API’s rate limit. See <a href="/blog/openai-anthropic-429-rate-limit-error-nextjs">the 429 rate limit guide</a>.</li>
 </ul>
 
 <h2>Make Codex retry on its own</h2>
-<p>The <a href="https://developers.openai.com/codex/config-reference">Codex config reference</a> lists two retry settings per model provider: <code>model_providers.&lt;id&gt;.request_max_retries</code> ("Retry count for HTTP requests to the provider (default: 4)") and <code>model_providers.&lt;id&gt;.stream_max_retries</code> ("Retry count for SSE streaming interruptions (default: 5)"). Raising them may help with short blips. A commenter in #55740 reports Codex already retries and then still ends the turn with the capacity error, so don't count on it.</p>
+<p>The <a href="https://developers.openai.com/codex/config-reference">Codex config reference</a> lists two retry settings per model provider: <code>model_providers.&lt;id&gt;.request_max_retries</code> (“Retry count for HTTP requests to the provider (default: 4)”) and <code>model_providers.&lt;id&gt;.stream_max_retries</code> (“Retry count for SSE streaming interruptions (default: 5)”). Raising them may help with short blips. A commenter in #55740 reports Codex already retries and then still ends the turn with the capacity error, so don’t count on it.</p>
 
 <h2>Keep long and unattended runs from dying</h2>
 <p>For long or <code>codex exec</code> runs, keep each step small and committed, so a failed turn costs you one step, not the whole job. When a session stops, resume it with <code>codex resume</code> rather than starting fresh.</p>
 
 <h2>Fallback when it won’t clear</h2>
 <ul>
-<li>Write a short handoff note (goal, what's done, what's next, files touched) so you can continue in another tool without losing context.</li>
+<li>Write a short handoff note (goal, what’s done, what’s next, files touched) so you can continue in another tool without losing context.</li>
 <li>If you also use another agent, such as Claude Code, switch to it for now. Watch its own limits too: see <a href="/blog/claude-code-weekly-limit-reached">Claude weekly limit reached</a>.</li>
-<li>If the turn stops with "stream disconnected before completion" instead, that's a dropped connection, not capacity: see <a href="/blog/codex-stream-disconnected-before-completion">Codex “stream disconnected before completion”</a>.</li>
+<li>If the turn stops with “stream disconnected before completion” instead, that’s a dropped connection, not capacity: see <a href="/blog/codex-stream-disconnected-before-completion">Codex “stream disconnected before completion”</a>.</li>
 <li>If the error looks tied to your account, as some reporters suspect, contact OpenAI support and add your details to the GitHub issue.</li>
 </ul>
 
 <h2>FAQ</h2>
-<p><b>Does "at capacity" use up my Codex quota?</b> We found no official answer. Reporters in #55740 see it with plenty of quota left.</p>
-<p><b>Why does every model say at capacity?</b> OpenAI hasn't said, as of 24 October 2026. Reporters suggest either capacity or an account flag, unconfirmed.</p>
+<p><b>Does “at capacity” use up my Codex quota?</b> We found no official answer. Reporters in #55740 see it with plenty of quota left.</p>
+<p><b>Why does every model say at capacity?</b> OpenAI hasn’t said, as of 24 October 2026. Reporters suggest either capacity or an account flag, unconfirmed.</p>
 <p><b>Is Codex down right now?</b> Check status.openai.com. It showed no incident when we checked, while users were still reporting the error.</p>
 <p><b>Can Codex retry automatically?</b> Yes, there are retry settings in the config reference, but users report the error can still come through.</p>
-<p><b>How is this different from "usage limit reached"?</b> A usage limit means your allowance is used up. "At capacity" is reported even when it isn't.</p>
+<p><b>How is this different from “usage limit reached”?</b> A usage limit means your allowance is used up. “At capacity” is reported even when it isn’t.</p>
 
 
 <section class="pitch" aria-label="Our product"><p><em>Disclosure: this is our own paid product.</em></p>
-<p>When Codex stops with "Selected model is at capacity" or a <code>server_is_overloaded</code> error, the Codex Capacity Failover Kit's runner is designed to wait with backoff and resume the same session in unattended <code>codex exec</code> runs.
-Every failover step is off by default, and it doesn't fix or prevent capacity errors.</p>
+<p>When Codex stops with “Selected model is at capacity” or a <code>server_is_overloaded</code> error, the Codex Capacity Failover Kit’s runner is designed to wait with backoff and resume the same session in unattended <code>codex exec</code> runs.
+Every failover step is off by default, and it doesn’t fix or prevent capacity errors.</p>
 <p><a data-ev="buy-click" data-ev-product="codex-capacity-failover-kit" data-ev-position="blog" data-ev-post="codex-selected-model-is-at-capacity" href="https://luxurydrive0.gumroad.com/l/cschz?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-codex-selected-model-is-at-capacity">Get the Codex Capacity Failover Kit</a> for $12 (plus VAT where applicable).</p></section>
-<p>If you turn on a failover step, your prompt, recent context and files the agent reads go to the service you chose, under your own account and that service's terms.</p>
+<p>If you turn on a failover step, your prompt, recent context and files the agent reads go to the service you chose, under your own account and that service’s terms.</p>
 <h2>Sources</h2>
 <p class="fine">Checked 24 Oct 2026: github.com/openai/codex issue #55740 and its comments; developers.openai.com/codex/config-reference; developers.openai.com/codex/cli/reference; status.openai.com.</p>
 

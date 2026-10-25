@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://edtrackai.github.io/blog/copilot-exceeded-monthly-quota-copilot-harness</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/vscode-local-vs-copilot-harness-keeps-switching</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/vscode-copilot-skills-not-working-agent-host</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/supabase-data-api-changes-30-oct-production</loc><lastmod>2026-10-24</lastmod></url>
@@ -44,7 +45,7 @@
   <url><loc>https://edtrackai.github.io/blog/notion-mrr-profit-tracker</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/cursor-rules-nextjs-supabase-stripe</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/charge-for-mcp-server-stripe-usage-billing</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://edtrackai.github.io/launch-audit</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/paid-mcp-starter</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/ship-it-bundle</loc><lastmod>2026-10-24</lastmod></url>

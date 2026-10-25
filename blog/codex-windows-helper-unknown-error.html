@@ -11,17 +11,17 @@
 <p class="eyebrow">AI coding · fixes · <time datetime="2026-10-24">2026-10-24</time></p><h1 class="h1-long">Codex “helper_unknown_error” on Windows: how to fix it</h1><p class="fine">As of 24 October 2026. This is a fast-moving problem. OpenAI may change things at any time, so check the linked issue and docs before you follow any step.</p><p>If you want the next step, read <a href="/blog/codex-desktop-new-worktree-chat-fix">Codex desktop “Cannot serialize value” error on new worktree chats: how to fix it</a>.</p>
 <p>If every command in Codex on Windows fails before it runs, you may see this:</p>
 <pre tabindex="0"><code>Failed to create unified exec process: helper_unknown_error: setup refresh had errors</code></pre>
-<p>That's the exact line quoted in <a href="https://github.com/openai/codex/issues/53623">openai/codex #53623</a> (opened 13 Oct 2026), on Codex CLI 0.162.1 in PowerShell on Windows 11 Pro. The reporter says the same command runs fine in PowerShell outside Codex, and "Restarting the computer and opening Codex again did not fix the issue."</p>
+<p>That’s the exact line quoted in <a href="https://github.com/openai/codex/issues/53623">openai/codex #53623</a> (opened 13 Oct 2026), on Codex CLI 0.162.1 in PowerShell on Windows 11 Pro. The reporter says the same command runs fine in PowerShell outside Codex, and “Restarting the computer and opening Codex again did not fix the issue.”</p>
 
 <h2>Quick fix: rerun the Windows sandbox setup</h2>
-<p>OpenAI's <a href="https://developers.openai.com/codex/windows">Windows sandbox page</a> says, for a failed setup: "Try the elevated sandbox setup again and approve the administrator prompt if your environment allows it." Restart Codex, run the setup again, and approve the Windows UAC prompt if you're allowed to.</p>
+<p>OpenAI’s <a href="https://developers.openai.com/codex/windows">Windows sandbox page</a> says, for a failed setup: “Try the elevated sandbox setup again and approve the administrator prompt if your environment allows it.” Restart Codex, run the setup again, and approve the Windows UAC prompt if you’re allowed to.</p>
 
 <h2>What the error means</h2>
-<p>OpenAI's docs don't name <code>helper_unknown_error</code> as of 24 October 2026. In #53623, the <code>codex doctor</code> report ties it to the sandbox: its <code>sandbox.helpers</code> check failed with the summary "elevated Windows sandbox provisioning recorded a structured failure", <code>"sandbox backend": "elevated"</code>, and <code>"error code": "helper_unknown_error"</code>. So the likely meaning is that the elevated sandbox setup didn't complete.</p>
-<p>Per OpenAI's troubleshooting page, the most common causes of a failed elevated setup are: "the Windows UAC or administrator prompt was declined, the machine does not allow local user or group creation, the machine does not allow firewall rule changes, the machine blocks the logon rights needed by the sandbox users, or another enterprise policy blocks part of the setup flow."</p>
+<p>OpenAI’s docs don’t name <code>helper_unknown_error</code> as of 24 October 2026. In #53623, the <code>codex doctor</code> report ties it to the sandbox: its <code>sandbox.helpers</code> check failed with the summary “elevated Windows sandbox provisioning recorded a structured failure”, <code>"sandbox backend": "elevated"</code>, and <code>"error code": "helper_unknown_error"</code>. So the likely meaning is that the elevated sandbox setup didn’t complete.</p>
+<p>Per OpenAI’s troubleshooting page, the most common causes of a failed elevated setup are: “the Windows UAC or administrator prompt was declined, the machine does not allow local user or group creation, the machine does not allow firewall rule changes, the machine blocks the logon rights needed by the sandbox users, or another enterprise policy blocks part of the setup flow.”</p>
 
 <h2>Try MXC instead</h2>
-<p>The docs call <code>mxc</code> "The recommended sandbox on compatible Windows devices", which "Uses native process isolation without administrator-approved setup, additional Windows accounts, or local firewall rules." In Codex CLI 0.162.0 and later, you can test it for one command from your project directory:</p>
+<p>The docs call <code>mxc</code> “The recommended sandbox on compatible Windows devices”, which “Uses native process isolation without administrator-approved setup, additional Windows accounts, or local firewall rules.” In Codex CLI 0.162.0 and later, you can test it for one command from your project directory:</p>
 <pre tabindex="0"><code>codex -c windows.sandbox=mxc sandbox --include-managed-config --permission-profile :workspace -- cmd.exe /d /c echo MXC_OK
 $LASTEXITCODE</code></pre>
 <p>The docs say the expected output is <code>MXC_OK</code> with exit code 0. If it works, turn MXC on in <code>config.toml</code>:</p>
@@ -30,32 +30,32 @@ prefer_mxc = true</code></pre>
 <p>The docs say Microsoft introduced MXC process isolation in Windows 11 24H2 (build 26100.9278) and 25H2 (build 26200.9278), so older builds may not support it.</p>
 
 <h2>Fall back to the unelevated sandbox</h2>
-<p>If setup still fails and your organization's policy allows it, the docs suggest using <code>unelevated</code> "while the issue is investigated":</p>
+<p>If setup still fails and your organization’s policy allows it, the docs suggest using <code>unelevated</code> “while the issue is investigated”:</p>
 <pre tabindex="0"><code>[windows]
 sandbox = "unelevated"</code></pre>
-<p>Know the trade-off. The docs call unelevated "A legacy fallback when elevated setup is unavailable and organizational policy permits it" that "Has weaker network isolation than elevated and doesn’t support denied read paths." Treat it as a temporary step and switch back once setup works.</p>
+<p>Know the trade-off. The docs call unelevated “A legacy fallback when elevated setup is unavailable and organizational policy permits it” that “Has weaker network isolation than elevated and doesn’t support denied read paths.” Treat it as a temporary step and switch back once setup works.</p>
 
 <h2>On a work laptop: what to ask IT</h2>
-<p>The docs suggest asking IT "whether the machine allows administrator-approved setup for local user/group creation, firewall configuration, and the required sandbox-user logon rights." IT can also set up the elevated sandbox for you from an elevated deployment process:</p>
+<p>The docs suggest asking IT “whether the machine allows administrator-approved setup for local user/group creation, firewall configuration, and the required sandbox-user logon rights.” IT can also set up the elevated sandbox for you from an elevated deployment process:</p>
 <pre tabindex="0"><code>codex sandbox setup --elevated --user 'DOMAIN\alice' --codex-home 'C:\Users\alice\.codex'</code></pre>
 <p>They replace the identity and path with yours. If Codex warns that some folders are writable by Everyone, the docs suggest reviewing those folders, removing Everyone write access where appropriate, and re-running setup.</p>
 
 <h2>Don’t do this</h2>
 <ul>
-<li><b>Don't try to turn off unified exec.</b> The <a href="https://developers.openai.com/codex/config-reference">config reference</a> says <code>features.unified_exec</code> is "(stable; enabled on all platforms). User opt-outs are ignored."</li>
-<li><b>Don't switch to full access as a fix.</b> The <a href="https://developers.openai.com/codex/windows">Windows sandbox page</a> warns: "Running Codex in full access mode means Codex is not limited to your project directory and might perform unintentional destructive actions that can lead to data loss." Commands may run again, but you lose the sandbox's protection for your files.</li>
+<li><b>Don’t try to turn off unified exec.</b> The <a href="https://developers.openai.com/codex/config-reference">config reference</a> says <code>features.unified_exec</code> is “(stable; enabled on all platforms). User opt-outs are ignored.”</li>
+<li><b>Don’t switch to full access as a fix.</b> The <a href="https://developers.openai.com/codex/windows">Windows sandbox page</a> warns: “Running Codex in full access mode means Codex is not limited to your project directory and might perform unintentional destructive actions that can lead to data loss.” Commands may run again, but you lose the sandbox’s protection for your files.</li>
 </ul>
 
 <h2>Send diagnostics</h2>
-<p>If none of this helps, add your details to <a href="https://github.com/openai/codex/issues/53623">#53623</a> or contact OpenAI. The docs ask for <code>CODEX_HOME/.sandbox/sandbox.log</code>, the sandbox implementation you selected, the error message, your Windows build, and whether you're on Windows 11 or Windows 10. They also say: do not send the contents of <code>CODEX_HOME/.sandbox-secrets/</code>.</p>
+<p>If none of this helps, add your details to <a href="https://github.com/openai/codex/issues/53623">#53623</a> or contact OpenAI. The docs ask for <code>CODEX_HOME/.sandbox/sandbox.log</code>, the sandbox implementation you selected, the error message, your Windows build, and whether you’re on Windows 11 or Windows 10. They also say: do not send the contents of <code>CODEX_HOME/.sandbox-secrets/</code>.</p>
 
 <h2>FAQ</h2>
 <p><b>Can I turn off unified exec?</b> No. The config reference says user opt-outs are ignored.</p>
-<p><b>Is unelevated safe?</b> It's still sandboxed, but the docs say it has weaker network isolation than elevated. Use it as a temporary fallback where policy allows.</p>
-<p><b>Does WSL avoid it?</b> This error comes from the native Windows sandbox. OpenAI has a separate WSL page, but we haven't tested whether WSL avoids it.</p>
+<p><b>Is unelevated safe?</b> It’s still sandboxed, but the docs say it has weaker network isolation than elevated. Use it as a temporary fallback where policy allows.</p>
+<p><b>Does WSL avoid it?</b> This error comes from the native Windows sandbox. OpenAI has a separate WSL page, but we haven’t tested whether WSL avoids it.</p>
 <p><b>Which Windows builds support MXC?</b> The docs name Windows 11 24H2 (build 26100.9278) and 25H2 (build 26200.9278). Run the probe above to check your device.</p>
-<p><b>What's error 1385?</b> The docs say it means "Windows is denying the logon type the sandbox user needs in order to start the command", which is usually a device policy for IT to check.</p>
-<p><b>Do I need admin rights?</b> The elevated sandbox "Requires administrator-approved setup", per the docs. MXC doesn't, on compatible devices.</p>
+<p><b>What’s error 1385?</b> The docs say it means “Windows is denying the logon type the sandbox user needs in order to start the command”, which is usually a device policy for IT to check.</p>
+<p><b>Do I need admin rights?</b> The elevated sandbox “Requires administrator-approved setup”, per the docs. MXC doesn’t, on compatible devices.</p>
 <p>Related: <a href="/blog/codex-desktop-new-worktree-chat-fix">other Codex desktop breakages</a> and <a href="/blog/codex-credits-cost-usage-limit-resets">Codex credits, costs, and usage limit resets</a>.</p>
 
 <h2>Sources</h2>

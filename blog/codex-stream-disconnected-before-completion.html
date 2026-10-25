@@ -9,21 +9,21 @@
 <main id="main"><div class="wrap narrow"><article class="prose">
 <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Codex “stream disconnected before completion”: h…</li></ol></nav>
 <p class="eyebrow">AI coding · fixes · <time datetime="2026-10-24">2026-10-24</time></p><h1 class="h1-long">Codex “stream disconnected before completion”: how to fix</h1><p class="fine">As of 24 October 2026. This is a fast-moving problem. OpenAI may change things at any time, so check the linked issues before you follow any step.</p><p>If you want the next step, read <a href="/blog/codex-selected-model-is-at-capacity">Codex “Selected model is at capacity”: what to do</a>.</p>
-<p>If Codex stops a turn with this message, you're not alone:</p>
+<p>If Codex stops a turn with this message, you’re not alone:</p>
 <pre tabindex="0"><code>stream disconnected before completion: An error occurred while processing your request. You can retry your request, or contact us through our help center at help.openai.com if the error persists. Please include the request ID e245f2c8-8fc9-490a-b1f8-728dccaf4057 in your message.</code></pre>
-<p>That's the full error quoted in <a href="https://github.com/openai/codex/issues/53777">openai/codex #53777</a> (opened 13 Oct 2026) from the Codex Windows desktop app, version 26.1007.21434. Your request ID will differ. The reporter says: "Retrying has not resolved the recurring problem, interrupting requests before completion." OpenAI has not published a cause as of 24 October 2026.</p>
-<p>In short, the response stream closed before the model finished. This is a dropped connection, not "at capacity" and not your usage limit.</p>
+<p>That’s the full error quoted in <a href="https://github.com/openai/codex/issues/53777">openai/codex #53777</a> (opened 13 Oct 2026) from the Codex Windows desktop app, version 26.1007.21434. Your request ID will differ. The reporter says: “Retrying has not resolved the recurring problem, interrupting requests before completion.” OpenAI has not published a cause as of 24 October 2026.</p>
+<p>In short, the response stream closed before the model finished. This is a dropped connection, not “at capacity” and not your usage limit.</p>
 
 <h2>Quick fix: what to try right now</h2>
 <ol>
-<li><b>Retry, or start a new turn.</b> The error text itself says "You can retry your request". If one retry works, carry on.</li>
+<li><b>Retry, or start a new turn.</b> The error text itself says “You can retry your request”. If one retry works, carry on.</li>
 <li><b>Read the text after the colon.</b> It often names a more specific failure. Match it to a section below.</li>
-<li><b>Check <a href="https://status.openai.com">status.openai.com</a>.</b> When we checked on 24 October 2026, it read "All Systems Operational", so a green page doesn't rule this error out.</li>
-<li><b>Resume, don't restart.</b> If a long task stopped, pick it back up with <code>codex resume</code> (see the <a href="https://developers.openai.com/codex/cli/reference">Codex CLI reference</a>) so you keep its context.</li>
+<li><b>Check <a href="https://status.openai.com">status.openai.com</a>.</b> When we checked on 24 October 2026, it read “All Systems Operational”, so a green page doesn’t rule this error out.</li>
+<li><b>Resume, don’t restart.</b> If a long task stopped, pick it back up with <code>codex resume</code> (see the <a href="https://developers.openai.com/codex/cli/reference">Codex CLI reference</a>) so you keep its context.</li>
 </ol>
 
 <h2>Read the text after the colon</h2>
-<p>People search for several versions of this error, each with different text after the colon. OpenAI hasn't documented what each one means, so treat the notes below as places to look, not confirmed causes.</p>
+<p>People search for several versions of this error, each with different text after the colon. OpenAI hasn’t documented what each one means, so treat the notes below as places to look, not confirmed causes.</p>
 <h3>stream closed before response.completed</h3>
 <p>The stream ended before the final event arrived. If it keeps happening on one long chat, try a new chat or a smaller task, then resume.</p>
 <h3>idle timeout waiting for SSE or websocket</h3>
@@ -31,21 +31,21 @@
 <h3>error sending request for url or tls handshake eof</h3>
 <p>These point to the connection itself. A common pattern, not documented by OpenAI, is a VPN, proxy, or company network that inspects TLS traffic. If you can, try once on a different network to compare.</p>
 <h3>response.failed event received</h3>
-<p>The server reported that the response failed. That's usually not something your settings can change. Retry, check the status page, and file an issue with the request ID if it keeps happening.</p>
+<p>The server reported that the response failed. That’s usually not something your settings can change. Retry, check the status page, and file an issue with the request ID if it keeps happening.</p>
 
 <h2>Make Codex retry the stream on its own</h2>
 <p>The <a href="https://developers.openai.com/codex/config-reference">Codex config reference</a> lists these per-provider settings:</p>
 <ul>
-<li><code>model_providers.&lt;id&gt;.stream_max_retries</code>: "Retry count for SSE streaming interruptions (default: 5)."</li>
-<li><code>model_providers.&lt;id&gt;.stream_idle_timeout_ms</code>: "Idle timeout for SSE streams in milliseconds (default: 300000)."</li>
-<li><code>model_providers.&lt;id&gt;.request_max_retries</code>: "Retry count for HTTP requests to the provider (default: 4)."</li>
+<li><code>model_providers.&lt;id&gt;.stream_max_retries</code>: “Retry count for SSE streaming interruptions (default: 5).”</li>
+<li><code>model_providers.&lt;id&gt;.stream_idle_timeout_ms</code>: “Idle timeout for SSE streams in milliseconds (default: 300000).”</li>
+<li><code>model_providers.&lt;id&gt;.request_max_retries</code>: “Retry count for HTTP requests to the provider (default: 4).”</li>
 </ul>
-<p>Put them in your user-level <code>~/.codex/config.toml</code>. The same page says Codex ignores <code>model_providers</code> in a project-local <code>.codex/config.toml</code>: "put provider, notification, and telemetry keys in user-level config instead." Raising these may help with short blips. It's unlikely to help when the server itself fails the response.</p>
+<p>Put them in your user-level <code>~/.codex/config.toml</code>. The same page says Codex ignores <code>model_providers</code> in a project-local <code>.codex/config.toml</code>: “put provider, notification, and telemetry keys in user-level config instead.” Raising these may help with short blips. It’s unlikely to help when the server itself fails the response.</p>
 
 <h2>It happens during remote compact</h2>
-<p>The error can also appear when Codex compacts a chat's context. In <a href="https://github.com/openai/codex/issues/56164">openai/codex #56164</a> (opened 22 Oct 2026), running <code>/compact</code> in the Windows desktop app failed with:</p>
+<p>The error can also appear when Codex compacts a chat’s context. In <a href="https://github.com/openai/codex/issues/56164">openai/codex #56164</a> (opened 22 Oct 2026), running <code>/compact</code> in the Windows desktop app failed with:</p>
 <pre tabindex="0"><code>Error running remote compact task: stream disconnected before completion: stream closed before response.completed</code></pre>
-<p>That reporter had just switched models in an existing chat. If you see this, try compacting again, or start a new chat with a short handoff note (goal, what's done, what's next, files touched).</p>
+<p>That reporter had just switched models in an existing chat. If you see this, try compacting again, or start a new chat with a short handoff note (goal, what’s done, what’s next, files touched).</p>
 
 <h2>Keep long <code class="nb">codex exec</code> runs alive</h2>
 <p>For long or unattended runs, keep each step small and committed, so a dropped stream costs you one step, not the whole job. When a session stops, resume it with <code>codex resume</code> rather than starting fresh.</p>
@@ -55,14 +55,14 @@
 
 <h2>FAQ</h2>
 <p><b>Does it use up my Codex quota?</b> We found no official answer as of 24 October 2026.</p>
-<p><b>Is it the same as "at capacity"?</b> No. "Stream disconnected" means the connection dropped before the answer finished. "At capacity" is a different message.</p>
-<p><b>Is my VPN the cause?</b> It might be, mainly for "tls handshake eof" or "error sending request". Compare once on another network before changing anything else.</p>
+<p><b>Is it the same as “at capacity”?</b> No. “Stream disconnected” means the connection dropped before the answer finished. “At capacity” is a different message.</p>
+<p><b>Is my VPN the cause?</b> It might be, mainly for “tls handshake eof” or “error sending request”. Compare once on another network before changing anything else.</p>
 <p><b>Which config keys help?</b> <code>stream_max_retries</code>, <code>stream_idle_timeout_ms</code>, and <code>request_max_retries</code>, set per provider in user-level config.</p>
-<p><b>Why does it happen on the Windows desktop app?</b> OpenAI hasn't said. #53777 is a Windows desktop report, but people search for this error with the CLI too.</p>
+<p><b>Why does it happen on the Windows desktop app?</b> OpenAI hasn’t said. #53777 is a Windows desktop report, but people search for this error with the CLI too.</p>
 <p><b>What is the request ID for?</b> The error asks you to include it when you contact OpenAI, so they can find your failed request.</p>
 <p>Related: <a href="/blog/codex-credits-cost-usage-limit-resets">Codex credits, costs, and usage limit resets</a>, <a href="/blog/chatgpt-pro-200-codex-usage-limits">ChatGPT Pro and Codex usage limits</a>, <a href="/blog/openai-anthropic-429-rate-limit-error-nextjs">the 429 rate limit guide</a>, and <a href="/blog/codex-desktop-new-worktree-chat-fix">other Codex desktop fixes</a>.</p>
 
-<p>Seeing "Selected model is at capacity" instead? That's a different error. See <a href="/blog/codex-selected-model-is-at-capacity">Codex “selected model is at capacity”</a>.</p>
+<p>Seeing “Selected model is at capacity” instead? That’s a different error. See <a href="/blog/codex-selected-model-is-at-capacity">Codex “selected model is at capacity”</a>.</p>
 
 <h2>Sources</h2>
 <p class="fine">Checked 24 Oct 2026: github.com/openai/codex issues #53777 and #56164; developers.openai.com/codex/config-reference; developers.openai.com/codex/cli/reference; status.openai.com.</p>

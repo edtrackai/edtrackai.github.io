@@ -9,55 +9,55 @@
 <main id="main"><div class="wrap narrow"><article class="prose">
 <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Gemini API key reported as leaked? Rotate, cap, …</li></ol></nav>
 <p class="eyebrow">Security · fixes · <time datetime="2026-10-23">2026-10-23</time></p><h1 class="h1-long">Gemini API key reported as leaked? Rotate, cap, find the leak</h1><p class="fine">As of 24 October 2026. Google and OpenAI update their key policies often, so check the linked pages before you act.</p><p>If you want the next step, read <a href="/blog/supabase-service-role-key-exposed">Supabase service role key exposed? How to check, rotate, and stop it happening again</a>.</p>
-<p>Google's troubleshooting page lists this error with a <code>403 PERMISSION_DENIED</code> status:</p>
+<p>Google’s troubleshooting page lists this error with a <code>403 PERMISSION_DENIED</code> status:</p>
 <pre tabindex="0"><code>Your API key was reported as leaked. Please use another API key.</code></pre>
-<p>Google adds: "If your key is known to be leaked, you can no longer use that key with the Gemini API" (<a href="https://ai.google.dev/gemini-api/docs/troubleshooting">Gemini API troubleshooting</a>). Some developers only find out from a bill. One Ask HN post this week was titled "My Gemini bill shot up suddenly to 2500 USD in one day" (<a href="https://news.ycombinator.com/item?id=50168795">Hacker News</a>, 20 Oct 2026). Here's what to do.</p>
+<p>Google adds: “If your key is known to be leaked, you can no longer use that key with the Gemini API” (<a href="https://ai.google.dev/gemini-api/docs/troubleshooting">Gemini API troubleshooting</a>). Some developers only find out from a bill. One Ask HN post this week was titled “My Gemini bill shot up suddenly to 2500 USD in one day” (<a href="https://news.ycombinator.com/item?id=50168795">Hacker News</a>, 20 Oct 2026). Here’s what to do.</p>
 
 <h2>Quick fix: the first 15 minutes</h2>
-<p>Google's own leak checklist (<a href="https://ai.google.dev/gemini-api/docs/api-key">Using Gemini API keys</a>) is the order to follow:</p>
+<p>Google’s own leak checklist (<a href="https://ai.google.dev/gemini-api/docs/api-key">Using Gemini API keys</a>) is the order to follow:</p>
 <ol>
 <li><b>Generate a new key</b> in Google AI Studio.</li>
 <li><b>Update your app</b> to use it, from an environment variable or secret store, never from code.</li>
-<li><b>Disable or delete the old key.</b> Google says: "Do not delete the old key until the new key is fully active."</li>
+<li><b>Disable or delete the old key.</b> Google says: “Do not delete the old key until the new key is fully active.”</li>
 <li><b>Audit usage</b> for unexpected spikes or unfamiliar API calls.</li>
 <li><b>Set budget alerts</b> on the billing account, and restrict the new key (see the FAQ).</li>
-<li><b>If you were charged</b>, Google's troubleshooting page says to "Submit a billing support case" for "Unexpected charges due to vulnerability".</li>
+<li><b>If you were charged</b>, Google’s troubleshooting page says to “Submit a billing support case” for “Unexpected charges due to vulnerability”.</li>
 </ol>
-<p>Don't keep retrying the old key. Google lists 403 among errors you shouldn't retry.</p>
+<p>Don’t keep retrying the old key. Google lists 403 among errors you shouldn’t retry.</p>
 
 <h2>Why Google flagged your key</h2>
-<p>Google says its new auth keys "provide fast-acting leaked key enforcement that quickly stops the usage of leaked keys detected by our systems", and new keys made in AI Studio are auth keys from 28 May 2026 (<a href="https://ai.google.dev/gemini-api/docs/api-key">Using Gemini API keys</a>). The same page says the Gemini API rejects requests from unrestricted standard keys. In short, Google found your key somewhere public and turned it off. That stops new usage on that key. It doesn't tell you where else the key was copied, so find the source next.</p>
+<p>Google says its new auth keys “provide fast-acting leaked key enforcement that quickly stops the usage of leaked keys detected by our systems”, and new keys made in AI Studio are auth keys from 28 May 2026 (<a href="https://ai.google.dev/gemini-api/docs/api-key">Using Gemini API keys</a>). The same page says the Gemini API rejects requests from unrestricted standard keys. In short, Google found your key somewhere public and turned it off. That stops new usage on that key. It doesn’t tell you where else the key was copied, so find the source next.</p>
 
 <h2>Find the leak</h2>
 <h3>Your repo and its history</h3>
-<p>Google says: "Never check API keys into source control systems like Git." Deleting the line in a new commit doesn't remove it from history. Search every commit for the leaked key itself (or, for older standard keys, the <code>AIza</code> prefix shown in <a href="https://cloud.google.com/docs/authentication/api-keys">Google Cloud's API key docs</a>; newer auth keys may not use it):</p>
+<p>Google says: “Never check API keys into source control systems like Git.” Deleting the line in a new commit doesn’t remove it from history. Search every commit for the leaked key itself (or, for older standard keys, the <code>AIza</code> prefix shown in <a href="https://cloud.google.com/docs/authentication/api-keys">Google Cloud’s API key docs</a>; newer auth keys may not use it):</p>
 <pre tabindex="0"><code>git log -p --all -S 'PASTE_THE_LEAKED_KEY'
 git log -p --all -S 'AIza' | grep -n 'AIza'</code></pre>
-<p>Rewriting history (for example with git filter-repo) and force pushing removes it from your copy. Back up the repo first and warn collaborators, because a force push overwrites the remote history they work from. Assume anyone could have copied it already. Rotating the key is the step that matters, because history rewrites don't reach copies others already made.</p>
+<p>Rewriting history (for example with git filter-repo) and force pushing removes it from your copy. Back up the repo first and warn collaborators, because a force push overwrites the remote history they work from. Assume anyone could have copied it already. Rotating the key is the step that matters, because history rewrites don’t reach copies others already made.</p>
 <h3>Front-end bundles and NEXT_PUBLIC_</h3>
-<p>In Next.js, any variable prefixed <code>NEXT_PUBLIC_</code> is "inlined into any JavaScript sent to the browser" (<a href="https://nextjs.org/docs/app/guides/environment-variables">Next.js environment variables docs</a>). A Gemini key there is public. Search your built output (<code>.next/static</code> or <code>dist</code>) for <code>AIza</code>, and move Gemini calls to a server route.</p>
+<p>In Next.js, any variable prefixed <code>NEXT_PUBLIC_</code> is “inlined into any JavaScript sent to the browser” (<a href="https://nextjs.org/docs/app/guides/environment-variables">Next.js environment variables docs</a>). A Gemini key there is public. Search your built output (<code>.next/static</code> or <code>dist</code>) for <code>AIza</code>, and move Gemini calls to a server route.</p>
 <h3>Scripts, notebooks, and shared files</h3>
 <p>Check notebooks with saved outputs, gists, pasted logs, Docker images, CI logs, and screenshots.</p>
 
 <h2>Same steps for an OpenAI key</h2>
-<p>OpenAI says: "If you believe your key has been leaked, rotate your key immediately from the API Keys page" (<a href="https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety">Best practices for API key safety</a>). It also advises never deploying keys in client-side environments, never committing keys to a repository, and using the <code>OPENAI_API_KEY</code> environment variable. On spend, it notes that "Spend alerts alone don't stop API traffic", so set a monthly spend limit with hard enforcement too. For per-user caps in your own app, see <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user OpenAI and Anthropic spend limits in Next.js</a>.</p>
+<p>OpenAI says: “If you believe your key has been leaked, rotate your key immediately from the API Keys page” (<a href="https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety">Best practices for API key safety</a>). It also advises never deploying keys in client-side environments, never committing keys to a repository, and using the <code>OPENAI_API_KEY</code> environment variable. On spend, it notes that “Spend alerts alone don’t stop API traffic”, so set a monthly spend limit with hard enforcement too. For per-user caps in your own app, see <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user OpenAI and Anthropic spend limits in Next.js</a>.</p>
 
 <h2>Stop your AI agent putting keys in client code</h2>
-<p>Coding agents often reach for <code>NEXT_PUBLIC_</code> because it "just works" in the browser. Add a rule to your <code>CLAUDE.md</code>, <code>AGENTS.md</code>, or Cursor rules that AI API keys stay in server code and server environment variables only, and review diffs that touch <code>.env</code> or client components. The same mistake with Supabase is covered in <a href="/blog/supabase-service-role-key-exposed">Supabase service role key exposed</a>. Use the <a href="/tools/ai-api-cost-calculator">AI API cost calculator</a> to work out a sensible budget alert.</p>
+<p>Coding agents often reach for <code>NEXT_PUBLIC_</code> because it “just works” in the browser. Add a rule to your <code>CLAUDE.md</code>, <code>AGENTS.md</code>, or Cursor rules that AI API keys stay in server code and server environment variables only, and review diffs that touch <code>.env</code> or client components. The same mistake with Supabase is covered in <a href="/blog/supabase-service-role-key-exposed">Supabase service role key exposed</a>. Use the <a href="/tools/ai-api-cost-calculator">AI API cost calculator</a> to work out a sensible budget alert.</p>
 
 <section class="pitch" aria-label="Our product"><p><em>Disclosure: this is our own paid product.</em></p>
 <p>The API Bill Panic Kit is a sourced, step-by-step checklist for when an AI API bill is climbing, plus a Node script designed to find OpenAI, Anthropic, and Google key patterns in git history, the working tree, and built bundles.
-It prints masked values only, and it's not tested against live provider accounts.</p>
+It prints masked values only, and it’s not tested against live provider accounts.</p>
 <p><a data-ev="buy-click" data-ev-product="api-bill-panic-kit" data-ev-position="blog" data-ev-post="gemini-api-key-reported-as-leaked" href="https://luxurydrive0.gumroad.com/l/zlteda?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-gemini-api-key-reported-as-leaked">Get the API Bill Panic Kit</a> for $9 (plus VAT where applicable).</p></section>
 <h2>FAQ</h2>
 <h3>Will Google refund charges from a leaked key?</h3>
-<p>We can't promise that. Google's guidance is to submit a billing support case for unexpected charges.</p>
+<p>We can’t promise that. Google’s guidance is to submit a billing support case for unexpected charges.</p>
 <h3>Does deleting the key stop charges immediately?</h3>
-<p>Once a leak is detected, Google says the key can no longer be used with the Gemini API. Usage already made can still be billed, and Google doesn't give a timing for when deletion takes effect, so also check billing reports and alerts.</p>
+<p>Once a leak is detected, Google says the key can no longer be used with the Gemini API. Usage already made can still be billed, and Google doesn’t give a timing for when deletion takes effect, so also check billing reports and alerts.</p>
 <h3>What is an auth key?</h3>
-<p>It's Google's newer Gemini key type with fast-acting leaked key enforcement. New AI Studio keys are auth keys from 28 May 2026.</p>
+<p>It’s Google’s newer Gemini key type with fast-acting leaked key enforcement. New AI Studio keys are auth keys from 28 May 2026.</p>
 <h3>Can I restrict a key to one API?</h3>
-<p>Yes. Google's key page describes "Restrict to Gemini API only" in AI Studio, and IP address restrictions in the Google Cloud console.</p>
+<p>Yes. Google’s key page describes “Restrict to Gemini API only” in AI Studio, and IP address restrictions in the Google Cloud console.</p>
 <h3>How do I find a leaked key in git history?</h3>
 <p>Search all commits for the key string with <code>git log -p --all -S</code> (and <code>AIza</code> for older standard keys), then rotate the key whether or not you rewrite history.</p>
 <h3>Is NEXT_PUBLIC_ safe for API keys?</h3>

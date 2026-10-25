@@ -9,42 +9,42 @@
 <main id="main"><div class="wrap narrow"><article class="prose">
 <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">Claude Code “safeguards flagged this message”: w…</li></ol></nav>
 <p class="eyebrow">AI coding · fixes · <time datetime="2026-10-24">2026-10-24</time></p><h1 class="h1-long">Claude Code “safeguards flagged this message”: what to do</h1><p class="fine">As of 24 October 2026. Anthropic may change this behavior at any time, so check the linked issues and help pages before you follow any step.</p><p>If you want the next step, read <a href="/blog/claude-code-weekly-limit-reached">Claude weekly limit reached? Why it burns fast + what to do</a>.</p>
-<p>If Claude Code stops with this message, you're not alone:</p>
+<p>If Claude Code stops with this message, you’re not alone:</p>
 <pre tabindex="0"><code>API Error: Sonnet 5.5's safeguards flagged this message (https://www.anthropic.com/legal/aup). This sometimes happens with safe, normal conversations. Claude Code can't respond to this message with Sonnet 5.5.</code></pre>
-<p>That's the exact text quoted in <a href="https://github.com/anthropics/claude-code/issues/101076">anthropics/claude-code #101076</a> (opened 10 Oct 2026), after the reporter asked a plain question about a missing skill. In <a href="https://github.com/anthropics/claude-code/issues/104364">#104364</a> (opened 22 Oct 2026), another user reports "Opus 5.5's safeguards flagged this message" during "an ordinary development request".</p>
-<p>This isn't a usage limit. The message says Anthropic's safeguards flagged that one message.</p>
+<p>That’s the exact text quoted in <a href="https://github.com/anthropics/claude-code/issues/101076">anthropics/claude-code #101076</a> (opened 10 Oct 2026), after the reporter asked a plain question about a missing skill. In <a href="https://github.com/anthropics/claude-code/issues/104364">#104364</a> (opened 22 Oct 2026), another user reports “Opus 5.5’s safeguards flagged this message” during “an ordinary development request”.</p>
+<p>This isn’t a usage limit. The message says Anthropic’s safeguards flagged that one message.</p>
 
 <h2>What to try first: retry, edit, or start a fresh session</h2>
-<p>The error in #101076 suggests its own next steps: "Double press esc to edit your last message, or try a different model with /model."</p>
+<p>The error in #101076 suggests its own next steps: “Double press esc to edit your last message, or try a different model with /model.”</p>
 <ol>
-<li><b>Retry, or edit your last message</b> if it didn't say clearly what you want done in the code. The error itself says this "sometimes happens with safe, normal conversations". Don't reword a request just to get it past the safeguards.</li>
-<li><b>Start a fresh session</b> if the problem seems to come from earlier context. Users report this can help, though Anthropic hasn't documented it.</li>
+<li><b>Retry, or edit your last message</b> if it didn’t say clearly what you want done in the code. The error itself says this “sometimes happens with safe, normal conversations”. Don’t reword a request just to get it past the safeguards.</li>
+<li><b>Start a fresh session</b> if the problem seems to come from earlier context. Users report this can help, though Anthropic hasn’t documented it.</li>
 </ol>
 
 <h2>What the message means</h2>
-<p>The error links Anthropic's <a href="https://www.anthropic.com/legal/aup">Usage Policy</a>. Anthropic's help article <a href="https://support.claude.com/en/articles/8106465">Our Approach to User Safety</a> describes "Detection models that flag potentially harmful content based on our Usage Policy" and "Safety filters on prompts, which may block responses from the model when our detection models flag content as harmful." It adds: "These features are not failsafe, and we may make mistakes through false positives or false negatives."</p>
+<p>The error links Anthropic’s <a href="https://www.anthropic.com/legal/aup">Usage Policy</a>. Anthropic’s help article <a href="https://support.claude.com/en/articles/8106465">Our Approach to User Safety</a> describes “Detection models that flag potentially harmful content based on our Usage Policy” and “Safety filters on prompts, which may block responses from the model when our detection models flag content as harmful.” It adds: “These features are not failsafe, and we may make mistakes through false positives or false negatives.”</p>
 <h3>The [reasoning_extraction] variant</h3>
-<p>Some messages add <code>Details: [reasoning_extraction]</code>. We didn't find an Anthropic page that explains this label as of 24 October 2026, so we won't guess how it works. The reporter in #104364 writes: "I wasn't asking the model to reveal its reasoning, thinking, or system prompt". They point to the workspace context Claude Code sessions carry "(CLAUDE.md, skills, memory)".</p>
+<p>Some messages add <code>Details: [reasoning_extraction]</code>. We didn’t find an Anthropic page that explains this label as of 24 October 2026, so we won’t guess how it works. The reporter in #104364 writes: “I wasn’t asking the model to reveal its reasoning, thinking, or system prompt”. They point to the workspace context Claude Code sessions carry “(CLAUDE.md, skills, memory)”.</p>
 
 <h2>Switch model for that message</h2>
-<p>The error says Claude Code can't respond "with Sonnet 5.5", and suggests trying "a different model with /model". Another model may answer the same normal request, but that isn't guaranteed: #104364 reports the error on Opus 5.5 too.</p>
+<p>The error says Claude Code can’t respond “with Sonnet 5.5”, and suggests trying “a different model with /model”. Another model may answer the same normal request, but that isn’t guaranteed: #104364 reports the error on Opus 5.5 too.</p>
 
 <h2>Check your CLAUDE.md, hooks, and pasted content</h2>
-<p>Claude Code sends more than your last line. Your CLAUDE.md, skills, memory, and anything pasted earlier go along with it. If the error keeps coming back in one project, mention that in your /feedback report, since Anthropic hasn't said which context is checked. Keep the content honest and on task. The aim is to describe your real request clearly, not to get around the safeguards.</p>
+<p>Claude Code sends more than your last line. Your CLAUDE.md, skills, memory, and anything pasted earlier go along with it. If the error keeps coming back in one project, mention that in your /feedback report, since Anthropic hasn’t said which context is checked. Keep the content honest and on task. The aim is to describe your real request clearly, not to get around the safeguards.</p>
 
 <h2>Report a false positive</h2>
-<p>The error in #101076 says: "Send feedback with /feedback or learn more: https://support.claude.com/en/articles/8106465". If you think the block was a mistake, use <code>/feedback</code> in Claude Code and include the request ID if you have one. You can also add details to the GitHub issues above. Anthropic's help article says it encourages feedback on these safety measures.</p>
-<p>Don't try to evade or work around the safeguards. That goes against Anthropic's Usage Policy and could put your account at risk.</p>
+<p>The error in #101076 says: “Send feedback with /feedback or learn more: https://support.claude.com/en/articles/8106465”. If you think the block was a mistake, use <code>/feedback</code> in Claude Code and include the request ID if you have one. You can also add details to the GitHub issues above. Anthropic’s help article says it encourages feedback on these safety measures.</p>
+<p>Don’t try to evade or work around the safeguards. That goes against Anthropic’s Usage Policy and could put your account at risk.</p>
 
 <h2>It isn’t a usage limit</h2>
-<p>If Claude Code stopped because you ran out of allowance, that's a different message. See <a href="/blog/claude-code-weekly-limit-reached">Claude weekly limit reached</a> and <a href="/blog/claude-code-reduce-token-usage-limits">how to reduce Claude Code token usage</a>.</p>
+<p>If Claude Code stopped because you ran out of allowance, that’s a different message. See <a href="/blog/claude-code-weekly-limit-reached">Claude weekly limit reached</a> and <a href="/blog/claude-code-reduce-token-usage-limits">how to reduce Claude Code token usage</a>.</p>
 
 <h2>FAQ</h2>
 <p><b>Does it count against my limit?</b> We found no official answer as of 24 October 2026.</p>
-<p><b>Is my account at risk?</b> Anthropic's help article says it "may temporarily apply enhanced safety filters to users who repeatedly violate our policies". It doesn't say a single false positive affects your account. Reporting false positives helps Anthropic tell them apart.</p>
-<p><b>Why does it flag normal code?</b> Anthropic says its detection models can make mistakes "through false positives or false negatives". It hasn't said why particular requests are flagged.</p>
-<p><b>What is reasoning_extraction?</b> A label shown in the error details. We didn't find an Anthropic page that explains it as of 24 October 2026.</p>
-<p><b>Will switching to Opus help?</b> It may, since the error says Claude Code can't respond with Sonnet 5.5 specifically. #104364 shows Opus 5.5 can flag messages too.</p>
+<p><b>Is my account at risk?</b> Anthropic’s help article says it “may temporarily apply enhanced safety filters to users who repeatedly violate our policies”. It doesn’t say a single false positive affects your account. Reporting false positives helps Anthropic tell them apart.</p>
+<p><b>Why does it flag normal code?</b> Anthropic says its detection models can make mistakes “through false positives or false negatives”. It hasn’t said why particular requests are flagged.</p>
+<p><b>What is reasoning_extraction?</b> A label shown in the error details. We didn’t find an Anthropic page that explains it as of 24 October 2026.</p>
+<p><b>Will switching to Opus help?</b> It may, since the error says Claude Code can’t respond with Sonnet 5.5 specifically. #104364 shows Opus 5.5 can flag messages too.</p>
 <p><b>How do I report it?</b> Use <code>/feedback</code> in Claude Code, as the error suggests.</p>
 <p>Related: <a href="/blog/claude-code-deleted-my-files">Claude Code deleted my files</a>.</p>
 

@@ -24,6 +24,7 @@
 
 ## Blog
 
+- [You have exceeded your monthly quota in Copilot harness](https://edtrackai.github.io/blog/copilot-exceeded-monthly-quota-copilot-harness): Copilot harness agent sessions fail with 402 “You have exceeded your monthly quota” while chat still works? Check your usage, reload, or use Local.
 - [VS Code Local vs Copilot harness: settings to stay on Local](https://edtrackai.github.io/blog/vscode-local-vs-copilot-harness-keeps-switching): VS Code keeps switching chat from Local to the Copilot harness after updates? Pick Local in Session Target and set the three settings the docs give.
 - [VS Code Copilot skills not working? Fix personal skills](https://edtrackai.github.io/blog/vscode-copilot-skills-not-working-agent-host): Personal skills in ~/.claude/skills not loading in VS Code 1.143 Copilot chat? Agent-host sessions skip them. Move or link them to ~/.agents/skills.
 - [Supabase Data API changes on 30 Oct: what breaks in prod](https://edtrackai.github.io/blog/supabase-data-api-changes-30-oct-production): Supabase says that from 30 Oct, new tables in public need an explicit grant. See what fails in production, why local dev may hide it, and the fix.
