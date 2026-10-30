@@ -8,21 +8,21 @@
 <header class="top"><div class="wrap"><nav aria-label="Main"><a class="brand" href="/"><picture><source srcset="/visuals/logo/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="/visuals/logo/logo-light.svg" alt="Stack &amp; Ship home" width="175" height="28"></picture></a><div class="links"><a href="/ai-rules" data-ev="cta-click" data-ev-cta="nav">AI Rules</a><a href="/launch-audit" data-ev="cta-click" data-ev-cta="nav">Launch Audit</a><a href="/paid-mcp-starter" data-ev="cta-click" data-ev-cta="nav">MCP Starter</a><a href="/spend-caps-kit" data-ev="cta-click" data-ev-cta="nav">Spend Caps Kit</a><a href="/solo-founder-os" data-ev="cta-click" data-ev-cta="nav">Founder OS</a><a href="/uk-sole-trader-tracker" data-ev="cta-click" data-ev-cta="nav">UK Tax Tracker</a><a href="/blog/">Blog</a></div></nav></div></header>
 <main id="main"><div class="wrap narrow"><article class="prose">
 <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog/">Blog</a></li><li aria-current="page">LiteLLM 1.107.0 compromised: what to do right no…</li></ol></nav>
-<p class="eyebrow">AI coding · fixes · <time datetime="2026-10-24">2026-10-24</time></p><h1 class="h1-long">LiteLLM 1.107.0 compromised: what to do right now</h1><p class="fine">As of 25 October 2026. This is a live incident. Check the linked issue before you follow any step, because guidance there may change. This is not professional security advice, and these steps can't guarantee a machine is clean. Follow the LiteLLM maintainers' guidance and your own security team.</p><p>If you want the next step, read <a href="/blog/npm-min-release-age-exclude-security-patch">npm min-release-age: allow one urgent security patch</a>.</p>
-<p>LiteLLM 1.107.0 was compromised. The public report is <a href="https://github.com/BerriAI/litellm/issues/47826">BerriAI/litellm #47826</a>, opened on 21 October 2026 and signed by the Upwind security research team. Its summary says "the <code>litellm==1.107.0</code> wheels on PyPI contain a credential stealer and a remote-code loader. All 7 wheels are affected." LiteLLM maintainers replied in the same issue, treating it as "SEV-0", and confirmed that "PyPI quarantined 1.107.0" and that "The malicious docker images have been removed."</p>
+<p class="eyebrow">AI coding · fixes · <time datetime="2026-10-24">2026-10-24</time></p><h1 class="h1-long">LiteLLM 1.107.0 compromised: what to do right now</h1><p class="fine">As of 25 October 2026. This is a live incident. Check the linked issue before you follow any step, because guidance there may change. This is not professional security advice, and these steps can’t guarantee a machine is clean. Follow the LiteLLM maintainers’ guidance and your own security team.</p><p>If you want the next step, read <a href="/blog/npm-min-release-age-exclude-security-patch">npm min-release-age: allow one urgent security patch</a>.</p>
+<p>LiteLLM 1.107.0 was compromised. The public report is <a href="https://github.com/BerriAI/litellm/issues/47826">BerriAI/litellm #47826</a>, opened on 21 October 2026 and signed by the Upwind security research team. Its summary says “the <code>litellm==1.107.0</code> wheels on PyPI contain a credential stealer and a remote-code loader. All 7 wheels are affected.” LiteLLM maintainers replied in the same issue, treating it as “SEV-0”, and confirmed that “PyPI quarantined 1.107.0” and that “The malicious docker images have been removed.”</p>
 <p>This is the LiteLLM cleanup. For npm cooldown settings see our guide to <a href="/blog/npm-min-release-age-exclude-security-patch">npm minimum-release-age with a security-patch exception</a>.</p>
 
 <h2>Quick answer: am I affected?</h2>
 <ul>
-<li><b>PyPI:</b> you're affected if <code>litellm==1.107.0</code> was installed from PyPI. The report lists the sha256 of every affected file in its "Affected" table; compare against that table rather than any copy.</li>
-<li><b>Docker:</b> a follow-up comment in the issue (<a href="https://github.com/BerriAI/litellm/issues/47826#issuecomment-6316601885">Docker update</a>) says the <code>v1.107.0</code>, <code>latest</code>, <code>main-latest</code>, and <code>main-stable</code> tags of <code>litellm</code>, <code>litellm-database</code>, and <code>litellm-non_root</code> pointed to the infected image for a time, and says to "treat every v1.107.0 image as compromised". The report's status line now says those floating tags "no longer point to the v1.107.0 stealer image".</li>
-<li><b>Source code:</b> the report says "The payload is NOT in the <code>v1.107.0</code> git tag". The report and the maintainers describe the tag differently. A maintainer later added that "there is no official v.1.107.0 source tag".</li>
-<li><b>When:</b> LiteLLM's <a href="https://docs.litellm.ai/blog/security-incident-oct-21-2026">incident post</a> says the PyPI package was "live from 11:39:51 to 13:23 UTC" on 21 October, and that the Docker tags pointed to the compromised images from 11:46:56 UTC until 14:20 UTC on Docker Hub, and on GHCR until they "were made unavailable by 13:51 UTC".</li>
-<li><b>Other versions:</b> a maintainer wrote that "Older versions of LiteLLM are not impacted." The report lists the wheels of 1.106.2 and several earlier releases as "Checked and clean".</li>
+<li><b>PyPI:</b> you’re affected if <code>litellm==1.107.0</code> was installed from PyPI. The report lists the sha256 of every affected file in its “Affected” table; compare against that table rather than any copy.</li>
+<li><b>Docker:</b> a follow-up comment in the issue (<a href="https://github.com/BerriAI/litellm/issues/47826#issuecomment-6316601885">Docker update</a>) says the <code>v1.107.0</code>, <code>latest</code>, <code>main-latest</code>, and <code>main-stable</code> tags of <code>litellm</code>, <code>litellm-database</code>, and <code>litellm-non_root</code> pointed to the infected image for a time, and says to “treat every v1.107.0 image as compromised”. The report’s status line now says those floating tags “no longer point to the v1.107.0 stealer image”.</li>
+<li><b>Source code:</b> the report says “The payload is NOT in the <code>v1.107.0</code> git tag”. The report and the maintainers describe the tag differently. A maintainer later added that “there is no official v.1.107.0 source tag”.</li>
+<li><b>When:</b> LiteLLM’s <a href="https://docs.litellm.ai/blog/security-incident-oct-21-2026">incident post</a> says the PyPI package was “live from 11:39:51 to 13:23 UTC” on 21 October, and that the Docker tags pointed to the compromised images from 11:46:56 UTC until 14:20 UTC on Docker Hub, and on GHCR until they “were made unavailable by 13:51 UTC”.</li>
+<li><b>Other versions:</b> a maintainer wrote that “Older versions of LiteLLM are not impacted.” The report lists the wheels of 1.106.2 and several earlier releases as “Checked and clean”.</li>
 </ul>
 
 <h2>Check without starting Python</h2>
-<p>The report warns: "Any Python start in the affected environment runs <code>cook.pth</code> and <code>sitecustomize.py</code> again, and that includes running pip." So check from the shell only. These commands only list or search files:</p>
+<p>The report warns: “Any Python start in the affected environment runs <code>cook.pth</code> and <code>sitecustomize.py</code> again, and that includes running pip.” So check from the shell only. These commands only list or search files:</p>
 <pre tabindex="0"><code># the three files the report says the wheels add to site-packages
 find / \( -name cook.pth -o -name cook.py -o -name sitecustomize.py \) 2&gt;/dev/null
 
@@ -31,61 +31,61 @@ grep -n "litellm" uv.lock poetry.lock requirements*.txt 2&gt;/dev/null
 
 # which LiteLLM images are on this machine, with digests
 docker image ls --digests | grep -i litellm</code></pre>
-<p>Python's own docs say <code>sitecustomize</code> is a standard hook that is "typically created by a system administrator in the site-packages directory", so a match on that name alone isn't proof. A <code>cook.pth</code> or <code>cook.py</code> in site-packages is what the report describes. To match image digests, use the table in the Docker update comment linked above. We don't reprint hashes here, so you always compare against the source.</p>
+<p>Python’s own docs say <code>sitecustomize</code> is a standard hook that is “typically created by a system administrator in the site-packages directory”, so a match on that name alone isn’t proof. A <code>cook.pth</code> or <code>cook.py</code> in site-packages is what the report describes. To match image digests, use the table in the Docker update comment linked above. We don’t reprint hashes here, so you always compare against the source.</p>
 
 <h2>Clean up in this order</h2>
-<p>These are the report's "Remediation for users" steps, quoted. It opens with: "<b>Don't start with <code>pip install</code>.</b>"</p>
+<p>These are the report’s “Remediation for users” steps, quoted. It opens with: “<b>Don’t start with <code>pip install</code>.</b>”</p>
 <ol>
-<li>"From the shell, delete <code>cook.pth</code>, <code>cook.py</code>, <code>sitecustomize.py</code> and any matching <code>__pycache__/cook*.pyc</code> and <code>sitecustomize*.pyc</code> from <b>every</b> affected site-packages."</li>
-<li>"Kill the detached python daemon (it holds <code>/tmp/remote_code_loader.lock</code>)."</li>
-<li>"Reinstall pinned to <code>litellm==1.106.2</code>. Rebuilding images and venvs from scratch is better."</li>
-<li>"<b>If 1.107.0 was ever installed on a host with outbound internet, assume the exfil succeeded.</b> If the marker file exists, the exfil is confirmed. If it doesn't, that proves nothing: containers and tmp cleanup remove it."</li>
+<li>“From the shell, delete <code>cook.pth</code>, <code>cook.py</code>, <code>sitecustomize.py</code> and any matching <code>__pycache__/cook*.pyc</code> and <code>sitecustomize*.pyc</code> from <b>every</b> affected site-packages.”</li>
+<li>“Kill the detached python daemon (it holds <code>/tmp/remote_code_loader.lock</code>).”</li>
+<li>“Reinstall pinned to <code>litellm==1.106.2</code>. Rebuilding images and venvs from scratch is better.”</li>
+<li>“<b>If 1.107.0 was ever installed on a host with outbound internet, assume the exfil succeeded.</b> If the marker file exists, the exfil is confirmed. If it doesn’t, that proves nothing: containers and tmp cleanup remove it.”</li>
 </ol>
-<p>The report names the marker file in its IOCs table. For Docker, the update comment says "the remediation from the original report applies inside the container", and that the simplest fix is to redeploy on <code>v1.106.2</code>.</p>
+<p>The report names the marker file in its IOCs table. For Docker, the update comment says “the remediation from the original report applies inside the container”, and that the simplest fix is to redeploy on <code>v1.106.2</code>.</p>
 
 <h2>Rotate keys: what a LiteLLM proxy can reach</h2>
-<p>Step 5 of the report says to "Rotate everything listed above that the host could reach. In particular:"</p>
+<p>Step 5 of the report says to “Rotate everything listed above that the host could reach. In particular:”</p>
 <ul>
-<li>"the instance/task IAM role"</li>
-<li>"<b>every provider key stored in the LiteLLM proxy DB</b>, plus the master and virtual keys"</li>
-<li>"the <code>DATABASE_URL</code> password"</li>
-<li>"any secret that was in the environment of any process on the host"</li>
+<li>“the instance/task IAM role”</li>
+<li>“<b>every provider key stored in the LiteLLM proxy DB</b>, plus the master and virtual keys”</li>
+<li>“the <code>DATABASE_URL</code> password”</li>
+<li>“any secret that was in the environment of any process on the host”</li>
 </ul>
-<p>Step 6: "Check CloudTrail for <code>GetCallerIdentity</code> from the instance role around install time, then for use of the role's credentials from outside your infrastructure."</p>
-<p>Rotate provider keys on each provider's own key page. For the general steps, see <a href="/blog/gemini-api-key-reported-as-leaked">what to do when an AI API key leaks</a>, and to limit damage from any key that does leak, see <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user spend limits for OpenAI and Anthropic</a>.</p>
+<p>Step 6: “Check CloudTrail for <code>GetCallerIdentity</code> from the instance role around install time, then for use of the role’s credentials from outside your infrastructure.”</p>
+<p>Rotate provider keys on each provider’s own key page. For the general steps, see <a href="/blog/gemini-api-key-reported-as-leaked">what to do when an AI API key leaks</a>, and to limit damage from any key that does leak, see <a href="/blog/openai-anthropic-spend-limit-per-user-nextjs">per-user spend limits for OpenAI and Anthropic</a>.</p>
 
 <h2>Pin a known version</h2>
-<p>The report says: "pin <code>litellm==1.106.2</code>". A maintainer wrote: "please pin your version to 1.106.2 or any explicit version published prior to now." In a requirements file that's:</p>
+<p>The report says: “pin <code>litellm==1.106.2</code>”. A maintainer wrote: “please pin your version to 1.106.2 or any explicit version published prior to now.” In a requirements file that’s:</p>
 <pre tabindex="0"><code>litellm==1.106.2</code></pre>
-<p>As of 25 October 2026, <a href="https://pypi.org/project/litellm/">PyPI</a> also lists 1.106.3, but LiteLLM's official guidance still says to pin 1.106.2.</p>
-<p>Use the same exact pin in <code>pyproject.toml</code> for uv or Poetry, then refresh the lockfile. For Docker, an earlier status line in the report said to "Pin <code>v1.106.2</code> by digest" instead of using a floating tag such as <code>latest</code>.</p>
+<p>As of 25 October 2026, <a href="https://pypi.org/project/litellm/">PyPI</a> also lists 1.106.3, but LiteLLM’s official guidance still says to pin 1.106.2.</p>
+<p>Use the same exact pin in <code>pyproject.toml</code> for uv or Poetry, then refresh the lockfile. For Docker, an earlier status line in the report said to “Pin <code>v1.106.2</code> by digest” instead of using a floating tag such as <code>latest</code>.</p>
 
 <h2>Stop the next one: a release-age cooldown</h2>
-<p>A cooldown tells your installer to skip releases newer than a set age. A maintainer wrote that "The impacted version (v1.107.0) was removed within 3 hours of release." A cooldown is designed to make it less likely that a just-published bad release gets installed. Whether it would have helped you depends on when you installed, so treat it as one layer, not a guarantee.</p>
+<p>A cooldown tells your installer to skip releases newer than a set age. A maintainer wrote that “The impacted version (v1.107.0) was removed within 3 hours of release.” A cooldown is designed to make it less likely that a just-published bad release gets installed. Whether it would have helped you depends on when you installed, so treat it as one layer, not a guarantee.</p>
 <h3>uv: <code>exclude-newer</code></h3>
-<p>The <a href="https://docs.astral.sh/uv/reference/settings/">uv settings reference</a> says <code>exclude-newer</code> will "Limit candidate packages to those that were uploaded prior to the given date." It "Accepts RFC 3339 timestamps (e.g., 2006-12-02T02:07:43Z), a "friendly" duration (e.g., 24 hours, 1 week, 30 days), or an ISO 8601 duration (e.g., PT24H, P7D, P30D)."</p>
+<p>The <a href="https://docs.astral.sh/uv/reference/settings/">uv settings reference</a> says <code>exclude-newer</code> will “Limit candidate packages to those that were uploaded prior to the given date.” It “Accepts RFC 3339 timestamps (e.g., 2006-12-02T02:07:43Z), a “friendly” duration (e.g., 24 hours, 1 week, 30 days), or an ISO 8601 duration (e.g., PT24H, P7D, P30D).”</p>
 <pre tabindex="0"><code>[tool.uv]
 exclude-newer = "7 days"</code></pre>
-<p>To let one urgent security fix through, the same page documents <code>exclude-newer-package</code>: "Set a package to false to exempt it from the global exclude-newer constraint entirely." Its example:</p>
+<p>To let one urgent security fix through, the same page documents <code>exclude-newer-package</code>: “Set a package to false to exempt it from the global exclude-newer constraint entirely.” Its example:</p>
 <pre tabindex="0"><code>[tool.uv]
 exclude-newer-package = { tqdm = "2022-04-04T00:00:00Z", markupsafe = false }</code></pre>
 <h3>pip: <code class="wb">--uploaded-prior-to</code></h3>
-<p>The <a href="https://pip.pypa.io/en/stable/cli/pip_install/">pip install docs</a> describe <code>--uploaded-prior-to &lt;datetime_or_duration&gt;</code>: "Only consider packages uploaded prior to the given value." It accepts "a duration in days (e.g., ‘P3D’ for packages uploaded at least 3 days ago)", and is "Only effective when using indexes that provide upload-time metadata." The environment variable is <code>PIP_UPLOADED_PRIOR_TO</code>.</p>
+<p>The <a href="https://pip.pypa.io/en/stable/cli/pip_install/">pip install docs</a> describe <code>--uploaded-prior-to &lt;datetime_or_duration&gt;</code>: “Only consider packages uploaded prior to the given value.” It accepts “a duration in days (e.g., ‘P3D’ for packages uploaded at least 3 days ago)”, and is “Only effective when using indexes that provide upload-time metadata.” The environment variable is <code>PIP_UPLOADED_PRIOR_TO</code>.</p>
 <pre tabindex="0"><code>pip install --uploaded-prior-to P7D -r requirements.txt</code></pre>
 <p>Neither page says which release added the option, so check that your installed uv or pip lists it before you rely on it.</p>
-<p><b>Prevention, not remediation.</b> A cooldown, and the kit below, do nothing for a machine that already ran 1.107.0. They don't clean up an affected machine and don't rotate keys. Do the steps above first.</p>
+<p><b>Prevention, not remediation.</b> A cooldown, and the kit below, do nothing for a machine that already ran 1.107.0. They don’t clean up an affected machine and don’t rotate keys. Do the steps above first.</p>
 
 <h2>FAQ</h2>
-<p><b>Is 1.106.2 safe?</b> The report lists the 1.106.2 wheels as "Checked and clean", and both the report and the maintainers point users to 1.106.2. We haven't checked it ourselves.</p>
-<p><b>Was the GitHub source compromised?</b> The report says "The payload is NOT in the <code>v1.107.0</code> git tag". In their final write-up, <a href="https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain">LiteLLM's attack chain post</a>, the maintainers say "our release pipeline published a compromised <code>litellm==1.107.0</code> to PyPI and to our container registries", after the attacker gained access to multiple GitHub identities. The attack chain post says the attacker dispatched the staging workflow "with the source set to the lookalike Berri-AI/litellm", at a commit that "exists only on the attacker's fork". The maintainers have also said that, in their earlier status updates, "some of our assumptions and beliefs were later proven to be inaccurate or incomplete".</p>
+<p><b>Is 1.106.2 safe?</b> The report lists the 1.106.2 wheels as “Checked and clean”, and both the report and the maintainers point users to 1.106.2. We haven’t checked it ourselves.</p>
+<p><b>Was the GitHub source compromised?</b> The report says “The payload is NOT in the <code>v1.107.0</code> git tag”. In their final write-up, <a href="https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain">LiteLLM’s attack chain post</a>, the maintainers say “our release pipeline published a compromised <code>litellm==1.107.0</code> to PyPI and to our container registries”, after the attacker gained access to multiple GitHub identities. The attack chain post says the attacker dispatched the staging workflow “with the source set to the lookalike Berri-AI/litellm”, at a commit that “exists only on the attacker’s fork”. The maintainers have also said that, in their earlier status updates, “some of our assumptions and beliefs were later proven to be inaccurate or incomplete”.</p>
 <p><b>I only used the Docker image. Am I affected?</b> If you ran a <code>v1.107.0</code> image, or a floating tag while it pointed to that image, the Docker update comment says to treat it as compromised and apply the same remediation inside the container.</p>
-<p><b>Do I have to rotate keys if the marker file is missing?</b> Yes, if 1.107.0 was installed on a host with outbound internet. The report says a missing marker "proves nothing".</p>
-<p><b>Would a cooldown have stopped this?</b> It's designed to delay new releases, so it depends on the cooldown length and when you installed. We don't claim it would have.</p>
+<p><b>Do I have to rotate keys if the marker file is missing?</b> Yes, if 1.107.0 was installed on a host with outbound internet. The report says a missing marker “proves nothing”.</p>
+<p><b>Would a cooldown have stopped this?</b> It’s designed to delay new releases, so it depends on the cooldown length and when you installed. We don’t claim it would have.</p>
 
 <h2>If you want one cooldown policy across tools</h2>
 <section class="pitch" aria-label="Our product"><p><em>Disclosure: this is our own paid product.</em></p>
 <p>The Dependency Cooldown + Emergency-Patch Kit is designed to reduce the chance of installing a just-published bad release, with one release-age cooldown across npm, pnpm, Yarn, Bun, uv, Renovate, and Dependabot.
-It's prevention, not remediation: it doesn't clean up an affected machine, and a cooldown does not detect malware.</p>
+It’s prevention, not remediation: it doesn’t clean up an affected machine, and a cooldown does not detect malware.</p>
 <p><a data-ev="buy-click" data-ev-product="dependency-cooldown-kit" data-ev-position="blog" data-ev-post="litellm-1-107-0-compromised-what-to-do" href="https://luxurydrive0.gumroad.com/l/qlnmns?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-litellm-1-107-0-compromised-what-to-do">Get the Dependency Cooldown + Emergency-Patch Kit</a> for $12 (plus VAT where applicable).</p></section>
 <h2>Sources</h2>
 <p class="fine">Checked 25 Oct 2026: github.com/BerriAI/litellm issue #47826, its comments, and the maintainer status updates in it; docs.litellm.ai/blog/security-incident-oct-21-2026; docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain; pypi.org/project/litellm; docs.astral.sh/uv/reference/settings; pip.pypa.io/en/stable/cli/pip_install; docs.python.org/3/library/site.html.</p>
