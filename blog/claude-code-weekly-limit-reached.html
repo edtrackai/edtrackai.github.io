@@ -21,6 +21,7 @@
 <li><b>Or wait.</b> Anthropic lists “Wait until your usage limits reset” as an option for both Pro and Max (<a href="https://support.claude.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan">help centre</a>).</li>
 </ol>
 
+<aside class="lead-card pitch-card" aria-label="Our product"><p><em>Disclosure: this is our own paid product.</em></p><p><strong>Hitting your weekly limit before the week ends? Prefer hooks designed to help catch the waste?</strong></p><ul><li>Hooks designed to warn before a very large prompt or a filling context window, and when your 5-hour or weekly plan usage passes a threshold you choose (Pro and Max plans).</li><li>Hooks designed to stop a loop of the same failing shell command, and to stop a runaway turn or session with tool-call caps.</li><li>A step-by-step for switching to Codex when you hit the limit, with a handoff template and a <code>/handoff</code> skill. It needs your own Codex access.</li></ul><a class="btn btn-p" href="https://luxurydrive0.gumroad.com/l/tinlnk?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-claude-code-weekly-limit-reached-top" data-ev="buy-click" data-ev-product="usage-limit-saver" data-ev-position="blog-top" data-ev-post="claude-code-weekly-limit-reached">Get the Usage Limit Saver for $12 (plus VAT where applicable)</a><p class="fine">It doesn’t raise your plan’s limits or change how they’re counted, and it makes no promise about how much extra usage you’ll get. Tested on Linux only so far. Needs Node 20 or later and Claude Code.</p></aside>
 <h2>Why your weekly limit is draining faster than last week</h2>
 <p>Anthropic says Pro and Max plans “have a five-hour session limit and a weekly limit”, that Max plans “also have a separate weekly limit for Fable”, and that “these limits are shared across Claude and Claude Code” (<a href="https://support.claude.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan">help centre</a>). So chat use counts too. Inside Claude Code, these are the usual causes.</p>
 
@@ -53,10 +54,6 @@
 <h2>Fallback plan when the limit hits</h2>
 <p>If you also have Codex, keep a project <code>AGENTS.md</code> with the same rules as your <code>CLAUDE.md</code>, write a handoff note, and continue there until the reset. Codex has its own limits and credits, which we explain in <a href="/blog/codex-credits-cost-usage-limit-resets">Codex credits, costs, and usage limit resets</a> and <a href="/blog/chatgpt-pro-200-codex-usage-limits">ChatGPT Pro and Codex usage limits</a>.</p>
 
-<section class="pitch" aria-label="Our product"><p><em>Disclosure: this is our own paid product.</em></p>
-<p>Usage Limit Saver has hooks, model routing, and a token-lean rules file designed to cut wasted Claude Code usage, plus a step-by-step for falling back to Codex.
-It doesn’t raise your plan’s limits or change how they’re counted.</p>
-<p><a data-ev="buy-click" data-ev-product="usage-limit-saver" data-ev-position="blog" data-ev-post="claude-code-weekly-limit-reached" href="https://luxurydrive0.gumroad.com/l/tinlnk?utm_source=blog&amp;utm_medium=content&amp;utm_campaign=sprint1&amp;utm_content=seo-claude-code-weekly-limit-reached">Get the Usage Limit Saver</a> for $12 (plus VAT where applicable).</p></section>
 <h2>FAQ</h2>
 <h3>When does the Claude Code weekly limit reset?</h3>
 <p>The limit message shows the day and time it resets, and <code>/status</code> and <code>/usage</code> show your current position. We don’t list fixed reset times because they’re shown per account.</p>
