@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://edtrackai.github.io/blog/rotate-api-keys-after-hosting-breach-northflank</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/copilot-exceeded-monthly-quota-copilot-harness</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/claude-code-sandbox-settings-exit-code-126</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/claude-5-hour-limit-draining-fast-agent-sdk</loc><lastmod>2026-10-31</lastmod></url>
@@ -24,7 +25,7 @@
   <url><loc>https://edtrackai.github.io/blog/notion-expense-tracker-template</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/gemini-api-key-reported-as-leaked</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/codex-desktop-new-worktree-chat-fix</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/blog/claude-code-weekly-limit-reached</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/claude-code-weekly-limit-reached</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/claude-code-deleted-my-files</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/better-auth-polar-nextjs-drizzle</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/supabase-getsession-vs-getuser-vs-getclaims</loc><lastmod>2026-10-17</lastmod></url>
@@ -35,7 +36,7 @@
   <url><loc>https://edtrackai.github.io/blog/cursor-usage-limits-reset-weekly-pool</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/codex-credits-cost-usage-limit-resets</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/claude-temperature-deprecated-400-nextjs</loc><lastmod>2026-10-24</lastmod></url>
-  <url><loc>https://edtrackai.github.io/blog/claude-code-reduce-token-usage-limits</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://edtrackai.github.io/blog/claude-code-reduce-token-usage-limits</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/claude-code-monthly-spend-limit-usage-credits</loc><lastmod>2026-10-17</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/chatgpt-pro-200-codex-usage-limits</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/supabase-rls-policies-pass-review-leak-data</loc><lastmod>2026-10-16</lastmod></url>
@@ -47,7 +48,7 @@
   <url><loc>https://edtrackai.github.io/blog/notion-mrr-profit-tracker</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/cursor-rules-nextjs-supabase-stripe</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://edtrackai.github.io/blog/charge-for-mcp-server-stripe-usage-billing</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://edtrackai.github.io/</loc><lastmod>2026-10-30</lastmod></url>
+  <url><loc>https://edtrackai.github.io/</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://edtrackai.github.io/launch-audit</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://edtrackai.github.io/paid-mcp-starter</loc><lastmod>2026-10-30</lastmod></url>
   <url><loc>https://edtrackai.github.io/ship-it-bundle</loc><lastmod>2026-10-30</lastmod></url>

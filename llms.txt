@@ -24,6 +24,7 @@
 
 ## Blog
 
+- [Rotate API Keys After a Hosting Breach: Northflank Guide](https://edtrackai.github.io/blog/rotate-api-keys-after-hosting-breach-northflank): Northflank says to assume every env var was decrypted. Inventory names only, rotate AI keys first, revoke old keys, check usage logs. A free guide.
 - [You have exceeded your monthly quota in Copilot harness](https://edtrackai.github.io/blog/copilot-exceeded-monthly-quota-copilot-harness): Copilot harness agent sessions fail with 402 “You have exceeded your monthly quota” while chat still works? Check your usage, reload, or use Local.
 - [Claude Code sandbox settings: exit code 126, WSL2 and OOM](https://edtrackai.github.io/blog/claude-code-sandbox-settings-exit-code-126): Claude Code sandbox on and every Bash command fails with exit code 126, is refused in Docker Desktop, or eats memory? Fixes from the issues and docs.
 - [Claude 5 hour limit draining fast in T3 Code or Agent SDK](https://edtrackai.github.io/blog/claude-5-hour-limit-draining-fast-agent-sdk): Claude 5-hour limit gone in about 30 minutes in T3 Code, an Agent SDK app or claude -p? What user tests show, what Anthropic's docs say and what to do now.
